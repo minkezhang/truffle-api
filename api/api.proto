@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package "bene.api";
+option go_package = "github.com/minkezhang/bene-api/go/api";
+
+enum API {
+  API_UNKNOWN      = 0;
+  API_BENE         = 1;
+  API_MAL          = 2;
+  API_MANGADEX     = 3;
+  API_TMDB         = 4;  // https://www.themoviedb.org/
+  API_OMDB         = 5;  // https://www.omdbapi.com/
+  API_STEAM        = 6;
+  API_OPEN_LIBRARY = 7;
+  API_SPOTIFY      = 8;
+  API_YOUTUBE      = 9;
+}
+
+message ID {
+  API    api      = 1;
+  string category = 2;  // e.g. optional URL subcategory
+  string id       = 3;
+}

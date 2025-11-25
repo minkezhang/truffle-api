@@ -1,0 +1,161 @@
+syntax = "proto3";
+
+package "bene.data";
+option go_package = "github.com/minkezhang/bene-api/go/data";
+
+import "api/api.proto";
+import "google/protobuf/timestamp.proto";
+
+enum NodeType {
+  NODE_UNKNOWN           = 0;
+  NODE_SEMANTIC          = 17;
+  NODE_TV_SERIES         = 1;
+  NODE_TV_SERIES_EPISODE = 2;
+  NODE_MOVIE             = 6;
+  NODE_YOUTUBE_SERIES    = 3;
+  NODE_YOUTUBE_VIDEO     = 4;
+  NODE_PAPER             = 7;
+  NODE_BOOK              = 8;
+  NODE_BOOK_CHAPTER      = 9;
+  NODE_POEM              = 10;
+  NODE_SHORT_STORY       = 11;
+  NODE_GAME              = 12;
+  NODE_ALBUM             = 13;
+  NODE_ALBUM_TRACK       = 14;
+  NODE_PODCAST           = 15;
+}
+
+message Node {
+           Node     parent    = 1;
+           NodeType type      = 2;
+           string   title     = 3;
+           bool     is_queued = 4;
+  repeated Atom     atoms     = 5;  // Empty if type is NODE_SEMANTIC
+  repeated Node     related   = 6;
+}
+
+message Atom {
+  bene.api.ID api         = 1;
+  string      title       = 2;
+  string      preview_url = 20;
+  int32       score       = 3;  // Valid range [0, 100]
+  oneof       metadata {
+    MetadataTVSeries        metadata_tv_series         = 4;
+    MetadataTVSeriesEpisode metadata_tv_series_episode = 5;
+    MetadataMovie           metadata_movie             = 7;
+    MetadataYoutubeSeries   metadata_youtube_series    = 8;
+    MetadataYoutubeVideo    metadata_youtube_video     = 9;
+    MetadataPaper           metadata_paper             = 10;
+    MetadataBook            metadata_book              = 11;
+    MetadataBookChapter     metadata_book_chapter      = 12;
+    MetadataPoem            metadata_poem              = 13;
+    MetadataShortStory      metadata_short_story       = 14;
+    MetadataGame            metadata_game              = 15;
+    MetadataAlbum           metadata_album             = 16;
+    MetadataAlbumTrack      metadata_album_track       = 17;
+    MetadataPodcast         metadata_podcast           = 18;
+  }
+}
+
+message MetadataTVSeries {
+           int32  season                = 1;  // Used if tracking a single season, e.g. One Punch Man
+           bool   is_animated           = 2;
+  repeated string genres                = 3;
+  repeated string showrunners           = 4;
+           MetadataVideo metadata_video = 5;
+}
+
+message MetadataTVEpisode {
+  int32         episode        = 1;
+  bool          is_animated    = 2;
+  MetadataVideo metadata_video = 3;
+}
+
+message MetadataMovie {
+  string        episode        = 1;  // Used if tracking as part of a series, e.g. The Two Towers
+  bool          is_animated    = 2;
+  MetadataVideo metadata_video = 3;
+}
+
+message MetadataVideo {
+  repeated string directors        = 1;
+  repeated string writers          = 2;
+  repeated string cinematography   = 3;
+  repeated string music            = 4;
+  repeated string starring         = 5;
+           string animation_studio = 6;
+}
+
+message MetadataYoutubeSeries {
+  string          playlist_url     = 1;
+  MetadataYoutube metadata_youtube = 2;
+}
+
+message MetadataYoutubeVideo {
+  MetadataYoutube metadata_youtube = 1;
+}
+
+message MetadataYoutube {
+  string profile      = 1;  // e.g. EthosLab
+  string channel_url  = 3;
+}
+
+message MetadataPaper {
+  repeated string                    authors          = 1;
+           google.protobuf.Timestamp publication_date = 2;
+}
+
+message MetadataBook {
+           int32              series              = 1;  // Used if tracking as part of a series, e.g. The Two Towers
+           bool               is_animated         = 2;
+  repeated string             genres              = 3;
+           MetadataLiterature metadata_literature = 4;
+}
+
+message MetadataBookChapter {
+  int32              chapter             = 1;
+  MetadataLiterature metadata_literature = 2;
+}
+
+message MetadataPoem {
+  MetadataLiterature metadata_literature = 1;
+}
+
+message MetadataShortStory {
+  MetadataLiterature metadata_literature = 1;
+}
+
+message MetadataLiterature {
+  repeated string authors      = 1;
+  repeated string illustrators = 2;
+}
+
+message MetadataGame {
+  repeated string developers = 1;
+  repeated string directors  = 2;
+  repeated string artists    = 3;
+  repeated string composers  = 4;
+  repeated string genres     = 5;
+}
+
+message MetadataAlbum {
+  repeated string genres                = 1;
+           MetadataAudio metadata_audio = 2;
+}
+
+message MetadataAlbumTrack {
+  int32         track          = 1;
+  MetadataAudio metadata_audio = 2;
+}
+
+message MetadataAudio {
+  repeated string artists   = 1;
+  repeated string writers   = 2;
+  repeated string composers = 3;
+}
+
+message MetadataPodcast {
+  repeated string hosts     = 1;
+  repeated string genres    = 2;
+  repeated string narrators = 3;
+}
