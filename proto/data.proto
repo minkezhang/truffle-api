@@ -7,77 +7,77 @@ import "proto/api.proto";
 import "google/protobuf/timestamp.proto";
 
 enum NodeType {
-  NODE_UNKNOWN           = 0;
-  NODE_SEMANTIC          = 17;
-  NODE_TV_SERIES         = 1;
-  NODE_TV_SERIES_EPISODE = 2;
-  NODE_MOVIE             = 6;
-  NODE_YOUTUBE_SERIES    = 3;
-  NODE_YOUTUBE_VIDEO     = 4;
-  NODE_PAPER             = 7;
-  NODE_BOOK              = 8;
-  NODE_BOOK_CHAPTER      = 9;
-  NODE_POEM              = 10;
-  NODE_SHORT_STORY       = 11;
-  NODE_GAME              = 12;
-  NODE_ALBUM             = 13;
-  NODE_ALBUM_TRACK       = 14;
-  NODE_PODCAST           = 15;
+  NODE_UNKNOWN  = 0;
+  NODE_SEMANTIC = 1;
+  NODE_TV       = 2;
+  NODE_MOVIE    = 3;
+  NODE_VIDEO    = 4;
+  NODE_PAPER    = 5;
+  NODE_BOOK     = 6;
+  NODE_NOVELLA  = 7;  // e.g. short story or poem
+  // NODE_FANFICTION = 16;
+  NODE_GAME     = 8;
+  NODE_ALBUM    = 9;
+  NODE_SONG     = 10;
+  NODE_PODCAST  = 11;
 }
 
-message Node {
-           Node     parent    = 1;
-           NodeType type      = 2;
-           string   title     = 3;
-           bool     is_queued = 4;
-  repeated Atom     atoms     = 5;  // Empty if type is NODE_SEMANTIC
-  repeated Node     related   = 6;
-}
-
-message Atom {
-  bene.api.ID api         = 1;
-  string      title       = 2;
-  string      preview_url = 20;
-  int32       score       = 3;  // Valid range [0, 100]
-  oneof       metadata {
-    MetadataTVSeries        metadata_tv_series      = 4;
-    MetadataTVEpisode       metadata_tv_episode     = 5;
-    MetadataMovie           metadata_movie          = 7;
-    MetadataYoutubeSeries   metadata_youtube_series = 8;
-    MetadataYoutubeVideo    metadata_youtube_video  = 9;
-    MetadataPaper           metadata_paper          = 10;
-    MetadataBook            metadata_book           = 11;
-    MetadataBookChapter     metadata_book_chapter   = 12;
-    MetadataPoem            metadata_poem           = 13;
-    MetadataShortStory      metadata_short_story    = 14;
-    MetadataGame            metadata_game           = 15;
-    MetadataAlbum           metadata_album          = 16;
-    MetadataAlbumTrack      metadata_album_track    = 17;
-    MetadataPodcast         metadata_podcast        = 18;
+message Query {
+  oneof query {
+    bene.api.ID query_node = 1;  // API_BENE_NODE
+    QueryAtom   query_atom = 2;
   }
 }
 
-message MetadataTVSeries {
-           int32  season                = 1;  // Used if tracking a single season, e.g. One Punch Man
-           bool   is_animated           = 2;
-  repeated string genres                = 3;
-  repeated string showrunners           = 4;
-           MetadataVideo metadata_video = 5;
+message QueryAtom {
+  NodeType type = 2;
+  Atom     atom = 3;
 }
 
-message MetadataTVEpisode {
-  int32         episode        = 1;
-  bool          is_animated    = 2;
-  MetadataVideo metadata_video = 3;
+message Node {
+           bene.api.ID id        = 1;  // API_BENE_NODE
+           Node        parent    = 2;
+           NodeType    type      = 3;
+           bool        is_queued = 4;
+  repeated Atom        atoms     = 5;
+  repeated Node        related   = 6;
+}
+
+message Atom {
+  bene.api.ID id          = 1;
+  string      title       = 2;
+  string      preview_url = 3;
+  int32       score       = 4;  // Valid range [0, 100]
+  bool        is_dirty    = 5;
+  oneof       metadata {
+    MetadataTV      metadata_tv      = 100;
+    MetadataMovie   metadata_movie   = 101;
+    MetadataVideo   metadata_video   = 102;
+    MetadataPaper   metadata_paper   = 103;
+    MetadataBook    metadata_book    = 104;
+    MetadataNovella metadata_novella = 105;
+    MetadataGame    metadata_game    = 106;
+    MetadataAlbum   metadata_album   = 107;
+    MetadataSong    metadata_song    = 108;
+    MetadataPodcast metadata_podcast = 109;
+  }
+}
+
+message MetadataTV {
+           int32  season                   = 1;  // Used if tracking a single
+                                                 // season, e.g. One Punch Man
+           bool   is_animated              = 2;
+  repeated string genres                   = 3;
+  repeated string showrunners              = 4;
+           MetadataAuxVideo metadata_video = 5;
 }
 
 message MetadataMovie {
-  string        episode        = 1;  // Used if tracking as part of a series, e.g. The Two Towers
-  bool          is_animated    = 2;
-  MetadataVideo metadata_video = 3;
+  bool          is_animated       = 1;
+  MetadataAuxVideo metadata_video = 2;
 }
 
-message MetadataVideo {
+message MetadataAuxVideo {
   repeated string directors        = 1;
   repeated string writers          = 2;
   repeated string cinematography   = 3;
@@ -86,18 +86,10 @@ message MetadataVideo {
            string animation_studio = 6;
 }
 
-message MetadataYoutubeSeries {
-  string          playlist_url     = 1;
-  MetadataYoutube metadata_youtube = 2;
-}
+message MetadataVideo {
+  string creator   = 1;  // e.g. EthosLab
+  string video_url = 2;
 
-message MetadataYoutubeVideo {
-  MetadataYoutube metadata_youtube = 1;
-}
-
-message MetadataYoutube {
-  string profile      = 1;  // e.g. EthosLab
-  string channel_url  = 3;
 }
 
 message MetadataPaper {
@@ -106,26 +98,20 @@ message MetadataPaper {
 }
 
 message MetadataBook {
-           int32              series              = 1;  // Used if tracking as part of a series, e.g. The Two Towers
-           bool               is_animated         = 2;
-  repeated string             genres              = 3;
-           MetadataLiterature metadata_literature = 4;
+           int32                 series              = 1;  // Used if tracking
+                                                           // as part of a
+                                                           // series, e.g. The
+                                                           // Two Towers
+           bool                  is_animated         = 2;
+  repeated string                genres              = 3;
+           MetadataAuxLiterature metadata_literature = 4;
 }
 
-message MetadataBookChapter {
-  int32              chapter             = 1;
-  MetadataLiterature metadata_literature = 2;
+message MetadataNovella {
+  MetadataAuxLiterature metadata_literature = 1;
 }
 
-message MetadataPoem {
-  MetadataLiterature metadata_literature = 1;
-}
-
-message MetadataShortStory {
-  MetadataLiterature metadata_literature = 1;
-}
-
-message MetadataLiterature {
+message MetadataAuxLiterature {
   repeated string authors      = 1;
   repeated string illustrators = 2;
 }
@@ -139,16 +125,16 @@ message MetadataGame {
 }
 
 message MetadataAlbum {
-  repeated string genres                = 1;
-           MetadataAudio metadata_audio = 2;
+  repeated string           genres         = 1;
+           MetadataAuxAudio metadata_audio = 2;
 }
 
-message MetadataAlbumTrack {
-  int32         track          = 1;
-  MetadataAudio metadata_audio = 2;
+message MetadataSong {
+  int32            track          = 1;
+  MetadataAuxAudio metadata_audio = 2;
 }
 
-message MetadataAudio {
+message MetadataAuxAudio {
   repeated string artists   = 1;
   repeated string writers   = 2;
   repeated string composers = 3;

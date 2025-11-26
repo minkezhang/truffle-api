@@ -5,16 +5,17 @@ option go_package = "github.com/minkezhang/bene-api/proto/go/api";
 
 enum API {
   API_UNKNOWN      = 0;
-  API_BENE         = 1;
-  API_TRUFFLE      = 10;
-  API_MAL          = 2;
-  API_MANGADEX     = 3;
-  API_TMDB         = 4;  // https://www.themoviedb.org/
-  API_OMDB         = 5;  // https://www.omdbapi.com/
-  API_STEAM        = 6;
-  API_OPEN_LIBRARY = 7;
-  API_SPOTIFY      = 8;
-  API_YOUTUBE      = 9;
+  API_BENE_NODE    = 1;
+  API_BENE_ATOM    = 2;
+  // API_TRUFFLE      = 3;
+  // API_MAL          = 4;
+  // API_MANGADEX     = 5;
+  // API_TMDB         = 6;  // https://www.themoviedb.org/
+  // API_OMDB         = 7;  // https://www.omdbapi.com/
+  // API_STEAM        = 8;
+  // API_OPEN_LIBRARY = 9;
+  // API_SPOTIFY      = 10;
+  // API_YOUTUBE      = 11;
 }
 
 message ID {
