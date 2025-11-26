@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package bene.api;
-option go_package = "github.com/minkezhang/bene-api/proto/api";
+option go_package = "github.com/minkezhang/bene-api/proto/go/api";
 
 enum API {
   API_UNKNOWN      = 0;

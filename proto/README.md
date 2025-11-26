@@ -11,6 +11,6 @@ Run from project root
 protoc -I ./ \
   --go_out=proto/go/ \
   --go_opt=paths=import \
-  --go_opt=module=github.com/minkezhang/bene-api/proto \
+  --go_opt=module=github.com/minkezhang/bene-api/proto/go \
   proto/*.proto
 ```
