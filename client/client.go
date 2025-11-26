@@ -12,6 +12,7 @@ type E interface {
 	Status() int
 }
 
+// C is an atomic client.
 type C interface {
-	Query(ctx context.Context, q *dpb.Query) (*dpb.Node, error)
+	Query(ctx context.Context, q *dpb.QueryAtom) ([]*dpb.Atom, error)
 }

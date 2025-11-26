@@ -1,4 +1,4 @@
-package bene_node
+package bene
 
 import (
 	"github.com/minkezhang/bene-api/client"

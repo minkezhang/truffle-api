@@ -1,4 +1,4 @@
-package bene_node
+package bene
 
 import (
 	"context"
@@ -8,6 +8,6 @@ import (
 
 type C struct{}
 
-func (c *C) Query(ctx context.Context, q *dpb.Query) (*dpb.Node, error) {
+func (c *C) Query(ctx context.Context, q *dpb.QueryAtom) ([]*dpb.Atom, error) {
 	return nil, nil
 }

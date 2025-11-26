@@ -43,24 +43,29 @@ message Node {
   repeated Node        related   = 6;
 }
 
+message Title {
+  string title        = 1;
+  string localization = 2;
+}
+
 message Atom {
-  bene.api.ID id          = 1;
-  string      title       = 2;
-  string      preview_url = 3;
-  int32       score       = 4;  // Valid range [0, 100]
-  bool        is_dirty    = 5;
-  oneof       metadata {
-    MetadataTV      metadata_tv      = 100;
-    MetadataMovie   metadata_movie   = 101;
-    MetadataVideo   metadata_video   = 102;
-    MetadataPaper   metadata_paper   = 103;
-    MetadataBook    metadata_book    = 104;
-    MetadataNovella metadata_novella = 105;
-    MetadataGame    metadata_game    = 106;
-    MetadataAlbum   metadata_album   = 107;
-    MetadataSong    metadata_song    = 108;
-    MetadataPodcast metadata_podcast = 109;
-  }
+           bene.api.ID id          = 1;
+  repeated Title       titles      = 2;
+           string      preview_url = 3;
+           int32       score       = 4;  // Valid range [0, 100]
+           bool        is_dirty    = 5;
+           oneof       metadata {
+             MetadataTV      metadata_tv      = 100;
+             MetadataMovie   metadata_movie   = 101;
+             MetadataVideo   metadata_video   = 102;
+             MetadataPaper   metadata_paper   = 103;
+             MetadataBook    metadata_book    = 104;
+             MetadataNovella metadata_novella = 105;
+             MetadataGame    metadata_game    = 106;
+             MetadataAlbum   metadata_album   = 107;
+             MetadataSong    metadata_song    = 108;
+             MetadataPodcast metadata_podcast = 109;
+           }
 }
 
 message MetadataTV {
