@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package "bene.data";
-option go_package = "github.com/minkezhang/bene-api/go/data";
+package bene.data;
+option go_package = "github.com/minkezhang/bene-api/proto/data";
 
-import "api/api.proto";
+import "proto/api.proto";
 import "google/protobuf/timestamp.proto";
 
 enum NodeType {
@@ -40,20 +40,20 @@ message Atom {
   string      preview_url = 20;
   int32       score       = 3;  // Valid range [0, 100]
   oneof       metadata {
-    MetadataTVSeries        metadata_tv_series         = 4;
-    MetadataTVSeriesEpisode metadata_tv_series_episode = 5;
-    MetadataMovie           metadata_movie             = 7;
-    MetadataYoutubeSeries   metadata_youtube_series    = 8;
-    MetadataYoutubeVideo    metadata_youtube_video     = 9;
-    MetadataPaper           metadata_paper             = 10;
-    MetadataBook            metadata_book              = 11;
-    MetadataBookChapter     metadata_book_chapter      = 12;
-    MetadataPoem            metadata_poem              = 13;
-    MetadataShortStory      metadata_short_story       = 14;
-    MetadataGame            metadata_game              = 15;
-    MetadataAlbum           metadata_album             = 16;
-    MetadataAlbumTrack      metadata_album_track       = 17;
-    MetadataPodcast         metadata_podcast           = 18;
+    MetadataTVSeries        metadata_tv_series      = 4;
+    MetadataTVEpisode       metadata_tv_episode     = 5;
+    MetadataMovie           metadata_movie          = 7;
+    MetadataYoutubeSeries   metadata_youtube_series = 8;
+    MetadataYoutubeVideo    metadata_youtube_video  = 9;
+    MetadataPaper           metadata_paper          = 10;
+    MetadataBook            metadata_book           = 11;
+    MetadataBookChapter     metadata_book_chapter   = 12;
+    MetadataPoem            metadata_poem           = 13;
+    MetadataShortStory      metadata_short_story    = 14;
+    MetadataGame            metadata_game           = 15;
+    MetadataAlbum           metadata_album          = 16;
+    MetadataAlbumTrack      metadata_album_track    = 17;
+    MetadataPodcast         metadata_podcast        = 18;
   }
 }
 

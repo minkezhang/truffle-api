@@ -1,11 +1,12 @@
 syntax = "proto3";
 
-package "bene.api";
-option go_package = "github.com/minkezhang/bene-api/go/api";
+package bene.api;
+option go_package = "github.com/minkezhang/bene-api/proto/api";
 
 enum API {
   API_UNKNOWN      = 0;
   API_BENE         = 1;
+  API_TRUFFLE      = 10;
   API_MAL          = 2;
   API_MANGADEX     = 3;
   API_TMDB         = 4;  // https://www.themoviedb.org/
