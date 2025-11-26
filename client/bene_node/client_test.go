@@ -1,7 +1,7 @@
 package bene_node
 
 import (
-	"github.com/minkezhang/bene-api/clients"
+	"github.com/minkezhang/bene-api/client"
 )
 
 var _ client.C = &C{}

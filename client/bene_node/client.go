@@ -6,7 +6,7 @@ import (
 	dpb "github.com/minkezhang/bene-api/proto/go/data"
 )
 
-type C struct {}
+type C struct{}
 
 func (c *C) Query(ctx context.Context, q *dpb.Query) (*dpb.Node, error) {
 	return nil, nil
