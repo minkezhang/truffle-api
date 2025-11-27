@@ -1,54 +1,77 @@
+// Package atom is a collection of discrete data sources used to represent
+// different data types.
+//
+// Each data type has a specific associated atom.
 package atom
 
-import (
-	"fmt"
+type AtomType int
+type ClientAPI int
 
-	apb "github.com/minkezhang/bene-api/proto/go/api"
-	dpb "github.com/minkezhang/bene-api/proto/go/data"
+const (
+	AtomTypeNone AtomType = iota
+	AtomTypeTV
+
+	ClientAPINone ClientAPI = iota
+	ClientTypeVirtual
+	ClientAPIBene
 )
 
-type T struct {
-	Title string
-	Localization string
+var (
+	_ A[*Base] = &Base{}
+)
+
+type A[T any] interface {
+	GetType() AtomType
+	GetAPI() ClientAPI
+	GetID() string
+	Merge(T) (T, error)
 }
 
-type A struct {
-	nodeType dpb.NodeType
-	nodeID   string
+type Base struct {
+	Type AtomType  // Read-only
+	API  ClientAPI // Read-only
+	ID   string    // Read-only
 
-	api        apb.API
-	id         string
-	isDirty    bool
-
-	titles []T
-	previewURL string
-	score      int
-
-	season int
-	genres []string
-	showrunners []string
-	isAnimated bool
-	directors []string
-	writers []string
-	cinematography []string
-	composers []string
-	starring []string
-	animationStudios []string
-	creator  string
-	videoURL string
-}
-
-func (b *A) NodeType() dpb.NodeType { return b.nodeType }
-func (b *A) NodeID() string         { return b.nodeID }
-func (b *A) API() apb.API           { return b.api }
-func (b *A) ID() string             { return b.id }
-func (b *A) IsDirty() bool          { return b.isDirty }
-func (b *A) PreviewURL() string     { return b.previewURL }
-func (b *A) Score() int             { return b.score }
-
-func (b *A) Update(other A) error {
-	if b.API() != other.API() || b.ID() != other.ID() {
-		return fmt.Errorf("cannot fulfill a PUT request on mismatching atoms: (%v:%v != %v:%v)", b.API(), b.ID(), other.API(), other.ID())
+	Titles []struct {
+		Title        string
+		Localization string
 	}
-	return nil
+
+	PreviewURL string
+	Score      int
+}
+
+func (a *Base) GetType() AtomType { return a.Type }
+func (a *Base) GetAPI() ClientAPI { return a.API }
+func (a *Base) GetID() string     { return a.ID }
+func (a *Base) Merge(other *Base) (*Base, error) {
+	return &Base{
+		Type:    a.Type,
+		API:     a.API,
+		ID:      a.ID,
+		Titles: append(
+			append([]struct {
+				Title string
+				Localization string
+			}{},
+				a.Titles...),
+			other.Titles...),
+		PreviewURL: other.PreviewURL,
+		Score: other.Score,
+	}, nil
+}
+
+type TV struct {
+	*Base
+
+	Season           int
+	IsAnimated       bool
+	Genres           []string
+	Showrunners      []string
+	Directors        []string
+	Writers          []string
+	Cinematography   []string
+	Composers        []string
+	Starring         []string
+	AnimationStudios []string
 }
