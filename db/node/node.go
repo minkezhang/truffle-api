@@ -25,27 +25,27 @@ type N[T atom.A[T]] struct {
 }
 
 func (n *N[T]) CreateAtom(a T) error {
-	if a.GetType() == atom.AtomTypeNone {
+	if a.Type() == atom.AtomTypeNone {
 		return fmt.Errorf("atom type must be specified")
 	}
-	if a.GetAPI() == atom.ClientAPINone {
+	if a.API() == atom.ClientAPINone {
 		return fmt.Errorf("atom client API must be specified")
 	}
-	if a.GetType() != n.Type {
-		return fmt.Errorf("invalid atom type: %v != %v", a.GetType(), n.Type)
+	if a.Type() != n.Type {
+		return fmt.Errorf("invalid atom type: %v != %v", a.Type(), n.Type)
 	}
-	if a.GetID() == "" {
+	if a.ID() == "" {
 		return fmt.Errorf("atom ID must be non-empty")
 	}
 
-	if _, ok := n.Atoms[a.GetAPI()]; !ok {
-		n.Atoms[a.GetAPI()] = map[string]T{}
+	if _, ok := n.Atoms[a.API()]; !ok {
+		n.Atoms[a.API()] = map[string]T{}
 	}
-	n.Atoms[a.GetAPI()][a.GetID()] = a
+	n.Atoms[a.API()][a.ID()] = a
 	return nil
 }
 
-func (n *N[T]) GetData() (T, error) {
+func (n *N[T]) Data() (T, error) {
 	var res T
 	for _, atoms := range n.Atoms {
 		for _, a := range atoms {

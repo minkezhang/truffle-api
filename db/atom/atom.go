@@ -21,16 +21,16 @@ var (
 )
 
 type A[T any] interface {
-	GetType() AtomType
-	GetAPI() ClientAPI
-	GetID() string
+	Type() AtomType
+	API() ClientAPI
+	ID() string
 	Merge(T) T
 }
 
 type Base struct {
-	Type AtomType  // Read-only
-	API  ClientAPI // Read-only
-	ID   string    // Read-only
+	atomType AtomType  // Read-only
+	api      ClientAPI // Read-only
+	id       string    // Read-only
 
 	Titles []struct {
 		Title        string
@@ -41,25 +41,34 @@ type Base struct {
 	Score      int
 }
 
-func (a *Base) GetType() AtomType { return a.Type }
-func (a *Base) GetAPI() ClientAPI { return a.API }
-func (a *Base) GetID() string     { return a.ID }
+func (a *Base) Type() AtomType { return a.atomType }
+func (a *Base) API() ClientAPI { return a.api }
+func (a *Base) ID() string     { return a.id }
 func (a *Base) Merge(other *Base) *Base {
 	res := &Base{
-		Type: a.Type,
-		API: a.API,
-		ID: a.ID,
+		atomType: a.atomType,
+		api:      a.api,
+		id:       a.id,
 		Titles: append(
 			append([]struct {
-				Title string
+				Title        string
 				Localization string
 			}{},
 				a.Titles...),
 			other.Titles...),
 		PreviewURL: other.PreviewURL,
-		Score: other.Score,
+		Score:      other.Score,
 	}
 	return res
+}
+func (a *Base) WithHeader(o struct {
+	Type AtomType
+	API  ClientAPI
+	ID   string
+}) {
+	a.atomType = o.Type
+	a.api = o.API
+	a.id = o.ID
 }
 
 type TV struct {
