@@ -5,8 +5,7 @@ option go_package = "github.com/minkezhang/bene-api/proto/go/api";
 
 enum API {
   API_UNKNOWN      = 0;
-  API_BENE_NODE    = 1;
-  API_BENE_ATOM    = 2;
+  API_BENE         = 2;
   // API_TRUFFLE      = 3;
   // API_MAL          = 4;
   // API_MANGADEX     = 5;
@@ -16,10 +15,4 @@ enum API {
   // API_OPEN_LIBRARY = 9;
   // API_SPOTIFY      = 10;
   // API_YOUTUBE      = 11;
-}
-
-message ID {
-  API    api      = 1;
-  string category = 2;  // e.g. optional URL subcategory
-  string id       = 3;
 }

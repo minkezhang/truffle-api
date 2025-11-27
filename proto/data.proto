@@ -24,8 +24,8 @@ enum NodeType {
 
 message Query {
   oneof query {
-    bene.api.ID query_node = 1;  // API_BENE_NODE
-    QueryAtom   query_atom = 2;
+    string    query_node = 1;
+    QueryAtom query_atom = 2;
   }
 }
 
@@ -35,12 +35,13 @@ message QueryAtom {
 }
 
 message Node {
-           bene.api.ID id        = 1;  // API_BENE_NODE
-           Node        parent    = 2;
-           NodeType    type      = 3;
-           bool        is_queued = 4;
-  repeated Atom        atoms     = 5;
-  repeated Node        related   = 6;
+           NodeType type      = 1;
+           string   id        = 2;
+           string   parent    = 3;
+
+           bool     is_queued = 4;
+  repeated Atom     atoms     = 5;
+  repeated Node     related   = 6;
 }
 
 message Title {
@@ -49,12 +50,14 @@ message Title {
 }
 
 message Atom {
-           bene.api.ID id          = 1;
-  repeated Title       titles      = 2;
-           string      preview_url = 3;
-           int32       score       = 4;  // Valid range [0, 100]
-           bool        is_dirty    = 5;
-           oneof       metadata {
+           bene.api.API api         = 1;
+           string       id          = 2;
+
+  repeated Title        titles      = 3;
+           string       preview_url = 4;
+           int32        score       = 5;  // Valid range [0, 100]
+           bool         is_dirty    = 6;
+           oneof        metadata {
              MetadataTV      metadata_tv      = 100;
              MetadataMovie   metadata_movie   = 101;
              MetadataVideo   metadata_video   = 102;
@@ -71,24 +74,23 @@ message Atom {
 message MetadataTV {
            int32  season                   = 1;  // Used if tracking a single
                                                  // season, e.g. One Punch Man
-           bool   is_animated              = 2;
   repeated string genres                   = 3;
   repeated string showrunners              = 4;
            MetadataAuxVideo metadata_video = 5;
 }
 
 message MetadataMovie {
-  bool          is_animated       = 1;
-  MetadataAuxVideo metadata_video = 2;
+  MetadataAuxVideo metadata_video = 1;
 }
 
 message MetadataAuxVideo {
-  repeated string directors        = 1;
-  repeated string writers          = 2;
-  repeated string cinematography   = 3;
-  repeated string music            = 4;
-  repeated string starring         = 5;
-           string animation_studio = 6;
+           bool   is_animated       = 1;
+  repeated string directors         = 2;
+  repeated string writers           = 3;
+  repeated string cinematography    = 4;
+  repeated string composers         = 5;
+  repeated string starring          = 6;
+  repeated string animation_studios = 7;
 }
 
 message MetadataVideo {
