@@ -24,7 +24,7 @@ type A[T any] interface {
 	GetType() AtomType
 	GetAPI() ClientAPI
 	GetID() string
-	Merge(T) (T, error)
+	Merge(T) T
 }
 
 type Base struct {
@@ -44,11 +44,11 @@ type Base struct {
 func (a *Base) GetType() AtomType { return a.Type }
 func (a *Base) GetAPI() ClientAPI { return a.API }
 func (a *Base) GetID() string     { return a.ID }
-func (a *Base) Merge(other *Base) (*Base, error) {
-	return &Base{
-		Type:    a.Type,
-		API:     a.API,
-		ID:      a.ID,
+func (a *Base) Merge(other *Base) *Base {
+	res := &Base{
+		Type: a.Type,
+		API: a.API,
+		ID: a.ID,
 		Titles: append(
 			append([]struct {
 				Title string
@@ -58,7 +58,8 @@ func (a *Base) Merge(other *Base) (*Base, error) {
 			other.Titles...),
 		PreviewURL: other.PreviewURL,
 		Score: other.Score,
-	}, nil
+	}
+	return res
 }
 
 type TV struct {
