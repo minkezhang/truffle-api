@@ -24,15 +24,9 @@ type N[T atom.A[T]] struct {
 	Related  map[string]bool // Related nodes
 }
 
-func (n *N[T]) CreateAtom(a T) error {
-	if a.Type() == atom.AtomTypeNone {
-		return fmt.Errorf("atom type must be specified")
-	}
+func (n *N[T]) LinkAtom(a T) error {
 	if a.API() == atom.ClientAPINone {
 		return fmt.Errorf("atom client API must be specified")
-	}
-	if a.Type() != n.Type {
-		return fmt.Errorf("invalid atom type: %v != %v", a.Type(), n.Type)
 	}
 	if a.ID() == "" {
 		return fmt.Errorf("atom ID must be non-empty")
@@ -45,6 +39,23 @@ func (n *N[T]) CreateAtom(a T) error {
 	return nil
 }
 
+func (n *N[A]) UnlinkAtom(api atom.ClientAPI, id string) error {
+	if _, ok := n.Atoms[api]; ok {
+		delete(n.Atoms[api], id)
+	}
+	return nil
+}
+
+func LinkNode[T atom.A[T], U atom.A[U]](n *N[T], m *N[U]) {
+	n.Related[m.ID] = true
+	m.Related[n.ID] = true
+}
+
+func UnlinkNode[T atom.A[T], U atom.A[U]](n *N[T], m *N[U]) {
+	delete(n.Related, m.ID)
+	delete(m.Related, n.ID)
+}
+
 func (n *N[T]) Data() (T, error) {
 	var res T
 	for _, atoms := range n.Atoms {
@@ -55,19 +66,3 @@ func (n *N[T]) Data() (T, error) {
 	return res, nil
 }
 
-func (n *N[A]) DeleteAtom(api atom.ClientAPI, id string) error {
-	if _, ok := n.Atoms[api]; ok {
-		delete(n.Atoms[api], id)
-	}
-	return nil
-}
-
-func CreateLink[T atom.A[T], U atom.A[U]](n *N[T], m *N[U]) {
-	n.Related[m.ID] = true
-	m.Related[n.ID] = true
-}
-
-func DeleteLink[T atom.A[T], U atom.A[U]](n *N[T], m *N[U]) {
-	delete(n.Related, m.ID)
-	delete(m.Related, n.ID)
-}

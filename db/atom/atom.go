@@ -27,48 +27,44 @@ type A[T any] interface {
 	Merge(T) T
 }
 
+type T struct {
+	Title        string
+	Localization string
+}
+
+type H struct {
+	API ClientAPI
+	ID  string
+}
+
 type Base struct {
-	atomType AtomType  // Read-only
-	api      ClientAPI // Read-only
-	id       string    // Read-only
+	api ClientAPI // Read-only
+	id  string    // Read-only
 
-	Titles []struct {
-		Title        string
-		Localization string
-	}
-
+	Titles     []T
 	PreviewURL string
 	Score      int
 }
 
-func (a *Base) Type() AtomType { return a.atomType }
 func (a *Base) API() ClientAPI { return a.api }
 func (a *Base) ID() string     { return a.id }
+func (a *Base) Type() AtomType { return AtomTypeNone }
 func (a *Base) Merge(other *Base) *Base {
 	res := &Base{
-		atomType: a.atomType,
-		api:      a.api,
-		id:       a.id,
+		api: a.api,
+		id:  a.id,
 		Titles: append(
-			append([]struct {
-				Title        string
-				Localization string
-			}{},
-				a.Titles...),
+			append([]T{}, a.Titles...),
 			other.Titles...),
 		PreviewURL: other.PreviewURL,
 		Score:      other.Score,
 	}
 	return res
 }
-func (a *Base) WithHeader(o struct {
-	Type AtomType
-	API  ClientAPI
-	ID   string
-}) {
-	a.atomType = o.Type
-	a.api = o.API
-	a.id = o.ID
+func (a *Base) WithHeader(h H) *Base {
+	a.api = h.API
+	a.id = h.ID
+	return a
 }
 
 type TV struct {
@@ -85,3 +81,5 @@ type TV struct {
 	Starring         []string
 	AnimationStudios []string
 }
+
+func Type() AtomType { return AtomTypeTV }
