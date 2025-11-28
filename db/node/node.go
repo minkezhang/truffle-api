@@ -65,4 +65,3 @@ func (n *N[T]) Data() (T, error) {
 	}
 	return res, nil
 }
-

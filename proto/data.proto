@@ -94,8 +94,8 @@ message MetadataAuxVideo {
 }
 
 message MetadataVideo {
-  string creator   = 1;  // e.g. EthosLab
-  string video_url = 2;
+  repeated string creator   = 1;  // e.g. EthosLab
+           string video_url = 2;
 
 }
 
