@@ -24,6 +24,7 @@ type A[T any] interface {
 	Type() AtomType
 	API() ClientAPI
 	ID() string
+	GetBase() *Base
 	Merge(T) T
 }
 
@@ -63,6 +64,8 @@ type Base struct {
 func (a *Base) API() ClientAPI { return a.api }
 func (a *Base) ID() string     { return a.id }
 func (a *Base) Type() AtomType { return AtomTypeNone }
+func (a *Base) GetBase() *Base { return a }
+
 func (a *Base) Merge(other *Base) *Base {
 	res := &Base{
 		api: a.api,
