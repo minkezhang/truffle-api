@@ -37,6 +37,20 @@ type H struct {
 	ID  string
 }
 
+type O struct {
+	Titles     []T
+	PreviewURL string
+	Score      int
+}
+
+func New(o O) *Base {
+	return &Base{
+		Titles:     o.Titles,
+		PreviewURL: o.PreviewURL,
+		Score:      o.Score,
+	}
+}
+
 type Base struct {
 	api ClientAPI // Read-only
 	id  string    // Read-only
@@ -66,20 +80,3 @@ func (a *Base) WithHeader(h H) *Base {
 	a.id = h.ID
 	return a
 }
-
-type TV struct {
-	*Base
-
-	Season           int
-	IsAnimated       bool
-	Genres           []string
-	Showrunners      []string
-	Directors        []string
-	Writers          []string
-	Cinematography   []string
-	Composers        []string
-	Starring         []string
-	AnimationStudios []string
-}
-
-func Type() AtomType { return AtomTypeTV }
