@@ -10,9 +10,10 @@ type ClientAPI int
 const (
 	AtomTypeNone AtomType = iota
 	AtomTypeTV
+)
 
-	ClientAPINone ClientAPI = iota
-	ClientTypeVirtual
+const (
+	ClientAPIVirtual ClientAPI = iota
 	ClientAPIBene
 )
 
@@ -60,20 +61,22 @@ type Base struct {
 	Score      int
 }
 
-func (a *Base) API() ClientAPI { return a.api }
-func (a *Base) ID() string     { return a.id }
-func (a *Base) Type() AtomType { return AtomTypeNone }
-func (a *Base) GetBase() *Base { return a }
+func (t *Base) API() ClientAPI { return t.api }
+func (t *Base) ID() string     { return t.id }
+func (t *Base) Type() AtomType { return AtomTypeNone }
+func (t *Base) GetBase() *Base { return t }
 
-func (a *Base) Merge(other *Base) *Base {
-	res := &Base{
-		api: a.api,
-		id:  a.id,
+func (t *Base) Merge(other *Base) *Base {
+	if t == nil {
+		t = &Base{}
+	}
+	return &Base{
+		api: t.api,
+		id:  t.id,
 		Titles: append(
-			append([]T{}, a.Titles...),
+			append([]T{}, t.Titles...),
 			other.Titles...),
 		PreviewURL: other.PreviewURL,
 		Score:      other.Score,
 	}
-	return res
 }

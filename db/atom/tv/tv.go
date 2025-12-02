@@ -68,6 +68,38 @@ type T struct {
 }
 
 func (t *T) Type() atom.AtomType { return atom.AtomTypeTV }
+
 func (t *T) Merge(other *T) *T {
-	return nil // unimplmented
+	if t == nil {
+		t = &T{}
+	}
+	return &T{
+		Base:       t.Base.Merge(other.Base),
+		Season:     other.Season,
+		IsAnimated: other.IsAnimated,
+		Genres: append(
+			append([]string{}, t.Genres...),
+			other.Genres...),
+		Showrunners: append(
+			append([]string{}, t.Showrunners...),
+			other.Showrunners...),
+		Directors: append(
+			append([]string{}, t.Directors...),
+			other.Directors...),
+		Writers: append(
+			append([]string{}, t.Writers...),
+			other.Writers...),
+		Cinematography: append(
+			append([]string{}, t.Cinematography...),
+			other.Cinematography...),
+		Composers: append(
+			append([]string{}, t.Composers...),
+			other.Composers...),
+		Starring: append(
+			append([]string{}, t.Starring...),
+			other.Starring...),
+		AnimationStudios: append(
+			append([]string{}, t.AnimationStudios...),
+			other.AnimationStudios...),
+	}
 }

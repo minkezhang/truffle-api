@@ -69,7 +69,7 @@ func (c *Bene[T]) Query(ctx context.Context, q client.Q[T]) ([]T, error) {
 	return res, nil
 }
 
-func (c *Bene[T]) Create(ctx context.Context, a atom.A[T]) error {
+func (c *Bene[T]) Create(ctx context.Context, a T) error {
 	c.cache[a.ID()] = a
 	return nil
 }

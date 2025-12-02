@@ -9,24 +9,59 @@ import (
 	"github.com/minkezhang/bene-api/db/atom"
 )
 
-var (
-	_ = &N[*atom.Base]{}
-)
+type O[T atom.A[T]] struct {
+	Type     atom.AtomType
+	ID       string
+	IsQueued bool
+	Atoms    []T
+	Related  []string
+}
+
+func DebugNewOrDie[T atom.A[T]](o O[T]) *N[T] {
+	n, err := New(o)
+	if err != nil {
+		panic(err)
+	}
+	return n
+}
+
+func New[T atom.A[T]](o O[T]) (*N[T], error) {
+	n := &N[T]{
+		t:        o.Type,
+		id:       o.ID,
+		IsQueued: o.IsQueued,
+		Atoms:    map[atom.ClientAPI]map[string]T{}, // e.g. n.Atoms[ClientAPIBene]["foo"]
+		Related:  map[string]interface{}{},
+	}
+	for _, a := range o.Atoms {
+		if err := n.LinkAtom(a); err != nil {
+			return nil, err
+		}
+	}
+	for _, l := range o.Related {
+		n.Related[l] = struct{}{}
+	}
+	return n, nil
+}
 
 // N is a generic container which contains multiple atoms of type atom.A[T].
 //
 // T here is a concrete atom pointer type, e.g. *atom.TV.
 type N[T atom.A[T]] struct {
-	Type     atom.AtomType
-	ID       string
+	id string
+	t  atom.AtomType
+
 	IsQueued bool
 	Atoms    map[atom.ClientAPI]map[string]T
-	Related  map[string]bool // Related nodes
+	Related  map[string]interface{} // Related nodes
 }
 
+func (n *N[T]) ID() string          { return n.id }
+func (n *N[T]) Type() atom.AtomType { return n.t }
+
 func (n *N[T]) LinkAtom(a T) error {
-	if a.API() == atom.ClientAPINone {
-		return fmt.Errorf("atom client API must be specified")
+	if a.API() == atom.ClientAPIVirtual {
+		return fmt.Errorf("atom client API must be non-virtual")
 	}
 	if a.ID() == "" {
 		return fmt.Errorf("atom ID must be non-empty")
@@ -47,16 +82,17 @@ func (n *N[A]) UnlinkAtom(api atom.ClientAPI, id string) error {
 }
 
 func LinkNode[T atom.A[T], U atom.A[U]](n *N[T], m *N[U]) {
-	n.Related[m.ID] = true
-	m.Related[n.ID] = true
+	n.Related[m.ID()] = struct{}{}
+	m.Related[n.ID()] = struct{}{}
 }
 
 func UnlinkNode[T atom.A[T], U atom.A[U]](n *N[T], m *N[U]) {
-	delete(n.Related, m.ID)
-	delete(m.Related, n.ID)
+	delete(n.Related, m.ID())
+	delete(m.Related, n.ID())
 }
 
-func (n *N[T]) Data() (T, error) {
+// Union merges all atoms into a representative struct.
+func (n *N[T]) Union() (T, error) {
 	var res T
 	for _, atoms := range n.Atoms {
 		for _, a := range atoms {
