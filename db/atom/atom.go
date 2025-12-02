@@ -33,23 +33,22 @@ type T struct {
 	Localization string
 }
 
-type H struct {
-	API ClientAPI
-	ID  string
-}
-
 type O struct {
+	API        ClientAPI
+	ID         string
 	Titles     []T
 	PreviewURL string
 	Score      int
 }
 
-func New(o O) *Base {
+func New(o O) (*Base, error) {
 	return &Base{
+		api:        o.API,
+		id:         o.ID,
 		Titles:     o.Titles,
 		PreviewURL: o.PreviewURL,
 		Score:      o.Score,
-	}
+	}, nil
 }
 
 type Base struct {
@@ -77,9 +76,4 @@ func (a *Base) Merge(other *Base) *Base {
 		Score:      other.Score,
 	}
 	return res
-}
-func (a *Base) WithHeader(h H) *Base {
-	a.api = h.API
-	a.id = h.ID
-	return a
 }

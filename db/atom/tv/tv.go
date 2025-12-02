@@ -10,8 +10,7 @@ var (
 )
 
 type O struct {
-	Base   atom.O
-	Header atom.H
+	atom.O
 
 	Season           int
 	IsAnimated       bool
@@ -25,9 +24,21 @@ type O struct {
 	AnimationStudios []string
 }
 
+func DebugNewOrDie(o O) *T {
+	a, err := New(o)
+	if err != nil {
+		panic(err)
+	}
+	return a
+}
+
 func New(o O) (*T, error) {
+	a, err := atom.New(o.O)
+	if err != nil {
+		return nil, err
+	}
 	return &T{
-		Base:             atom.New(o.Base).WithHeader(o.Header),
+		Base:             a,
 		Season:           o.Season,
 		IsAnimated:       o.IsAnimated,
 		Genres:           o.Genres,
