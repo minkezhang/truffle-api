@@ -59,6 +59,17 @@ func (a *A) PreviewURL() string       { return a.previewURL }
 func (a *A) Score() int               { return a.score }
 func (a *A) AtomType() enums.AtomType { return a.atomType }
 func (a *A) Aux() Aux                 { return a.aux.Copy() }
+func (a *A) Copy() *A {
+	return New(O{
+		APIType:    a.apiType,
+		APIID:      a.apiID,
+		PreviewURL: a.previewURL,
+		Score:      a.score,
+		AtomType:   a.atomType,
+		Aux:        a.aux.Copy(),
+		Titles:     a.Titles(),
+	})
+}
 
 func (a *A) Titles() []T {
 	res := []T{}
@@ -83,8 +94,8 @@ func (a *A) SetTitles(v []T) {
 func (a *A) SetPreviewURL(v string) { a.previewURL = v }
 func (a *A) SetScore(v int)         { a.score = v }
 func (a *A) SetAux(v Aux) {
-	if a.AtomType() != v.AtomType() {
-		panic(fmt.Errorf("cannot set mismatching atom types: %v != %v", a.AtomType(), v.AtomType()))
+	if a.atomType != v.AtomType() {
+		panic(fmt.Errorf("cannot set mismatching atom types: %v != %v", a.atomType, v.AtomType()))
 	}
 	a.aux = v.Copy()
 }
@@ -97,8 +108,8 @@ func (a *A) SetAux(v Aux) {
 //  3. structs (i.e. a.Aux()) will be recursively merged with the same
 //     heuristic
 func (a *A) Merge(o *A) *A {
-	if a.AtomType() != o.AtomType() {
-		panic(fmt.Errorf("cannot merge mismatching atom types: %v != %v", a.AtomType(), o.AtomType()))
+	if a.atomType != o.atomType {
+		panic(fmt.Errorf("cannot merge mismatching atom types: %v != %v", a.atomType, o.atomType))
 	}
 	return New(O{
 		APIType: o.apiType,
