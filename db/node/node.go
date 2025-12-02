@@ -64,3 +64,9 @@ func (n *N) LinkAtom(a *atom.A) {
 	}
 	n.atoms[a.APIType()][a.APIID()] = a.Copy()
 }
+
+func (n *N) UnlinkAtom(api enums.ClientAPI, id string) {
+	if vs, ok := n.atoms[api]; ok {
+		delete(vs, id)
+	}
+}
