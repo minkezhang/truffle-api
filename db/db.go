@@ -50,12 +50,14 @@ func New(o O) (*DB, error) {
 //
 // A Node ID will be generated if no Node ID is provided.
 func (db *DB) AddNode(n *node.N) {
+	n.SetIsAuthoritative(true)
 	if n.ID() == "" {
 		n = node.New(node.O{
-			ID:       db.g.Generate(),
-			AtomType: n.AtomType(),
-			IsQueued: n.IsQueued(),
-			Atoms:    n.Atoms(),
+			ID:              db.g.Generate(),
+			AtomType:        n.AtomType(),
+			IsAuthoritative: n.IsAuthoritative(),
+			IsQueued:        n.IsQueued(),
+			Atoms:           n.Atoms(),
 		})
 	}
 	if _, ok := db.data[n.AtomType()]; !ok {
@@ -111,6 +113,8 @@ func (db *DB) Query(ctx context.Context, q *query.Q) ([]*node.N, error) {
 			}
 		}
 	}
+
 	// TODO(minkezhang): Implement client query logic
+
 	return res, nil
 }

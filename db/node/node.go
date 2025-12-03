@@ -8,25 +8,28 @@ import (
 )
 
 type O struct {
-	ID       string
-	AtomType enums.AtomType
-	IsQueued bool
-	Atoms    []*atom.A
+	ID              string
+	IsAuthoritative bool
+	AtomType        enums.AtomType
+	IsQueued        bool
+	Atoms           []*atom.A
 }
 
 type N struct {
 	id       string         // Read-only
 	atomType enums.AtomType // Read-only
 
-	isQueued bool
-	atoms    map[enums.ClientAPI]map[string]*atom.A
+	isAuthoritative bool
+	isQueued        bool
+	atoms           map[enums.ClientAPI]map[string]*atom.A
 }
 
 func New(o O) *N {
 	n := &N{
-		id:       o.ID,
-		atomType: o.AtomType,
-		isQueued: o.IsQueued,
+		id:              o.ID,
+		atomType:        o.AtomType,
+		isAuthoritative: o.IsAuthoritative,
+		isQueued:        o.IsQueued,
 	}
 	n.SetAtoms(o.Atoms)
 	return n
@@ -35,6 +38,7 @@ func New(o O) *N {
 func (n *N) ID() string               { return n.id }
 func (n *N) AtomType() enums.AtomType { return n.atomType }
 func (n *N) IsQueued() bool           { return n.isQueued }
+func (n *N) IsAuthoritative() bool    { return n.isAuthoritative }
 
 func (n *N) Atoms() []*atom.A {
 	res := []*atom.A{}
@@ -53,7 +57,8 @@ func (n *N) SetAtoms(as []*atom.A) {
 	}
 }
 
-func (n *N) SetIsQueued(v bool) { n.isQueued = v }
+func (n *N) SetIsQueued(v bool)        { n.isQueued = v }
+func (n *N) SetIsAuthoritative(v bool) { n.isAuthoritative = v }
 
 func (n *N) AddAtom(a *atom.A) {
 	if n.atomType != a.AtomType() {
@@ -73,10 +78,11 @@ func (n *N) RemoveAtom(api enums.ClientAPI, id string) {
 
 func (n *N) Copy() *N {
 	return New(O{
-		ID:       n.ID(),
-		AtomType: n.AtomType(),
-		IsQueued: n.IsQueued(),
-		Atoms:    n.Atoms(),
+		ID:              n.ID(),
+		AtomType:        n.AtomType(),
+		IsAuthoritative: n.IsAuthoritative(),
+		IsQueued:        n.IsQueued(),
+		Atoms:           n.Atoms(),
 	})
 }
 
