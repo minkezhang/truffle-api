@@ -27,14 +27,14 @@ type DB struct {
 	g g
 }
 
-func New(o O) (*DB, error) {
+func New(ctx context.Context, o O) (*DB, error) {
 	ids := []string{}
 	db := &DB{
 		data:    map[enums.AtomType]map[string]*node.N{},
 		clients: map[enums.ClientAPI]client.C{},
 	}
 	for _, n := range o.Data {
-		db.AddNode(n)
+		db.AddNode(ctx, n)
 		ids = append(ids, n.ID())
 	}
 	db.g = generator.New(generator.O{
@@ -49,7 +49,7 @@ func New(o O) (*DB, error) {
 // AddNode will add a given node to the DB.
 //
 // A Node ID will be generated if no Node ID is provided.
-func (db *DB) AddNode(n *node.N) {
+func (db *DB) AddNode(ctx context.Context, n *node.N) {
 	n.SetIsAuthoritative(true)
 	if n.ID() == "" {
 		n = node.New(node.O{

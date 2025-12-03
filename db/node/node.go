@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/minkezhang/bene-api/db/atom"
+	"github.com/minkezhang/bene-api/db/atom/empty"
 	"github.com/minkezhang/bene-api/db/enums"
 )
 
@@ -90,6 +91,7 @@ func (n *N) Copy() *N {
 func (n *N) Virtual() *atom.A {
 	res := atom.New(atom.O{
 		AtomType: n.atomType,
+		Aux:      empty.A{},
 	})
 	for _, a := range n.Atoms() {
 		res = res.Merge(a)
