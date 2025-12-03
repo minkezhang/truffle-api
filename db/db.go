@@ -6,9 +6,15 @@ import (
 
 	"github.com/minkezhang/bene-api/client"
 	"github.com/minkezhang/bene-api/db/enums"
+	"github.com/minkezhang/bene-api/db/generator"
 	"github.com/minkezhang/bene-api/db/node"
 	"github.com/minkezhang/bene-api/db/query"
 )
+
+// g is an ID generator
+type g interface {
+	Generate() string
+}
 
 type O struct {
 	Data []*node.N
@@ -17,14 +23,40 @@ type O struct {
 type DB struct {
 	data    map[enums.AtomType]map[string]*node.N
 	clients map[enums.ClientAPI]client.C
+
+	g g
+}
+
+func New(o O) (*DB, error) {
+	ids := []string{}
+	db := &DB{
+		data:    map[enums.AtomType]map[string]*node.N{},
+		clients: map[enums.ClientAPI]client.C{},
+	}
+	for _, n := range o.Data {
+		db.AddNode(n)
+		ids = append(ids, n.ID())
+	}
+	db.g = generator.New(generator.O{
+		IDs: ids,
+	})
+
+	// TODO(minkezhang): Initialize clients
+
+	return db, nil
 }
 
 // AddNode will add a given node to the DB.
 //
 // A Node ID will be generated if no Node ID is provided.
 func (db *DB) AddNode(n *node.N) {
-	if n.ID() != "" {
-		// ...
+	if n.ID() == "" {
+		n = node.New(node.O{
+			ID:       db.g.Generate(),
+			AtomType: n.AtomType(),
+			IsQueued: n.IsQueued(),
+			Atoms:    n.Atoms(),
+		})
 	}
 	if _, ok := db.data[n.AtomType()]; !ok {
 		db.data[n.AtomType()] = map[string]*node.N{}
