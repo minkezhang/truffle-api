@@ -71,8 +71,17 @@ func (n *N) RemoveAtom(api enums.ClientAPI, id string) {
 	}
 }
 
-// Returns the merged data of all atoms encapsulated in this node.
-func (n *N) Data() *atom.A {
+func (n *N) Copy() *N {
+	return New(O{
+		ID:       n.ID(),
+		AtomType: n.AtomType(),
+		IsQueued: n.IsQueued(),
+		Atoms:    n.Atoms(),
+	})
+}
+
+// Virtual returns the merged data of all atoms encapsulated in this node.
+func (n *N) Virtual() *atom.A {
 	res := atom.New(atom.O{
 		AtomType: n.atomType,
 	})

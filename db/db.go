@@ -2,23 +2,17 @@ package db
 
 import (
 	"context"
+	"regexp"
 
 	"github.com/minkezhang/bene-api/client"
-	"github.com/minkezhang/bene-api/client/bene"
 	"github.com/minkezhang/bene-api/db/enums"
 	"github.com/minkezhang/bene-api/db/node"
+	"github.com/minkezhang/bene-api/db/query"
 )
 
 type O struct {
 	Data []*node.N
 }
-
-type Q struct {
-	APIs      []enums.ClientAPI
-	AtomTypes []enums.AtomType
-	Title     string
-}
-
 
 type DB struct {
 	data    map[enums.AtomType]map[string]*node.N
@@ -36,10 +30,6 @@ func (db *DB) AddNode(n *node.N) {
 		db.data[n.AtomType()] = map[string]*node.N{}
 	}
 	db.data[n.AtomType()][n.ID()] = n
-	for _, a := range n.Atoms() {
-		// Cache atoms of all APIs
-		db.clients[enums.ClientAPIBene].(*bene.C).Add(a)
-	}
 }
 
 func (db *DB) RemoveNode(ctx context.Context, id string) error {
@@ -51,9 +41,6 @@ func (db *DB) RemoveNode(ctx context.Context, id string) error {
 		return nil
 	}
 
-	for _, a := range n.Atoms() {
-		db.clients[enums.ClientAPIBene].(*bene.C).Remove(a.APIID())
-	}
 	delete(db.data[n.AtomType()], n.ID())
 	return nil
 }
@@ -71,21 +58,27 @@ func (db *DB) Get(ctx context.Context, id string) (*node.N, error) {
 // Query returns a set of nodes which match the input query.
 //
 // If q.APIs is set, all matching clients will be queried.
-func (db *DB) Query(ctx context.Context, q Q) ([]*node.N, error) {
+func (db *DB) Query(ctx context.Context, q *query.Q) ([]*node.N, error) {
+	pattern, err := regexp.Compile(q.Title())
+	if err != nil {
+		return nil, err
+	}
+
 	res := []*node.N{}
-
-	types := map[enums.AtomType]interface{}{}
-	apis := map[enums.ClientAPI]interface{}{}
-	for _, t := range q.AtomTypes {
-		types[t] = struct{}{}
+	if q.IsSupportedAPI(enums.ClientAPIBene) {
+		for atomType := range db.data {
+			if q.IsSupportedAtomType(atomType) {
+				for _, n := range db.data[atomType] {
+					a := n.Virtual()
+					for _, t := range a.Titles() {
+						if pattern.MatchString(t.Title) {
+							res = append(res, n.Copy())
+						}
+					}
+				}
+			}
+		}
 	}
-	for _, api := range q.APIs() {
-		apis[t] = struct{}{}
-	}
-
-	if _, ok := apis[enums.ClientAPIBene] {
-
-	}
-
-	return nil, nil /* unimplemented */
+	// TODO(minkezhang): Implement client query logic
+	return res, nil
 }
