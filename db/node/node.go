@@ -49,13 +49,13 @@ func (n *N) Atoms() []*atom.A {
 func (n *N) SetAtoms(as []*atom.A) {
 	n.atoms = map[enums.ClientAPI]map[string]*atom.A{}
 	for _, a := range as {
-		n.LinkAtom(a)
+		n.AddAtom(a)
 	}
 }
 
 func (n *N) SetIsQueued(v bool) { n.isQueued = v }
 
-func (n *N) LinkAtom(a *atom.A) {
+func (n *N) AddAtom(a *atom.A) {
 	if n.atomType != a.AtomType() {
 		panic(fmt.Errorf("cannot link atom with mismatching type: %v != %v", n.atomType, a.AtomType()))
 	}
@@ -65,8 +65,27 @@ func (n *N) LinkAtom(a *atom.A) {
 	n.atoms[a.APIType()][a.APIID()] = a.Copy()
 }
 
-func (n *N) UnlinkAtom(api enums.ClientAPI, id string) {
+func (n *N) RemoveAtom(api enums.ClientAPI, id string) {
 	if vs, ok := n.atoms[api]; ok {
 		delete(vs, id)
 	}
+}
+
+// Returns the merged data of all atoms encapsulated in this node.
+func (n *N) Data() *atom.A {
+	res := atom.New(atom.O{
+		AtomType: n.atomType,
+	})
+	for _, a := range n.Atoms() {
+		res = res.Merge(a)
+	}
+	return atom.New(atom.O{
+		APIType:    res.APIType(),
+		APIID:      "",
+		Titles:     res.Titles(),
+		PreviewURL: res.PreviewURL(),
+		Score:      res.Score(),
+		AtomType:   res.AtomType(),
+		Aux:        res.Aux(),
+	})
 }
