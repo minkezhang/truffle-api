@@ -34,7 +34,7 @@ func New(ctx context.Context, o O) (*DB, error) {
 		clients: map[enums.ClientAPI]client.C{},
 	}
 	for _, n := range o.Data {
-		db.AddNode(ctx, n)
+		db.Add(ctx, n)
 		ids = append(ids, n.ID())
 	}
 	db.g = generator.New(generator.O{
@@ -46,10 +46,10 @@ func New(ctx context.Context, o O) (*DB, error) {
 	return db, nil
 }
 
-// AddNode will add a given node to the DB.
+// Add will add a given node to the DB.
 //
 // A Node ID will be generated if no Node ID is provided.
-func (db *DB) AddNode(ctx context.Context, n *node.N) {
+func (db *DB) Add(ctx context.Context, n *node.N) {
 	n.SetIsAuthoritative(true)
 	if n.ID() == "" {
 		n = node.New(node.O{
@@ -66,7 +66,7 @@ func (db *DB) AddNode(ctx context.Context, n *node.N) {
 	db.data[n.AtomType()][n.ID()] = n
 }
 
-func (db *DB) RemoveNode(ctx context.Context, id string) error {
+func (db *DB) Remove(ctx context.Context, id string) error {
 	n, err := db.Get(ctx, id)
 	if err != nil {
 		return err
