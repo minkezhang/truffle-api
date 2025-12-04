@@ -12,13 +12,66 @@ import (
 	"fmt"
 
 	"github.com/minkezhang/bene-api/db/atom/metadata"
-	"google.golang.org/protobuf/encoding/prototext"
+	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
 	"google.golang.org/protobuf/proto"
 
 	apb "github.com/minkezhang/bene-api/proto/go/atom"
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
 	mpb "github.com/minkezhang/bene-api/proto/go/atom/metadata"
+	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
+
+type G struct{}
+
+func (g G) Load(msg proto.Message) *A {
+	pb := msg.(*apb.Atom)
+	a := New(O{
+		AtomType:   pb.GetType(),
+		APIType:    pb.GetApi(),
+		APIID:      pb.GetId(),
+		PreviewURL: pb.GetPreviewUrl(),
+		Score:      pb.GetScore(),
+	})
+	titles := []T{}
+	for _, t := range pb.GetTitles() {
+		titles = append(titles, T{
+			Title:        t.GetTitle(),
+			Localization: t.GetLocalization(),
+		})
+	}
+	a.SetTitles(titles)
+	switch t := pb.GetType(); t {
+	case epb.Type_TYPE_TV:
+		// a.SetMetadata(tv.G{}.Load(pb.GetMetadataTv()))
+	default:
+		a.SetMetadata(empty.G{}.Load(pb.GetMetadataEmpty()))
+	}
+	return a
+}
+
+func (g G) Save(a *A) proto.Message {
+	pb := &apb.Atom{
+		Type:       a.AtomType(),
+		Api:        a.APIType(),
+		PreviewUrl: a.PreviewURL(),
+		Score:      int64(a.Score()),
+	}
+
+	for _, t := range a.Titles() {
+		pb.Titles = append(pb.GetTitles(), &apb.Title{
+			Title:        t.Title,
+			Localization: t.Localization,
+		})
+	}
+
+	switch t := a.AtomType(); t {
+	case epb.Type_TYPE_TV:
+		// pb.Metadata = &apb.Atom_MetadataTv{tv.G{}.Save(a.Metadata().(tv.M)).(*mpb.TV)}
+	default:
+		pb.Metadata = &apb.Atom_MetadataEmpty{empty.G{}.Save(a.Metadata().(empty.M)).(*mpb.Empty)}
+	}
+
+	return pb
+}
 
 type T struct {
 	Title        string
@@ -30,7 +83,7 @@ type O struct {
 	APIID      string
 	Titles     []T
 	PreviewURL string
-	Score      int
+	Score      int64
 	AtomType   epb.Type
 	Metadata   metadata.M
 }
@@ -40,7 +93,7 @@ type A struct {
 	apiID      string                            // Read-only
 	titles     map[string]map[string]interface{} // e.g. a.titles["us-en"]["Firefly"]
 	previewURL string
-	score      int
+	score      int64
 
 	atomType epb.Type   // Read-only
 	metadata metadata.M // Media-specific data
@@ -62,7 +115,7 @@ func New(o O) *A {
 func (a *A) APIType() epb.API     { return a.apiType }
 func (a *A) APIID() string        { return a.apiID }
 func (a *A) PreviewURL() string   { return a.previewURL }
-func (a *A) Score() int           { return a.score }
+func (a *A) Score() int64         { return a.score }
 func (a *A) AtomType() epb.Type   { return a.atomType }
 func (a *A) Metadata() metadata.M { return a.metadata.Copy() }
 func (a *A) Copy() *A {
@@ -98,7 +151,7 @@ func (a *A) SetTitles(v []T) {
 }
 
 func (a *A) SetPreviewURL(v string) { a.previewURL = v }
-func (a *A) SetScore(v int)         { a.score = v }
+func (a *A) SetScore(v int64)       { a.score = v }
 func (a *A) SetMetadata(v metadata.M) {
 	if a.atomType != v.AtomType() {
 		panic(fmt.Errorf("cannot set mismatching atom types: %v != %v", a.atomType, v.AtomType()))
@@ -129,42 +182,4 @@ func (a *A) Merge(o *A) *A {
 		AtomType:   o.atomType,
 		Metadata:   a.metadata.Merge(o.metadata),
 	})
-}
-
-func (a *A) Unmarshal() (proto.Message, error) {
-	pb := &apb.Atom{
-		Type:       a.AtomType(),
-		Api:        a.APIType(),
-		PreviewUrl: a.PreviewURL(),
-		Score:      int64(a.Score()),
-	}
-
-	for _, t := range a.Titles() {
-		pb.Titles = append(pb.GetTitles(), &apb.Title{
-			Title:        t.Title,
-			Localization: t.Localization,
-		})
-	}
-
-	metadata, err := a.Unmarshal()
-	if err != nil {
-		return nil, err
-	}
-
-	switch t := a.AtomType(); t {
-	case epb.Type_TYPE_TV:
-		pb.Metadata = &apb.Atom_MetadataTv{metadata.(*mpb.TV)}
-	default:
-		pb.Metadata = &apb.Atom_MetadataEmpty{metadata.(*mpb.Empty)}
-	}
-
-	return pb, nil
-}
-func (a *A) Marshal() ([]byte, error) {
-	pb, err := a.Unmarshal()
-	if err != nil {
-		return nil, err
-	}
-
-	return prototext.Marshal(pb.(*apb.Atom))
 }

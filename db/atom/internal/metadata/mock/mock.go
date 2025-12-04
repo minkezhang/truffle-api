@@ -14,7 +14,22 @@ import (
 
 var (
 	_ metadata.M = &M{}
+	_ metadata.G = G{}
 )
+
+type G struct{}
+
+func (g G) Load(msg proto.Message) metadata.M {
+	return New(O{
+		Producers: msg.(*mpb.Mock).GetProducers(),
+	})
+}
+
+func (g G) Save(m metadata.M) proto.Message {
+	return &mpb.Mock{
+		Producers: m.(*M).Producers(),
+	}
+}
 
 type O struct {
 	Producers []string
@@ -30,36 +45,36 @@ type M struct {
 	producers []string
 }
 
-func (a *M) AtomType() epb.Type      { return epb.Type_TYPE_TV }
-func (a *M) Producers() []string     { return append([]string{}, a.producers...) }
-func (a *M) Equal(o metadata.M) bool { return reflect.DeepEqual(a, o) }
+func (m *M) AtomType() epb.Type      { return epb.Type_TYPE_TV }
+func (m *M) Producers() []string     { return append([]string{}, m.producers...) }
+func (m *M) Equal(o metadata.M) bool { return reflect.DeepEqual(m, o) }
 
-func (a *M) Copy() metadata.M {
+func (m *M) Copy() metadata.M {
 	return &M{
-		producers: append([]string{}, a.producers...),
+		producers: append([]string{}, m.producers...),
 	}
 }
 
-func (a *M) Merge(o metadata.M) metadata.M {
-	if a.AtomType() != o.AtomType() {
-		panic(fmt.Errorf("cannot merge mismatching metadata types: %v != %v", a.AtomType(), o.AtomType()))
+func (m *M) Merge(o metadata.M) metadata.M {
+	if m.AtomType() != o.AtomType() {
+		panic(fmt.Errorf("cannot merge mismatching metadata types: %v != %v", m.AtomType(), o.AtomType()))
 	}
 	return &M{
 		producers: append(
-			append([]string{}, a.producers...),
+			append([]string{}, m.producers...),
 			o.(*M).producers...,
 		),
 	}
 }
 
-func (a M) Unmarshal() (proto.Message, error) {
+func (m M) Unmarshal() (proto.Message, error) {
 	return &mpb.Mock{
-		Producers: a.Producers(),
+		Producers: m.Producers(),
 	}, nil
 }
 
-func (a M) Marshal() ([]byte, error) {
-	pb, err := a.Unmarshal()
+func (m M) Marshal() ([]byte, error) {
+	pb, err := m.Unmarshal()
 	if err != nil {
 		return nil, err
 	}
