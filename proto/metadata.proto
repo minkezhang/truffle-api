@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package bene.atom.metadata;
 option go_package = "github.com/minkezhang/bene-api/proto/go/atom/metadata";
+// option features.(pb.go).api_level = API_OPEN;
 
 message Empty {}
 

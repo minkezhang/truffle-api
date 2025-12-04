@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package bene.data;
 option go_package = "github.com/minkezhang/bene-api/proto/go/data";
+// option features.(pb.go).api_level = API_OPEN;
 
 import "proto/api.proto";
 import "google/protobuf/timestamp.proto";
