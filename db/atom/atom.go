@@ -31,6 +31,7 @@ func (g G) Load(msg proto.Message) *A {
 		PreviewURL: pb.GetPreviewUrl(),
 		Score:      pb.GetScore(),
 	})
+
 	titles := []T{}
 	for _, t := range pb.GetTitles() {
 		titles = append(titles, T{
@@ -39,12 +40,14 @@ func (g G) Load(msg proto.Message) *A {
 		})
 	}
 	a.SetTitles(titles)
+
 	switch t := pb.GetType(); t {
 	case epb.Type_TYPE_TV:
 		// a.SetMetadata(tv.G{}.Load(pb.GetMetadataTv()))
 	default:
 		a.SetMetadata(empty.G{}.Load(pb.GetMetadataEmpty()))
 	}
+
 	return a
 }
 
@@ -52,6 +55,7 @@ func (g G) Save(a *A) proto.Message {
 	pb := &apb.Atom{
 		Type:       a.AtomType(),
 		Api:        a.APIType(),
+		Id:         a.APIID(),
 		PreviewUrl: a.PreviewURL(),
 		Score:      int64(a.Score()),
 	}
