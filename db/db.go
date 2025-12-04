@@ -49,7 +49,7 @@ func New(ctx context.Context, o O) (*DB, error) {
 // Add will add a given node to the DB.
 //
 // A Node ID will be generated if no Node ID is provided.
-func (db *DB) Add(ctx context.Context, n *node.N) {
+func (db *DB) Add(ctx context.Context, n *node.N) error {
 	n.SetIsAuthoritative(true)
 	if n.ID() == "" {
 		n = node.New(node.O{
@@ -64,6 +64,7 @@ func (db *DB) Add(ctx context.Context, n *node.N) {
 		db.data[n.AtomType()] = map[string]*node.N{}
 	}
 	db.data[n.AtomType()][n.ID()] = n
+	return nil
 }
 
 func (db *DB) Remove(ctx context.Context, id string) error {

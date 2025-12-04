@@ -49,7 +49,9 @@ func TestGet(t *testing.T) {
 	want := n.Copy()
 	want.SetIsAuthoritative(true)
 
-	db.Add(context.Background(), n)
+	if err := db.Add(context.Background(), n); err != nil {
+		t.Errorf("Add() raised unexpected error: %v", err)
+	}
 	got, err := db.Get(context.Background(), want.ID())
 	if err != nil {
 		t.Errorf("Get() raised unexpected error: %v", err)
@@ -99,7 +101,9 @@ func TestRemove(t *testing.T) {
 		},
 	})
 
-	db.Add(context.Background(), n)
+	if err := db.Add(context.Background(), n); err != nil {
+		t.Errorf("Add() raised unexpected error: %v", err)
+	}
 	if err := db.Remove(context.Background(), n.ID()); err != nil {
 		t.Errorf("Remove() returned unexpected error: %v", err)
 	}
