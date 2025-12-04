@@ -1,3 +1,5 @@
+// Package db encapsulates logic necessary to query for media data across
+// multiple clients.
 package db
 
 import (
@@ -27,7 +29,7 @@ type DB struct {
 	data    map[enums.AtomType]map[string]*node.N
 	clients map[enums.ClientAPI]client.C
 
-	g g
+	g g // ID generator
 }
 
 func New(ctx context.Context, o O) (*DB, error) {
@@ -53,7 +55,7 @@ func New(ctx context.Context, o O) (*DB, error) {
 
 // Add will add a given node to the DB.
 //
-// A Node ID will be generated if no Node ID is provided.
+// A Node ID will be generated if no Node ID is provided and returned.
 func (db *DB) Add(ctx context.Context, n *node.N) (string, error) {
 	n.SetIsAuthoritative(true)
 	if n.ID() == "" {

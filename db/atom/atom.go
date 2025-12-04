@@ -1,3 +1,11 @@
+// Package atom is a collection of discrete data sources used to represent
+// different media types.
+//
+// Each atom is backed by a single source of truth, e.g. MAL, Spotify, etc.
+//
+// Different media types have media-specific types of data -- a song for example
+// will need the concept of a composer, which is not the case for a book. This
+// media-specific data is wrapped in the `A.aux` field.
 package atom
 
 import (
@@ -37,7 +45,7 @@ type A struct {
 	score      int
 
 	atomType enums.AtomType // Read-only
-	aux      Aux
+	aux      Aux            // Media-specific data
 }
 
 func New(o O) *A {

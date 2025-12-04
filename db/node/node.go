@@ -1,3 +1,10 @@
+// Package node represents a logically distinct collection of atoms.
+//
+// That is, a node may be backed by multiple data sources, e.g. both IMDB and
+// MAL have entries for Our War Game! --
+//
+//	https://www.imdb.com/title/tt0313441/
+//	https://myanimelist.net/anime/2397/
 package node
 
 import (
@@ -20,8 +27,8 @@ type N struct {
 	id       string         // Read-only
 	atomType enums.AtomType // Read-only
 
-	isAuthoritative bool
-	isQueued        bool
+	isAuthoritative bool // Is saved locally
+	isQueued        bool // Is starred by the user
 	atoms           map[enums.ClientAPI]map[string]*atom.A
 }
 

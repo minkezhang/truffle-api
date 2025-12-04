@@ -1,3 +1,12 @@
+// Package empty is used to initialize an `atom.A` without any specific
+// auxiliary data.
+//
+// Example:
+//
+//	atom.New(atom.O{
+//		...
+//		Aux: empty.A{},
+//	})
 package empty
 
 import (

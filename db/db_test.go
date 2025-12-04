@@ -2,8 +2,8 @@ package db
 
 import (
 	"context"
-	"testing"
 	"fmt"
+	"testing"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/minkezhang/bene-api/client"

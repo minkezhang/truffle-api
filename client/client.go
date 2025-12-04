@@ -11,7 +11,12 @@ import (
 
 type C interface {
 	APIType() enums.ClientAPI
+
+	// Get returns a single atom given an ID associated with the API.
 	Get(ctx context.Context, id string) (*atom.A, error)
+
+	// Query returns a (potentially empty) list of atoms with the given
+	// input.
 	Query(ctx context.Context, q query.Q) ([]*atom.A, error)
 }
 
