@@ -7,12 +7,12 @@ import (
 
 	"github.com/minkezhang/bene-api/client"
 	"github.com/minkezhang/bene-api/db/atom"
-	"github.com/minkezhang/bene-api/db/enums"
 	"github.com/minkezhang/bene-api/db/generator"
 	"github.com/minkezhang/bene-api/db/node"
 	"github.com/minkezhang/bene-api/db/query"
 
 	cquery "github.com/minkezhang/bene-api/client/query"
+	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
 // g is an ID generator
@@ -26,8 +26,8 @@ type O struct {
 }
 
 type DB struct {
-	data    map[enums.AtomType]map[string]*node.N
-	clients map[enums.ClientAPI]client.C
+	data    map[epb.Type]map[string]*node.N
+	clients map[epb.API]client.C
 
 	g g // ID generator
 }
@@ -35,8 +35,8 @@ type DB struct {
 func New(ctx context.Context, o O) (*DB, error) {
 	ids := []string{}
 	db := &DB{
-		data:    map[enums.AtomType]map[string]*node.N{},
-		clients: map[enums.ClientAPI]client.C{},
+		data:    map[epb.Type]map[string]*node.N{},
+		clients: map[epb.API]client.C{},
 	}
 	for _, n := range o.Data {
 		db.Add(ctx, n)
@@ -102,9 +102,9 @@ func (db *DB) Get(ctx context.Context, id string) (*node.N, error) {
 // If q.APIs is set, all matching clients will be queried.
 func (db *DB) Query(ctx context.Context, q *query.Q) ([]*node.N, error) {
 	res := []*node.N{}
-	if q.IsSupportedAPI(enums.ClientAPIBene) {
+	if q.IsSupportedAPI(epb.API_API_BENE) {
 		for atomType := range db.data {
-			if q.IsSupportedAtomType(atomType) {
+			if q.IsSupportedType(atomType) {
 				for _, n := range db.data[atomType] {
 					match, err := client.Match(
 						cquery.Q{

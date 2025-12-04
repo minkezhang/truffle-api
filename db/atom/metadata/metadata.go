@@ -1,12 +1,13 @@
 package metadata
 
 import (
-	"github.com/minkezhang/bene-api/db/enums"
 	"google.golang.org/protobuf/proto"
+
+	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
 type M interface {
-	AtomType() enums.AtomType
+	AtomType() epb.Type
 	Copy() M
 	Merge(o M) M
 	Equal(o M) bool

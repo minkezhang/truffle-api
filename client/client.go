@@ -6,11 +6,12 @@ import (
 
 	"github.com/minkezhang/bene-api/client/query"
 	"github.com/minkezhang/bene-api/db/atom"
-	"github.com/minkezhang/bene-api/db/enums"
+
+	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
 type C interface {
-	APIType() enums.ClientAPI
+	APIType() epb.API
 
 	// Get returns a single atom given an ID associated with the API.
 	Get(ctx context.Context, id string) (*atom.A, error)

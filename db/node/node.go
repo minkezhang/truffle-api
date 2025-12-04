@@ -12,24 +12,25 @@ import (
 
 	"github.com/minkezhang/bene-api/db/atom"
 	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
-	"github.com/minkezhang/bene-api/db/enums"
+
+	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
 type O struct {
 	ID              string
 	IsAuthoritative bool
-	AtomType        enums.AtomType
+	AtomType        epb.Type
 	IsQueued        bool
 	Atoms           []*atom.A
 }
 
 type N struct {
-	id       string         // Read-only
-	atomType enums.AtomType // Read-only
+	id       string   // Read-only
+	atomType epb.Type // Read-only
 
 	isAuthoritative bool // Is saved locally
 	isQueued        bool // Is starred by the user
-	atoms           map[enums.ClientAPI]map[string]*atom.A
+	atoms           map[epb.API]map[string]*atom.A
 }
 
 func New(o O) *N {
@@ -43,10 +44,10 @@ func New(o O) *N {
 	return n
 }
 
-func (n *N) ID() string               { return n.id }
-func (n *N) AtomType() enums.AtomType { return n.atomType }
-func (n *N) IsQueued() bool           { return n.isQueued }
-func (n *N) IsAuthoritative() bool    { return n.isAuthoritative }
+func (n *N) ID() string            { return n.id }
+func (n *N) AtomType() epb.Type    { return n.atomType }
+func (n *N) IsQueued() bool        { return n.isQueued }
+func (n *N) IsAuthoritative() bool { return n.isAuthoritative }
 
 func (n *N) Atoms() []*atom.A {
 	res := []*atom.A{}
@@ -59,7 +60,7 @@ func (n *N) Atoms() []*atom.A {
 }
 
 func (n *N) SetAtoms(as []*atom.A) {
-	n.atoms = map[enums.ClientAPI]map[string]*atom.A{}
+	n.atoms = map[epb.API]map[string]*atom.A{}
 	for _, a := range as {
 		n.AddAtom(a)
 	}
@@ -78,7 +79,7 @@ func (n *N) AddAtom(a *atom.A) {
 	n.atoms[a.APIType()][a.APIID()] = a.Copy()
 }
 
-func (n *N) RemoveAtom(api enums.ClientAPI, id string) {
+func (n *N) RemoveAtom(api epb.API, id string) {
 	if vs, ok := n.atoms[api]; ok {
 		delete(vs, id)
 	}

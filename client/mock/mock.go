@@ -6,7 +6,8 @@ import (
 	"github.com/minkezhang/bene-api/client"
 	"github.com/minkezhang/bene-api/client/query"
 	"github.com/minkezhang/bene-api/db/atom"
-	"github.com/minkezhang/bene-api/db/enums"
+
+	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
 type O struct {
@@ -27,7 +28,7 @@ type C struct {
 	data map[string]*atom.A
 }
 
-func (c *C) APIType() enums.ClientAPI                            { return enums.ClientAPIMAL }
+func (c *C) APIType() epb.API                                    { return epb.API_API_MAL }
 func (c *C) Get(ctx context.Context, id string) (*atom.A, error) { return c.data[id], nil }
 
 func (c *C) Query(ctx context.Context, q query.Q) ([]*atom.A, error) {

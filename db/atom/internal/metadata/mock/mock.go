@@ -5,11 +5,11 @@ import (
 	"reflect"
 
 	"github.com/minkezhang/bene-api/db/atom/metadata"
-	"github.com/minkezhang/bene-api/db/enums"
 	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
 
 	mpb "github.com/minkezhang/bene-api/proto/go/atom/metadata"
+	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
 var (
@@ -30,9 +30,9 @@ type M struct {
 	producers []string
 }
 
-func (a *M) AtomType() enums.AtomType { return enums.AtomTypeTV }
-func (a *M) Producers() []string      { return append([]string{}, a.producers...) }
-func (a *M) Equal(o metadata.M) bool  { return reflect.DeepEqual(a, o) }
+func (a *M) AtomType() epb.Type      { return epb.Type_TYPE_TV }
+func (a *M) Producers() []string     { return append([]string{}, a.producers...) }
+func (a *M) Equal(o metadata.M) bool { return reflect.DeepEqual(a, o) }
 
 func (a *M) Copy() metadata.M {
 	return &M{

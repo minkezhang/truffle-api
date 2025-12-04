@@ -11,11 +11,11 @@ package empty
 
 import (
 	"github.com/minkezhang/bene-api/db/atom/metadata"
-	"github.com/minkezhang/bene-api/db/enums"
 	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
 
 	mpb "github.com/minkezhang/bene-api/proto/go/atom/metadata"
+	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
 var (
@@ -24,7 +24,7 @@ var (
 
 type M struct{}
 
-func (a M) AtomType() enums.AtomType          { return enums.AtomTypeNone }
+func (a M) AtomType() epb.Type                { return epb.Type_TYPE_NONE }
 func (a M) Equal(o metadata.M) bool           { return true }
 func (a M) Copy() metadata.M                  { return M{} }
 func (a M) Merge(o metadata.M) metadata.M     { return o.Copy() }

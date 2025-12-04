@@ -1,25 +1,25 @@
 package query
 
 import (
-	"github.com/minkezhang/bene-api/db/enums"
+	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
 type O struct {
-	APIs      []enums.ClientAPI
-	AtomTypes []enums.AtomType
+	APIs      []epb.API
+	AtomTypes []epb.Type
 	Title     string
 }
 
 type Q struct {
-	apis  map[enums.ClientAPI]bool
-	types map[enums.AtomType]bool
+	apis  map[epb.API]bool
+	types map[epb.Type]bool
 	title string
 }
 
 func New(o O) *Q {
 	q := &Q{
-		apis:  map[enums.ClientAPI]bool{},
-		types: map[enums.AtomType]bool{},
+		apis:  map[epb.API]bool{},
+		types: map[epb.Type]bool{},
 	}
 	for _, api := range o.APIs {
 		q.apis[api] = true
@@ -30,6 +30,6 @@ func New(o O) *Q {
 	return q
 }
 
-func (q *Q) IsSupportedAPI(v enums.ClientAPI) bool     { return q.apis[v] }
-func (q *Q) IsSupportedAtomType(v enums.AtomType) bool { return q.types[v] }
-func (q *Q) Title() string                             { return q.title }
+func (q *Q) IsSupportedAPI(v epb.API) bool   { return q.apis[v] }
+func (q *Q) IsSupportedType(v epb.Type) bool { return q.types[v] }
+func (q *Q) Title() string                   { return q.title }

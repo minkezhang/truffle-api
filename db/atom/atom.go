@@ -12,9 +12,11 @@ import (
 	"fmt"
 
 	"github.com/minkezhang/bene-api/db/atom/metadata"
-	"github.com/minkezhang/bene-api/db/enums"
-	//	"google.golang.org/protobuf/encoding/prototext"
-	// "google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/encoding/prototext"
+	"google.golang.org/protobuf/proto"
+
+	apb "github.com/minkezhang/bene-api/proto/go/atom"
+	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
 type T struct {
@@ -23,25 +25,24 @@ type T struct {
 }
 
 type O struct {
-	APIType    enums.ClientAPI
+	APIType    epb.API
 	APIID      string
 	Titles     []T
 	PreviewURL string
 	Score      int
-	AtomType   enums.AtomType
+	AtomType   epb.Type
 	Metadata   metadata.M
 }
 
 type A struct {
-	// Shared properties
-	apiType    enums.ClientAPI                   // Read-only
+	apiType    epb.API                           // Read-only
 	apiID      string                            // Read-only
 	titles     map[string]map[string]interface{} // e.g. a.titles["us-en"]["Firefly"]
 	previewURL string
 	score      int
 
-	atomType enums.AtomType // Read-only
-	metadata metadata.M     // Media-specific data
+	atomType epb.Type   // Read-only
+	metadata metadata.M // Media-specific data
 }
 
 func New(o O) *A {
@@ -57,12 +58,12 @@ func New(o O) *A {
 	return a
 }
 
-func (a *A) APIType() enums.ClientAPI { return a.apiType }
-func (a *A) APIID() string            { return a.apiID }
-func (a *A) PreviewURL() string       { return a.previewURL }
-func (a *A) Score() int               { return a.score }
-func (a *A) AtomType() enums.AtomType { return a.atomType }
-func (a *A) Metadata() metadata.M     { return a.metadata.Copy() }
+func (a *A) APIType() epb.API     { return a.apiType }
+func (a *A) APIID() string        { return a.apiID }
+func (a *A) PreviewURL() string   { return a.previewURL }
+func (a *A) Score() int           { return a.score }
+func (a *A) AtomType() epb.Type   { return a.atomType }
+func (a *A) Metadata() metadata.M { return a.metadata.Copy() }
 func (a *A) Copy() *A {
 	return New(O{
 		APIType:    a.apiType,
@@ -127,4 +128,26 @@ func (a *A) Merge(o *A) *A {
 		AtomType:   o.atomType,
 		Metadata:   a.metadata.Merge(o.metadata),
 	})
+}
+
+func (a *A) Unmarshal() (proto.Message, error) {
+	pb := &apb.Atom{
+		Type:       a.AtomType(),
+		Api:        a.APIType(),
+		PreviewUrl: a.PreviewURL(),
+		Score:      int64(a.Score()),
+	}
+
+	// TODO(minkezhang): Unmarshal a.Titles()
+	// TODO(minkezhang): Unmarshal a.Metadata()
+
+	return pb, nil
+}
+func (a *A) Marshal() ([]byte, error) {
+	pb, err := a.Unmarshal()
+	if err != nil {
+		return nil, err
+	}
+
+	return prototext.Marshal(pb.(*apb.Atom))
 }

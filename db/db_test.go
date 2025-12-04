@@ -9,9 +9,10 @@ import (
 	"github.com/minkezhang/bene-api/client/mock"
 	"github.com/minkezhang/bene-api/db/atom"
 	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
-	"github.com/minkezhang/bene-api/db/enums"
 	"github.com/minkezhang/bene-api/db/node"
 	"github.com/minkezhang/bene-api/db/query"
+
+	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
 func TestGet(t *testing.T) {
@@ -23,28 +24,28 @@ func TestGet(t *testing.T) {
 	n := node.New(node.O{
 		ID:              "foo",
 		IsAuthoritative: false,
-		AtomType:        enums.AtomTypeTV,
+		AtomType:        epb.Type_TYPE_TV,
 		Atoms: []*atom.A{
 			atom.New(atom.O{
-				APIType: enums.ClientAPIBene,
+				APIType: epb.API_API_BENE,
 				APIID:   "bar",
 				Titles: []atom.T{
 					{Title: "Firefly"},
 				},
 				PreviewURL: "",
 				Score:      91,
-				AtomType:   enums.AtomTypeTV,
+				AtomType:   epb.Type_TYPE_TV,
 				Metadata:   empty.M{},
 			}),
 			atom.New(atom.O{
-				APIType: enums.ClientAPIBene,
+				APIType: epb.API_API_BENE,
 				APIID:   "baz",
 				Titles: []atom.T{
 					{Title: "Firefly: The Complete Series"},
 				},
 				PreviewURL: "",
 				Score:      92,
-				AtomType:   enums.AtomTypeTV,
+				AtomType:   epb.Type_TYPE_TV,
 				Metadata:   empty.M{},
 			}),
 		},
@@ -77,28 +78,28 @@ func TestRemove(t *testing.T) {
 	n := node.New(node.O{
 		ID:              "foo",
 		IsAuthoritative: false,
-		AtomType:        enums.AtomTypeTV,
+		AtomType:        epb.Type_TYPE_TV,
 		Atoms: []*atom.A{
 			atom.New(atom.O{
-				APIType: enums.ClientAPIBene,
+				APIType: epb.API_API_BENE,
 				APIID:   "bar",
 				Titles: []atom.T{
 					{Title: "Firefly"},
 				},
 				PreviewURL: "",
 				Score:      91,
-				AtomType:   enums.AtomTypeTV,
+				AtomType:   epb.Type_TYPE_TV,
 				Metadata:   empty.M{},
 			}),
 			atom.New(atom.O{
-				APIType: enums.ClientAPIBene,
+				APIType: epb.API_API_BENE,
 				APIID:   "baz",
 				Titles: []atom.T{
 					{Title: "Firefly: The Complete Series"},
 				},
 				PreviewURL: "",
 				Score:      92,
-				AtomType:   enums.AtomTypeTV,
+				AtomType:   epb.Type_TYPE_TV,
 				Metadata:   empty.M{},
 			}),
 		},
@@ -125,28 +126,28 @@ func TestQuery(t *testing.T) {
 		n := node.New(node.O{
 			ID:              "foo",
 			IsAuthoritative: false,
-			AtomType:        enums.AtomTypeTV,
+			AtomType:        epb.Type_TYPE_TV,
 			Atoms: []*atom.A{
 				atom.New(atom.O{
-					APIType: enums.ClientAPIBene,
+					APIType: epb.API_API_BENE,
 					APIID:   "bar",
 					Titles: []atom.T{
 						{Title: "Firefly"},
 					},
 					PreviewURL: "",
 					Score:      91,
-					AtomType:   enums.AtomTypeTV,
+					AtomType:   epb.Type_TYPE_TV,
 					Metadata:   empty.M{},
 				}),
 				atom.New(atom.O{
-					APIType: enums.ClientAPIBene,
+					APIType: epb.API_API_BENE,
 					APIID:   "baz",
 					Titles: []atom.T{
 						{Title: "Firefly: The Complete Series"},
 					},
 					PreviewURL: "",
 					Score:      92,
-					AtomType:   enums.AtomTypeTV,
+					AtomType:   epb.Type_TYPE_TV,
 					Metadata:   empty.M{},
 				}),
 			},
@@ -158,8 +159,8 @@ func TestQuery(t *testing.T) {
 		db.Add(context.Background(), n)
 
 		got, err := db.Query(context.Background(), query.New(query.O{
-			APIs:      []enums.ClientAPI{enums.ClientAPIBene},
-			AtomTypes: []enums.AtomType{m.AtomType()},
+			APIs:      []epb.API{epb.API_API_BENE},
+			AtomTypes: []epb.Type{m.AtomType()},
 			Title:     "fly",
 		}))
 		if err != nil {
@@ -177,17 +178,17 @@ func TestQuery(t *testing.T) {
 
 	t.Run("External", func(t *testing.T) {
 		n := node.New(node.O{
-			AtomType: enums.AtomTypeTV,
+			AtomType: epb.Type_TYPE_TV,
 			Atoms: []*atom.A{
 				atom.New(atom.O{
-					APIType: enums.ClientAPIBene,
+					APIType: epb.API_API_BENE,
 					APIID:   "bar",
 					Titles: []atom.T{
 						{Title: "Firefly"},
 					},
 					PreviewURL: "",
 					Score:      91,
-					AtomType:   enums.AtomTypeTV,
+					AtomType:   epb.Type_TYPE_TV,
 					Metadata:   empty.M{},
 				}),
 			},
@@ -202,8 +203,8 @@ func TestQuery(t *testing.T) {
 
 		want := []*node.N{n.Copy()}
 		got, err := db.Query(context.Background(), query.New(query.O{
-			APIs:      []enums.ClientAPI{enums.ClientAPIMAL},
-			AtomTypes: []enums.AtomType{enums.AtomTypeTV},
+			APIs:      []epb.API{epb.API_API_MAL},
+			AtomTypes: []epb.Type{epb.Type_TYPE_TV},
 			Title:     "fly",
 		}))
 		if err != nil {
