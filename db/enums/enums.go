@@ -11,4 +11,5 @@ const (
 const (
 	ClientAPIVirtual ClientAPI = iota
 	ClientAPIBene
+	ClientAPIMAL
 )

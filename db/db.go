@@ -2,13 +2,15 @@ package db
 
 import (
 	"context"
-	"regexp"
 
 	"github.com/minkezhang/bene-api/client"
+	"github.com/minkezhang/bene-api/db/atom"
 	"github.com/minkezhang/bene-api/db/enums"
 	"github.com/minkezhang/bene-api/db/generator"
 	"github.com/minkezhang/bene-api/db/node"
 	"github.com/minkezhang/bene-api/db/query"
+
+	cquery "github.com/minkezhang/bene-api/client/query"
 )
 
 // g is an ID generator
@@ -17,7 +19,8 @@ type g interface {
 }
 
 type O struct {
-	Data []*node.N
+	Data    []*node.N
+	Clients []client.C
 }
 
 type DB struct {
@@ -41,7 +44,9 @@ func New(ctx context.Context, o O) (*DB, error) {
 		IDs: ids,
 	})
 
-	// TODO(minkezhang): Initialize clients
+	for _, c := range o.Clients {
+		db.clients[c.APIType()] = c
+	}
 
 	return db, nil
 }
@@ -49,7 +54,7 @@ func New(ctx context.Context, o O) (*DB, error) {
 // Add will add a given node to the DB.
 //
 // A Node ID will be generated if no Node ID is provided.
-func (db *DB) Add(ctx context.Context, n *node.N) error {
+func (db *DB) Add(ctx context.Context, n *node.N) (string, error) {
 	n.SetIsAuthoritative(true)
 	if n.ID() == "" {
 		n = node.New(node.O{
@@ -64,7 +69,7 @@ func (db *DB) Add(ctx context.Context, n *node.N) error {
 		db.data[n.AtomType()] = map[string]*node.N{}
 	}
 	db.data[n.AtomType()][n.ID()] = n
-	return nil
+	return n.ID(), nil
 }
 
 func (db *DB) Remove(ctx context.Context, id string) error {
@@ -94,29 +99,45 @@ func (db *DB) Get(ctx context.Context, id string) (*node.N, error) {
 //
 // If q.APIs is set, all matching clients will be queried.
 func (db *DB) Query(ctx context.Context, q *query.Q) ([]*node.N, error) {
-	pattern, err := regexp.Compile(q.Title())
-	if err != nil {
-		return nil, err
-	}
-
 	res := []*node.N{}
 	if q.IsSupportedAPI(enums.ClientAPIBene) {
 		for atomType := range db.data {
 			if q.IsSupportedAtomType(atomType) {
 				for _, n := range db.data[atomType] {
-					a := n.Virtual()
-					for _, t := range a.Titles() {
-						if pattern.MatchString(t.Title) {
-							res = append(res, n.Copy())
-							break
-						}
+					match, err := client.Match(
+						cquery.Q{
+							Title: q.Title(),
+						},
+						n.Virtual(),
+					)
+					if err != nil {
+						return nil, err
+					}
+					if match {
+						res = append(res, n.Copy())
 					}
 				}
 			}
 		}
 	}
 
-	// TODO(minkezhang): Implement client query logic
+	for _, c := range db.clients {
+		if q.IsSupportedAPI(c.APIType()) {
+			atoms, err := c.Query(ctx, cquery.Q{
+				Title: q.Title(),
+			})
+			if err != nil {
+				return nil, err
+			}
+			for _, a := range atoms {
+				res = append(res, node.New(node.O{
+					IsAuthoritative: false,
+					AtomType:        a.AtomType(),
+					Atoms:           []*atom.A{a},
+				}))
+			}
+		}
+	}
 
 	return res, nil
 }

@@ -3,8 +3,11 @@ package db
 import (
 	"context"
 	"testing"
+	"fmt"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/minkezhang/bene-api/client"
+	"github.com/minkezhang/bene-api/client/mock"
 	"github.com/minkezhang/bene-api/db/atom"
 	"github.com/minkezhang/bene-api/db/atom/empty"
 	"github.com/minkezhang/bene-api/db/enums"
@@ -50,7 +53,7 @@ func TestGet(t *testing.T) {
 	want := n.Copy()
 	want.SetIsAuthoritative(true)
 
-	if err := db.Add(context.Background(), n); err != nil {
+	if _, err := db.Add(context.Background(), n); err != nil {
 		t.Errorf("Add() raised unexpected error: %v", err)
 	}
 	got, err := db.Get(context.Background(), want.ID())
@@ -102,7 +105,7 @@ func TestRemove(t *testing.T) {
 		},
 	})
 
-	if err := db.Add(context.Background(), n); err != nil {
+	if _, err := db.Add(context.Background(), n); err != nil {
 		t.Errorf("Add() raised unexpected error: %v", err)
 	}
 	if err := db.Remove(context.Background(), n.ID()); err != nil {
@@ -169,7 +172,51 @@ func TestQuery(t *testing.T) {
 			got,
 			cmp.AllowUnexported(node.N{}, atom.A{}),
 		); diff != "" {
-			t.Errorf("Get() mismatch (-want +got):\n%s", diff)
+			t.Errorf("Query() mismatch (-want +got):\n%s", diff)
+		}
+	})
+
+	t.Run("External", func(t *testing.T) {
+		n := node.New(node.O{
+			AtomType: enums.AtomTypeTV,
+			Atoms: []*atom.A{
+				atom.New(atom.O{
+					APIType: enums.ClientAPIBene,
+					APIID:   "bar",
+					Titles: []atom.T{
+						{Title: "Firefly"},
+					},
+					PreviewURL: "",
+					Score:      91,
+					AtomType:   enums.AtomTypeTV,
+					Aux:        empty.A{},
+				}),
+			},
+		})
+		c := mock.New(mock.O{
+			Data: n.Atoms(),
+		})
+		db, err := New(context.Background(), O{Clients: []client.C{c}})
+		if err != nil {
+			t.Errorf("New() returned unexpected error: %v", err)
+		}
+
+		want := []*node.N{n.Copy()}
+		got, err := db.Query(context.Background(), query.New(query.O{
+			APIs:      []enums.ClientAPI{enums.ClientAPIMAL},
+			AtomTypes: []enums.AtomType{enums.AtomTypeTV},
+			Title:     "fly",
+		}))
+		if err != nil {
+			t.Errorf("Query() returned unexpected error: %v", err)
+		}
+
+		if diff := cmp.Diff(
+			want,
+			got,
+			cmp.AllowUnexported(node.N{}, atom.A{}),
+		); diff != "" {
+			t.Errorf("Query() mismatch (-want +got):\n%s", diff)
 		}
 	})
 }
