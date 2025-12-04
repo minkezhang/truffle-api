@@ -108,6 +108,7 @@ func (db *DB) Query(ctx context.Context, q *query.Q) ([]*node.N, error) {
 					for _, t := range a.Titles() {
 						if pattern.MatchString(t.Title) {
 							res = append(res, n.Copy())
+							break
 						}
 					}
 				}
