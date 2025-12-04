@@ -17,6 +17,7 @@ import (
 
 	apb "github.com/minkezhang/bene-api/proto/go/atom"
 	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	mpb "github.com/minkezhang/bene-api/proto/go/atom/metadata"
 )
 
 type T struct {
@@ -137,6 +138,7 @@ func (a *A) Unmarshal() (proto.Message, error) {
 		PreviewUrl: a.PreviewURL(),
 		Score:      int64(a.Score()),
 	}
+
 	for _, t := range a.Titles() {
 		pb.Titles = append(pb.GetTitles(), &apb.Title{
 			Title:        t.Title,
@@ -144,7 +146,17 @@ func (a *A) Unmarshal() (proto.Message, error) {
 		})
 	}
 
-	// TODO(minkezhang): Unmarshal a.Metadata()
+	metadata, err := a.Unmarshal()
+	if err != nil {
+		return nil, err
+	}
+
+	switch t := a.AtomType(); t {
+	case epb.Type_TYPE_TV:
+		pb.Metadata = &apb.Atom_MetadataTv{metadata.(*mpb.TV)}
+	default:
+		pb.Metadata = &apb.Atom_MetadataEmpty{metadata.(*mpb.Empty)}
+	}
 
 	return pb, nil
 }
