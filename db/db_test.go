@@ -6,9 +6,9 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/minkezhang/bene-api/client"
-	"github.com/minkezhang/bene-api/client/mock"
 	"github.com/minkezhang/bene-api/db/atom"
 	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
+	"github.com/minkezhang/bene-api/db/internal/client/mock"
 	"github.com/minkezhang/bene-api/db/node"
 	"github.com/minkezhang/bene-api/db/query"
 
