@@ -13,13 +13,14 @@ message Title {
 }
 
 message Atom {
-  bene.enums.Type type        = 1;
-  bene.enums.API  api         = 2;
-  string          id          = 3;
-  string          preview_url = 4;
-  int64           score       = 5;
-  oneof           metadata {
-    bene.atom.metadata.Empty metadata_empty = 100;
-    bene.atom.metadata.TV    metadata_tv    = 101;
-  }
+           bene.enums.Type type        = 1;
+           bene.enums.API  api         = 2;
+  repeated Title           titles      = 3;
+           string          id          = 4;
+           string          preview_url = 5;
+           int64           score       = 6;
+           oneof           metadata {
+             bene.atom.metadata.Empty metadata_empty = 100;
+             bene.atom.metadata.TV    metadata_tv    = 101;
+           }
 }

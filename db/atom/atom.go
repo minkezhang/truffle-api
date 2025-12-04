@@ -137,8 +137,13 @@ func (a *A) Unmarshal() (proto.Message, error) {
 		PreviewUrl: a.PreviewURL(),
 		Score:      int64(a.Score()),
 	}
+	for _, t := range a.Titles() {
+		pb.Titles = append(pb.GetTitles(), &apb.Title{
+			Title:        t.Title,
+			Localization: t.Localization,
+		})
+	}
 
-	// TODO(minkezhang): Unmarshal a.Titles()
 	// TODO(minkezhang): Unmarshal a.Metadata()
 
 	return pb, nil
