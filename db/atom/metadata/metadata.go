@@ -15,6 +15,6 @@ type G interface {
 type M interface {
 	AtomType() epb.Type
 	Copy() M
-	Merge(o M) M
+	Merge(v M) M
 	Equal(o M) bool
 }

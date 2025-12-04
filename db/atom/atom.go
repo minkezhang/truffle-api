@@ -13,6 +13,7 @@ import (
 
 	"github.com/minkezhang/bene-api/db/atom/metadata"
 	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
+	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
 	"google.golang.org/protobuf/proto"
 
 	apb "github.com/minkezhang/bene-api/proto/go/atom"
@@ -43,7 +44,7 @@ func (g G) Load(msg proto.Message) *A {
 
 	switch t := pb.GetType(); t {
 	case epb.Type_TYPE_TV:
-		// a.SetMetadata(tv.G{}.Load(pb.GetMetadataTv()))
+		a.SetMetadata(tv.G{}.Load(pb.GetMetadataTv()))
 	default:
 		a.SetMetadata(empty.G{}.Load(pb.GetMetadataEmpty()))
 	}
@@ -69,7 +70,7 @@ func (g G) Save(a *A) proto.Message {
 
 	switch t := a.AtomType(); t {
 	case epb.Type_TYPE_TV:
-		// pb.Metadata = &apb.Atom_MetadataTv{tv.G{}.Save(a.Metadata().(tv.M)).(*mpb.TV)}
+		pb.Metadata = &apb.Atom_MetadataTv{tv.G{}.Save(a.Metadata().(*tv.M)).(*mpb.TV)}
 	default:
 		pb.Metadata = &apb.Atom_MetadataEmpty{empty.G{}.Save(a.Metadata().(empty.M)).(*mpb.Empty)}
 	}

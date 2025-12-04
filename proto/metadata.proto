@@ -11,15 +11,14 @@ message Mock {
 }
 
 message TV {
-  repeated int32  seasons           = 1;
-           string genres            = 2;
-           string showrunners       = 3;
-           string is_animated       = 4;
+  repeated int64  seasons           = 1;
+  repeated string genres            = 2;
+  repeated string showrunners       = 3;
+           bool   is_animated       = 4;
   repeated string directors         = 5;
   repeated string writers           = 6;
   repeated string cinematography    = 7;
   repeated string composers         = 8;
-  repeated string starring          = 9;
-  repeated string animation_studios = 10;
+  repeated string studios           = 9;
 }
 

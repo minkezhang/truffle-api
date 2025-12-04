@@ -5,7 +5,6 @@ import (
 	"reflect"
 
 	"github.com/minkezhang/bene-api/db/atom/metadata"
-	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
 
 	mpb "github.com/minkezhang/bene-api/proto/go/atom/metadata"
@@ -55,29 +54,11 @@ func (m *M) Copy() metadata.M {
 	}
 }
 
-func (m *M) Merge(o metadata.M) metadata.M {
-	if m.AtomType() != o.AtomType() {
-		panic(fmt.Errorf("cannot merge mismatching metadata types: %v != %v", m.AtomType(), o.AtomType()))
+func (m *M) Merge(v metadata.M) metadata.M {
+	if m.AtomType() != v.AtomType() {
+		panic(fmt.Errorf("cannot merge mismatching metadata types: %v != %v", m.AtomType(), v.AtomType()))
 	}
 	return &M{
-		producers: append(
-			append([]string{}, m.producers...),
-			o.(*M).producers...,
-		),
+		producers: append(m.Producers(), v.(*M).Producers()...),
 	}
-}
-
-func (m M) Unmarshal() (proto.Message, error) {
-	return &mpb.Mock{
-		Producers: m.Producers(),
-	}, nil
-}
-
-func (m M) Marshal() ([]byte, error) {
-	pb, err := m.Unmarshal()
-	if err != nil {
-		return nil, err
-	}
-
-	return prototext.Marshal(pb.(*mpb.Mock))
 }

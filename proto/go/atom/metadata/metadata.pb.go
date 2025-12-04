@@ -103,7 +103,7 @@ func (x *Mock) GetProducers() []string {
 
 type TV struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Seasons          []int32                `protobuf:"varint,1,rep,packed,name=seasons,proto3" json:"seasons,omitempty"`
+	Seasons          []int64                `protobuf:"varint,1,rep,packed,name=seasons,proto3" json:"seasons,omitempty"`
 	Genres           string                 `protobuf:"bytes,2,opt,name=genres,proto3" json:"genres,omitempty"`
 	Showrunners      string                 `protobuf:"bytes,3,opt,name=showrunners,proto3" json:"showrunners,omitempty"`
 	IsAnimated       string                 `protobuf:"bytes,4,opt,name=is_animated,json=isAnimated,proto3" json:"is_animated,omitempty"`
@@ -147,7 +147,7 @@ func (*TV) Descriptor() ([]byte, []int) {
 	return file_proto_metadata_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *TV) GetSeasons() []int32 {
+func (x *TV) GetSeasons() []int64 {
 	if x != nil {
 		return x.Seasons
 	}
@@ -226,7 +226,7 @@ const file_proto_metadata_proto_rawDesc = "" +
 	"\x04Mock\x12\x1c\n" +
 	"\tproducers\x18\x01 \x03(\tR\tproducers\"\xc0\x02\n" +
 	"\x02TV\x12\x18\n" +
-	"\aseasons\x18\x01 \x03(\x05R\aseasons\x12\x16\n" +
+	"\aseasons\x18\x01 \x03(\x03R\aseasons\x12\x16\n" +
 	"\x06genres\x18\x02 \x01(\tR\x06genres\x12 \n" +
 	"\vshowrunners\x18\x03 \x01(\tR\vshowrunners\x12\x1f\n" +
 	"\vis_animated\x18\x04 \x01(\tR\n" +
