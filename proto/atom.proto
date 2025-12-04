@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package bene.atom;
+option go_package = "github.com/minkezhang/bene-api/proto/go/atom";
+
+import "proto/enums.proto";
+import "proto/metadata.proto";
+import "google/protobuf/timestamp.proto";
+
+message Title {
+  string title        = 1;
+  string localization = 2;
+}
+
+message Atom {
+  bene.enums.Type type        = 1;
+  bene.enums.API  api         = 2;
+  string          id          = 3;
+  string          preview_url = 4;
+  int32           score       = 5;
+  oneof           metadata {
+    bene.atom.metadata.Empty metadata_empty = 100;
+    bene.atom.metadata.TV    metadata_tv    = 101;
+  }
+}

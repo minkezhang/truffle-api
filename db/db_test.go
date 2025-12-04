@@ -8,7 +8,7 @@ import (
 	"github.com/minkezhang/bene-api/client"
 	"github.com/minkezhang/bene-api/client/mock"
 	"github.com/minkezhang/bene-api/db/atom"
-	"github.com/minkezhang/bene-api/db/atom/empty"
+	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
 	"github.com/minkezhang/bene-api/db/enums"
 	"github.com/minkezhang/bene-api/db/node"
 	"github.com/minkezhang/bene-api/db/query"
@@ -34,7 +34,7 @@ func TestGet(t *testing.T) {
 				PreviewURL: "",
 				Score:      91,
 				AtomType:   enums.AtomTypeTV,
-				Aux:        empty.A{},
+				Metadata:   empty.M{},
 			}),
 			atom.New(atom.O{
 				APIType: enums.ClientAPIBene,
@@ -45,7 +45,7 @@ func TestGet(t *testing.T) {
 				PreviewURL: "",
 				Score:      92,
 				AtomType:   enums.AtomTypeTV,
-				Aux:        empty.A{},
+				Metadata:   empty.M{},
 			}),
 		},
 	})
@@ -88,7 +88,7 @@ func TestRemove(t *testing.T) {
 				PreviewURL: "",
 				Score:      91,
 				AtomType:   enums.AtomTypeTV,
-				Aux:        empty.A{},
+				Metadata:   empty.M{},
 			}),
 			atom.New(atom.O{
 				APIType: enums.ClientAPIBene,
@@ -99,7 +99,7 @@ func TestRemove(t *testing.T) {
 				PreviewURL: "",
 				Score:      92,
 				AtomType:   enums.AtomTypeTV,
-				Aux:        empty.A{},
+				Metadata:   empty.M{},
 			}),
 		},
 	})
@@ -136,7 +136,7 @@ func TestQuery(t *testing.T) {
 					PreviewURL: "",
 					Score:      91,
 					AtomType:   enums.AtomTypeTV,
-					Aux:        empty.A{},
+					Metadata:   empty.M{},
 				}),
 				atom.New(atom.O{
 					APIType: enums.ClientAPIBene,
@@ -147,7 +147,7 @@ func TestQuery(t *testing.T) {
 					PreviewURL: "",
 					Score:      92,
 					AtomType:   enums.AtomTypeTV,
-					Aux:        empty.A{},
+					Metadata:   empty.M{},
 				}),
 			},
 		})
@@ -188,7 +188,7 @@ func TestQuery(t *testing.T) {
 					PreviewURL: "",
 					Score:      91,
 					AtomType:   enums.AtomTypeTV,
-					Aux:        empty.A{},
+					Metadata:   empty.M{},
 				}),
 			},
 		})

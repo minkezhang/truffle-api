@@ -5,25 +5,21 @@
 //
 // Different media types have media-specific types of data -- a song for example
 // will need the concept of a composer, which is not the case for a book. This
-// media-specific data is wrapped in the `A.aux` field.
+// media-specific data is wrapped in the `A.metadata` field.
 package atom
 
 import (
 	"fmt"
 
+	"github.com/minkezhang/bene-api/db/atom/metadata"
 	"github.com/minkezhang/bene-api/db/enums"
+	//	"google.golang.org/protobuf/encoding/prototext"
+	// "google.golang.org/protobuf/proto"
 )
 
 type T struct {
 	Title        string
 	Localization string
-}
-
-type Aux interface {
-	AtomType() enums.AtomType
-	Copy() Aux
-	Merge(o Aux) Aux
-	Equal(o Aux) bool
 }
 
 type O struct {
@@ -33,7 +29,7 @@ type O struct {
 	PreviewURL string
 	Score      int
 	AtomType   enums.AtomType
-	Aux        Aux
+	Metadata   metadata.M
 }
 
 type A struct {
@@ -45,7 +41,7 @@ type A struct {
 	score      int
 
 	atomType enums.AtomType // Read-only
-	aux      Aux            // Media-specific data
+	metadata metadata.M     // Media-specific data
 }
 
 func New(o O) *A {
@@ -55,7 +51,7 @@ func New(o O) *A {
 		previewURL: o.PreviewURL,
 		score:      o.Score,
 		atomType:   o.AtomType,
-		aux:        o.Aux,
+		metadata:   o.Metadata,
 	}
 	a.SetTitles(o.Titles)
 	return a
@@ -66,7 +62,7 @@ func (a *A) APIID() string            { return a.apiID }
 func (a *A) PreviewURL() string       { return a.previewURL }
 func (a *A) Score() int               { return a.score }
 func (a *A) AtomType() enums.AtomType { return a.atomType }
-func (a *A) Aux() Aux                 { return a.aux.Copy() }
+func (a *A) Metadata() metadata.M     { return a.metadata.Copy() }
 func (a *A) Copy() *A {
 	return New(O{
 		APIType:    a.apiType,
@@ -74,7 +70,7 @@ func (a *A) Copy() *A {
 		PreviewURL: a.previewURL,
 		Score:      a.score,
 		AtomType:   a.atomType,
-		Aux:        a.aux.Copy(),
+		Metadata:   a.metadata.Copy(),
 		Titles:     a.Titles(),
 	})
 }
@@ -101,11 +97,11 @@ func (a *A) SetTitles(v []T) {
 
 func (a *A) SetPreviewURL(v string) { a.previewURL = v }
 func (a *A) SetScore(v int)         { a.score = v }
-func (a *A) SetAux(v Aux) {
+func (a *A) SetMetadata(v metadata.M) {
 	if a.atomType != v.AtomType() {
 		panic(fmt.Errorf("cannot set mismatching atom types: %v != %v", a.atomType, v.AtomType()))
 	}
-	a.aux = v.Copy()
+	a.metadata = v.Copy()
 }
 
 // Merge will combine two atoms, with the following heuristic --
@@ -113,7 +109,7 @@ func (a *A) SetAux(v Aux) {
 //  1. the primitives of two merged atoms will be overwritten by the second
 //     atom
 //  2. slices and maps of the atoms are a union of the two inputs
-//  3. structs (i.e. a.Aux()) will be recursively merged with the same
+//  3. structs (i.e. a.M()) will be recursively merged with the same
 //     heuristic
 func (a *A) Merge(o *A) *A {
 	if a.atomType != o.atomType {
@@ -129,6 +125,6 @@ func (a *A) Merge(o *A) *A {
 		PreviewURL: o.previewURL,
 		Score:      o.score,
 		AtomType:   o.atomType,
-		Aux:        a.aux.Merge(o.aux),
+		Metadata:   a.metadata.Merge(o.metadata),
 	})
 }

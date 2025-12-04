@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package bene.enums;
+option go_package = "github.com/minkezhang/bene-api/proto/go/enums";
+
+enum Type {
+  TYPE_NONE = 0;
+  TYPE_TV   = 1;
+}
+
+enum API {
+  API_VIRTUAL      = 0;
+  API_BENE         = 2;
+  // API_TRUFFLE      = 3;
+  API_MAL          = 4;
+  // API_MANGADEX     = 5;
+  // API_TMDB         = 6;  // https://www.themoviedb.org/
+  // API_OMDB         = 7;  // https://www.omdbapi.com/
+  // API_STEAM        = 8;
+  // API_OPEN_LIBRARY = 9;
+  // API_SPOTIFY      = 10;
+  // API_YOUTUBE      = 11;
+}

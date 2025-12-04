@@ -11,7 +11,7 @@ import (
 	"fmt"
 
 	"github.com/minkezhang/bene-api/db/atom"
-	"github.com/minkezhang/bene-api/db/atom/empty"
+	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
 	"github.com/minkezhang/bene-api/db/enums"
 )
 
@@ -98,7 +98,7 @@ func (n *N) Copy() *N {
 func (n *N) Virtual() *atom.A {
 	res := atom.New(atom.O{
 		AtomType: n.atomType,
-		Aux:      empty.A{},
+		Metadata: empty.M{},
 	})
 	for _, a := range n.Atoms() {
 		res = res.Merge(a)
@@ -110,6 +110,6 @@ func (n *N) Virtual() *atom.A {
 		PreviewURL: res.PreviewURL(),
 		Score:      res.Score(),
 		AtomType:   res.AtomType(),
-		Aux:        res.Aux(),
+		Metadata:   res.Metadata(),
 	})
 }
