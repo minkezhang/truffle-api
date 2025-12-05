@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/minkezhang/bene-api/db/atom/internal/utils/merge"
 	"github.com/minkezhang/bene-api/db/atom/metadata"
 	"google.golang.org/protobuf/proto"
 
@@ -30,6 +31,15 @@ func (g G) Save(m metadata.M) proto.Message {
 	}
 }
 
+func (g G) Merge(t metadata.T, u metadata.T) metadata.M {
+	if t.M.AtomType() != u.M.AtomType() {
+		panic(fmt.Errorf("cannot merge mismatching metadata types: %v != %v", t.M.AtomType(), u.M.AtomType()))
+	}
+	return New(O{
+		Producers: merge_utils.Distinct(t.M.(*M).Producers(), u.M.(*M).Producers()),
+	})
+}
+
 type O struct {
 	Producers []string
 }
@@ -51,14 +61,5 @@ func (m *M) Equal(o metadata.M) bool { return reflect.DeepEqual(m, o) }
 func (m *M) Copy() metadata.M {
 	return &M{
 		producers: append([]string{}, m.producers...),
-	}
-}
-
-func (m *M) Merge(v metadata.M) metadata.M {
-	if m.AtomType() != v.AtomType() {
-		panic(fmt.Errorf("cannot merge mismatching metadata types: %v != %v", m.AtomType(), v.AtomType()))
-	}
-	return &M{
-		producers: append(m.Producers(), v.(*M).Producers()...),
 	}
 }

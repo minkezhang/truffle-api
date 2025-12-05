@@ -98,14 +98,15 @@ func (n *N) Copy() *N {
 // Virtual returns the merged data of all atoms encapsulated in this node.
 func (n *N) Virtual() *atom.A {
 	res := atom.New(atom.O{
+		APIType:  epb.API_API_VIRTUAL,
 		AtomType: n.atomType,
 		Metadata: empty.M{},
 	})
 	for _, a := range n.Atoms() {
-		res = res.Merge(a)
+		res = atom.Merge(res, a)
 	}
 	return atom.New(atom.O{
-		APIType:    res.APIType(),
+		APIType:    epb.API_API_VIRTUAL,
 		APIID:      "",
 		Titles:     res.Titles(),
 		PreviewURL: res.PreviewURL(),

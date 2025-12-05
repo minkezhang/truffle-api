@@ -7,6 +7,7 @@ option go_package = "github.com/minkezhang/bene-api/proto/go/enums";
 enum Type {
   TYPE_NONE = 0;
   TYPE_TV   = 1;
+  TYPE_BOOK = 2;
 }
 
 enum API {
@@ -21,4 +22,5 @@ enum API {
   // API_OPEN_LIBRARY = 9;
   // API_SPOTIFY      = 10;
   // API_YOUTUBE      = 11;
+  // API_ANILIST      = 12;
 }

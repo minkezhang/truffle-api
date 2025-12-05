@@ -11,7 +11,6 @@ import (
 	"github.com/minkezhang/bene-api/db/node"
 	"github.com/minkezhang/bene-api/db/query"
 
-	cquery "github.com/minkezhang/bene-api/client/query"
 	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
@@ -104,20 +103,13 @@ func (db *DB) Query(ctx context.Context, q *query.Q) ([]*node.N, error) {
 	res := []*node.N{}
 	if q.IsSupportedAPI(epb.API_API_BENE) {
 		for atomType := range db.data {
-			if q.IsSupportedType(atomType) {
-				for _, n := range db.data[atomType] {
-					match, err := client.Match(
-						cquery.Q{
-							Title: q.Title(),
-						},
-						n.Virtual(),
-					)
-					if err != nil {
-						return nil, err
-					}
-					if match {
-						res = append(res, n.Copy())
-					}
+			for _, n := range db.data[atomType] {
+				match, err := q.Match(n.Virtual())
+				if err != nil {
+					return nil, err
+				}
+				if match {
+					res = append(res, n.Copy())
 				}
 			}
 		}
@@ -125,9 +117,7 @@ func (db *DB) Query(ctx context.Context, q *query.Q) ([]*node.N, error) {
 
 	for _, c := range db.clients {
 		if q.IsSupportedAPI(c.APIType()) {
-			atoms, err := c.Query(ctx, cquery.Q{
-				Title: q.Title(),
-			})
+			atoms, err := c.Query(ctx, q.Q)
 			if err != nil {
 				return nil, err
 			}

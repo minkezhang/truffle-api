@@ -26,6 +26,7 @@ type Type int32
 const (
 	Type_TYPE_NONE Type = 0
 	Type_TYPE_TV   Type = 1
+	Type_TYPE_BOOK Type = 2
 )
 
 // Enum value maps for Type.
@@ -33,10 +34,12 @@ var (
 	Type_name = map[int32]string{
 		0: "TYPE_NONE",
 		1: "TYPE_TV",
+		2: "TYPE_BOOK",
 	}
 	Type_value = map[string]int32{
 		"TYPE_NONE": 0,
 		"TYPE_TV":   1,
+		"TYPE_BOOK": 2,
 	}
 )
 
@@ -122,10 +125,11 @@ var File_proto_enums_proto protoreflect.FileDescriptor
 const file_proto_enums_proto_rawDesc = "" +
 	"\n" +
 	"\x11proto/enums.proto\x12\n" +
-	"bene.enums*\"\n" +
+	"bene.enums*1\n" +
 	"\x04Type\x12\r\n" +
 	"\tTYPE_NONE\x10\x00\x12\v\n" +
-	"\aTYPE_TV\x10\x01*1\n" +
+	"\aTYPE_TV\x10\x01\x12\r\n" +
+	"\tTYPE_BOOK\x10\x02*1\n" +
 	"\x03API\x12\x0f\n" +
 	"\vAPI_VIRTUAL\x10\x00\x12\f\n" +
 	"\bAPI_BENE\x10\x02\x12\v\n" +

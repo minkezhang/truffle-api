@@ -31,9 +31,10 @@ func (g G) Load(msg proto.Message) metadata.M {
 
 func (g G) Save(m metadata.M) proto.Message { return &mpb.Empty{} }
 
+func (g G) Merge(t metadata.T, u metadata.T) metadata.M { return u.M.Copy() }
+
 type M struct{}
 
-func (m M) AtomType() epb.Type            { return epb.Type_TYPE_NONE }
-func (m M) Equal(o metadata.M) bool       { return true }
-func (m M) Copy() metadata.M              { return M{} }
-func (m M) Merge(v metadata.M) metadata.M { return v.Copy() }
+func (m M) AtomType() epb.Type      { return epb.Type_TYPE_NONE }
+func (m M) Equal(o metadata.M) bool { return true }
+func (m M) Copy() metadata.M        { return M{} }

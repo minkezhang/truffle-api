@@ -3,7 +3,6 @@ package mock
 import (
 	"context"
 
-	"github.com/minkezhang/bene-api/client"
 	"github.com/minkezhang/bene-api/client/query"
 	"github.com/minkezhang/bene-api/db/atom"
 
@@ -29,12 +28,12 @@ type C struct {
 }
 
 func (c *C) APIType() epb.API                                    { return epb.API_API_MAL }
-func (c *C) Get(ctx context.Context, id string) (*atom.A, error) { return c.data[id], nil }
+func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) { return c.data[g.ID], nil }
 
-func (c *C) Query(ctx context.Context, q query.Q) ([]*atom.A, error) {
+func (c *C) Query(ctx context.Context, q *query.Q) ([]*atom.A, error) {
 	res := []*atom.A{}
 	for _, a := range c.data {
-		match, err := client.Match(q, a)
+		match, err := q.Match(a)
 		if err != nil {
 			return nil, err
 		}

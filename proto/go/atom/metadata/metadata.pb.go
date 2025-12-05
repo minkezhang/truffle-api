@@ -102,19 +102,14 @@ func (x *Mock) GetProducers() []string {
 }
 
 type TV struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Seasons          []int64                `protobuf:"varint,1,rep,packed,name=seasons,proto3" json:"seasons,omitempty"`
-	Genres           string                 `protobuf:"bytes,2,opt,name=genres,proto3" json:"genres,omitempty"`
-	Showrunners      string                 `protobuf:"bytes,3,opt,name=showrunners,proto3" json:"showrunners,omitempty"`
-	IsAnimated       string                 `protobuf:"bytes,4,opt,name=is_animated,json=isAnimated,proto3" json:"is_animated,omitempty"`
-	Directors        []string               `protobuf:"bytes,5,rep,name=directors,proto3" json:"directors,omitempty"`
-	Writers          []string               `protobuf:"bytes,6,rep,name=writers,proto3" json:"writers,omitempty"`
-	Cinematography   []string               `protobuf:"bytes,7,rep,name=cinematography,proto3" json:"cinematography,omitempty"`
-	Composers        []string               `protobuf:"bytes,8,rep,name=composers,proto3" json:"composers,omitempty"`
-	Starring         []string               `protobuf:"bytes,9,rep,name=starring,proto3" json:"starring,omitempty"`
-	AnimationStudios []string               `protobuf:"bytes,10,rep,name=animation_studios,json=animationStudios,proto3" json:"animation_studios,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Genres        []string               `protobuf:"bytes,1,rep,name=genres,proto3" json:"genres,omitempty"`
+	Showrunners   []string               `protobuf:"bytes,2,rep,name=showrunners,proto3" json:"showrunners,omitempty"`
+	IsAnimated    bool                   `protobuf:"varint,3,opt,name=is_animated,json=isAnimated,proto3" json:"is_animated,omitempty"`
+	Studios       []string               `protobuf:"bytes,4,rep,name=studios,proto3" json:"studios,omitempty"`
+	Networks      []string               `protobuf:"bytes,5,rep,name=networks,proto3" json:"networks,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *TV) Reset() {
@@ -147,72 +142,37 @@ func (*TV) Descriptor() ([]byte, []int) {
 	return file_proto_metadata_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *TV) GetSeasons() []int64 {
-	if x != nil {
-		return x.Seasons
-	}
-	return nil
-}
-
-func (x *TV) GetGenres() string {
+func (x *TV) GetGenres() []string {
 	if x != nil {
 		return x.Genres
 	}
-	return ""
+	return nil
 }
 
-func (x *TV) GetShowrunners() string {
+func (x *TV) GetShowrunners() []string {
 	if x != nil {
 		return x.Showrunners
 	}
-	return ""
+	return nil
 }
 
-func (x *TV) GetIsAnimated() string {
+func (x *TV) GetIsAnimated() bool {
 	if x != nil {
 		return x.IsAnimated
 	}
-	return ""
+	return false
 }
 
-func (x *TV) GetDirectors() []string {
+func (x *TV) GetStudios() []string {
 	if x != nil {
-		return x.Directors
+		return x.Studios
 	}
 	return nil
 }
 
-func (x *TV) GetWriters() []string {
+func (x *TV) GetNetworks() []string {
 	if x != nil {
-		return x.Writers
-	}
-	return nil
-}
-
-func (x *TV) GetCinematography() []string {
-	if x != nil {
-		return x.Cinematography
-	}
-	return nil
-}
-
-func (x *TV) GetComposers() []string {
-	if x != nil {
-		return x.Composers
-	}
-	return nil
-}
-
-func (x *TV) GetStarring() []string {
-	if x != nil {
-		return x.Starring
-	}
-	return nil
-}
-
-func (x *TV) GetAnimationStudios() []string {
-	if x != nil {
-		return x.AnimationStudios
+		return x.Networks
 	}
 	return nil
 }
@@ -224,20 +184,14 @@ const file_proto_metadata_proto_rawDesc = "" +
 	"\x14proto/metadata.proto\x12\x12bene.atom.metadata\"\a\n" +
 	"\x05Empty\"$\n" +
 	"\x04Mock\x12\x1c\n" +
-	"\tproducers\x18\x01 \x03(\tR\tproducers\"\xc0\x02\n" +
-	"\x02TV\x12\x18\n" +
-	"\aseasons\x18\x01 \x03(\x03R\aseasons\x12\x16\n" +
-	"\x06genres\x18\x02 \x01(\tR\x06genres\x12 \n" +
-	"\vshowrunners\x18\x03 \x01(\tR\vshowrunners\x12\x1f\n" +
-	"\vis_animated\x18\x04 \x01(\tR\n" +
-	"isAnimated\x12\x1c\n" +
-	"\tdirectors\x18\x05 \x03(\tR\tdirectors\x12\x18\n" +
-	"\awriters\x18\x06 \x03(\tR\awriters\x12&\n" +
-	"\x0ecinematography\x18\a \x03(\tR\x0ecinematography\x12\x1c\n" +
-	"\tcomposers\x18\b \x03(\tR\tcomposers\x12\x1a\n" +
-	"\bstarring\x18\t \x03(\tR\bstarring\x12+\n" +
-	"\x11animation_studios\x18\n" +
-	" \x03(\tR\x10animationStudiosB7Z5github.com/minkezhang/bene-api/proto/go/atom/metadatab\x06proto3"
+	"\tproducers\x18\x01 \x03(\tR\tproducers\"\x95\x01\n" +
+	"\x02TV\x12\x16\n" +
+	"\x06genres\x18\x01 \x03(\tR\x06genres\x12 \n" +
+	"\vshowrunners\x18\x02 \x03(\tR\vshowrunners\x12\x1f\n" +
+	"\vis_animated\x18\x03 \x01(\bR\n" +
+	"isAnimated\x12\x18\n" +
+	"\astudios\x18\x04 \x03(\tR\astudios\x12\x1a\n" +
+	"\bnetworks\x18\x05 \x03(\tR\bnetworksB7Z5github.com/minkezhang/bene-api/proto/go/atom/metadatab\x06proto3"
 
 var (
 	file_proto_metadata_proto_rawDescOnce sync.Once

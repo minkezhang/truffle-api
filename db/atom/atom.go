@@ -11,6 +11,8 @@ package atom
 import (
 	"fmt"
 
+	"github.com/minkezhang/bene-api/db/atom/internal/metadata/mock"
+	"github.com/minkezhang/bene-api/db/atom/internal/utils/merge"
 	"github.com/minkezhang/bene-api/db/atom/metadata"
 	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
 	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
@@ -21,9 +23,7 @@ import (
 	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
-type G struct{}
-
-func (g G) Load(msg proto.Message) *A {
+func Load(msg proto.Message) *A {
 	pb := msg.(*apb.Atom)
 	a := New(O{
 		AtomType:   pb.GetType(),
@@ -52,7 +52,7 @@ func (g G) Load(msg proto.Message) *A {
 	return a
 }
 
-func (g G) Save(a *A) proto.Message {
+func Save(a *A) proto.Message {
 	pb := &apb.Atom{
 		Type:       a.AtomType(),
 		Api:        a.APIType(),
@@ -76,6 +76,43 @@ func (g G) Save(a *A) proto.Message {
 	}
 
 	return pb
+}
+
+// Merge will combine two atoms, with the following heuristic --
+//
+//  1. the primitives of two merged atoms will be overwritten by the higher
+//     priority API
+//  2. slices and maps of the atoms are a union of the two inputs
+//  3. structs (i.e. a.M()) will be recursively merged with the same
+//     heuristic
+func Merge(a *A, o *A) *A {
+	if a.atomType != o.atomType {
+		panic(fmt.Errorf("cannot merge mismatching atom types: %v != %v", a.atomType, o.atomType))
+	}
+	return New(O{
+		APIType: merge_utils.Prioritize(
+			merge_utils.V[epb.API]{API: a.APIType(), V: a.APIType()},
+			merge_utils.V[epb.API]{API: o.APIType(), V: o.APIType()},
+		),
+		APIID: merge_utils.Prioritize(
+			merge_utils.V[string]{API: a.APIType(), V: a.APIID()},
+			merge_utils.V[string]{API: o.APIType(), V: o.APIID()},
+		),
+		Titles:     merge_utils.Distinct(a.Titles(), o.Titles()),
+		PreviewURL: o.previewURL,
+		Score:      o.score,
+		AtomType:   o.atomType,
+		Metadata: MergeMetadata(
+			metadata.T{
+				API: a.APIType(),
+				M:   a.metadata,
+			},
+			metadata.T{
+				API: o.APIType(),
+				M:   o.metadata,
+			},
+		),
+	})
 }
 
 type T struct {
@@ -164,27 +201,16 @@ func (a *A) SetMetadata(v metadata.M) {
 	a.metadata = v.Copy()
 }
 
-// Merge will combine two atoms, with the following heuristic --
-//
-//  1. the primitives of two merged atoms will be overwritten by the second
-//     atom
-//  2. slices and maps of the atoms are a union of the two inputs
-//  3. structs (i.e. a.M()) will be recursively merged with the same
-//     heuristic
-func (a *A) Merge(o *A) *A {
-	if a.atomType != o.atomType {
-		panic(fmt.Errorf("cannot merge mismatching atom types: %v != %v", a.atomType, o.atomType))
+func MergeMetadata(t metadata.T, u metadata.T) metadata.M {
+	switch mt := t.M.(type) {
+	case *mock.M:
+		return mock.G{}.Merge(t, u)
+	case empty.M:
+		return empty.G{}.Merge(t, u)
+	case *tv.M:
+		return tv.G{}.Merge(t, u)
+	default:
+		panic(fmt.Errorf("cannot merge unsupported metadata type: %v", mt))
 	}
-	return New(O{
-		APIType: o.apiType,
-		APIID:   o.apiID,
-		Titles: append(
-			append([]T{}, a.Titles()...),
-			o.Titles()...,
-		),
-		PreviewURL: o.previewURL,
-		Score:      o.score,
-		AtomType:   o.atomType,
-		Metadata:   a.metadata.Merge(o.metadata),
-	})
+	return nil
 }
