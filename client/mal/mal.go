@@ -2,6 +2,7 @@ package mal
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -116,7 +117,12 @@ func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) {
 			Metadata:   m,
 		})
 		return a, nil
+	case epb.Type_TYPE_MOVIE:
+		return nil, fmt.Errorf("unimplemented")
+	case epb.Type_TYPE_BOOK:
+		return nil, fmt.Errorf("unimplemented")
 	}
+
 	return nil, nil
 }
 

@@ -5,15 +5,17 @@ option go_package = "github.com/minkezhang/bene-api/proto/go/enums";
 // option features.(pb.go).api_level = API_OPEN;
 
 enum Type {
-  TYPE_NONE = 0;
-  TYPE_TV   = 1;
-  TYPE_BOOK = 2;
+  TYPE_NONE  = 0;
+  TYPE_TV    = 1;
+  TYPE_MOVIE = 2;
+  TYPE_BOOK  = 3;
 }
 
 enum API {
   API_VIRTUAL      = 0;
-  API_BENE         = 2;
-  // API_TRUFFLE      = 3;
+  API_BENE         = 1;
+  // API_TRUFFLE      = 2;
+  // API_ANILIST      = 3;
   API_MAL          = 4;
   // API_MANGADEX     = 5;
   // API_TMDB         = 6;  // https://www.themoviedb.org/
@@ -21,6 +23,4 @@ enum API {
   // API_STEAM        = 8;
   // API_OPEN_LIBRARY = 9;
   // API_SPOTIFY      = 10;
-  // API_YOUTUBE      = 11;
-  // API_ANILIST      = 12;
 }

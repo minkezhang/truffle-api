@@ -24,9 +24,10 @@ const (
 type Type int32
 
 const (
-	Type_TYPE_NONE Type = 0
-	Type_TYPE_TV   Type = 1
-	Type_TYPE_BOOK Type = 2
+	Type_TYPE_NONE  Type = 0
+	Type_TYPE_TV    Type = 1
+	Type_TYPE_MOVIE Type = 2
+	Type_TYPE_BOOK  Type = 3
 )
 
 // Enum value maps for Type.
@@ -34,12 +35,14 @@ var (
 	Type_name = map[int32]string{
 		0: "TYPE_NONE",
 		1: "TYPE_TV",
-		2: "TYPE_BOOK",
+		2: "TYPE_MOVIE",
+		3: "TYPE_BOOK",
 	}
 	Type_value = map[string]int32{
-		"TYPE_NONE": 0,
-		"TYPE_TV":   1,
-		"TYPE_BOOK": 2,
+		"TYPE_NONE":  0,
+		"TYPE_TV":    1,
+		"TYPE_MOVIE": 2,
+		"TYPE_BOOK":  3,
 	}
 )
 
@@ -74,8 +77,9 @@ type API int32
 
 const (
 	API_API_VIRTUAL API = 0
-	API_API_BENE    API = 2
-	// API_TRUFFLE      = 3;
+	API_API_BENE    API = 1
+	// API_TRUFFLE      = 2;
+	// API_ANILIST      = 3;
 	API_API_MAL API = 4
 )
 
@@ -83,12 +87,12 @@ const (
 var (
 	API_name = map[int32]string{
 		0: "API_VIRTUAL",
-		2: "API_BENE",
+		1: "API_BENE",
 		4: "API_MAL",
 	}
 	API_value = map[string]int32{
 		"API_VIRTUAL": 0,
-		"API_BENE":    2,
+		"API_BENE":    1,
 		"API_MAL":     4,
 	}
 )
@@ -125,14 +129,16 @@ var File_proto_enums_proto protoreflect.FileDescriptor
 const file_proto_enums_proto_rawDesc = "" +
 	"\n" +
 	"\x11proto/enums.proto\x12\n" +
-	"bene.enums*1\n" +
+	"bene.enums*A\n" +
 	"\x04Type\x12\r\n" +
 	"\tTYPE_NONE\x10\x00\x12\v\n" +
-	"\aTYPE_TV\x10\x01\x12\r\n" +
-	"\tTYPE_BOOK\x10\x02*1\n" +
+	"\aTYPE_TV\x10\x01\x12\x0e\n" +
+	"\n" +
+	"TYPE_MOVIE\x10\x02\x12\r\n" +
+	"\tTYPE_BOOK\x10\x03*1\n" +
 	"\x03API\x12\x0f\n" +
 	"\vAPI_VIRTUAL\x10\x00\x12\f\n" +
-	"\bAPI_BENE\x10\x02\x12\v\n" +
+	"\bAPI_BENE\x10\x01\x12\v\n" +
 	"\aAPI_MAL\x10\x04B/Z-github.com/minkezhang/bene-api/proto/go/enumsb\x06proto3"
 
 var (
