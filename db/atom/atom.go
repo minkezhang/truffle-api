@@ -70,9 +70,9 @@ func Save(a *A) proto.Message {
 
 	switch t := a.AtomType(); t {
 	case epb.Type_TYPE_TV:
-		pb.Metadata = &apb.Atom_MetadataTv{tv.G{}.Save(a.Metadata().(*tv.M)).(*mpb.TV)}
+		pb.Metadata = &apb.Atom_MetadataTv{MetadataTv: tv.G{}.Save(a.Metadata().(*tv.M)).(*mpb.TV)}
 	default:
-		pb.Metadata = &apb.Atom_MetadataEmpty{empty.G{}.Save(a.Metadata().(empty.M)).(*mpb.Empty)}
+		pb.Metadata = &apb.Atom_MetadataEmpty{MetadataEmpty: empty.G{}.Save(a.Metadata().(empty.M)).(*mpb.Empty)}
 	}
 
 	return pb
@@ -212,5 +212,4 @@ func MergeMetadata(t metadata.T, u metadata.T) metadata.M {
 	default:
 		panic(fmt.Errorf("cannot merge unsupported metadata type: %v", mt))
 	}
-	return nil
 }

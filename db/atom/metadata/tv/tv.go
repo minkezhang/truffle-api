@@ -103,7 +103,7 @@ func (m *M) Equal(o metadata.M) bool { return reflect.DeepEqual(m, o) }
 func (m *M) Copy() metadata.M {
 	return New(O{
 		Genres:      m.Genres(),
-		Showrunners: m.Genres(),
+		Showrunners: m.Showrunners(),
 		IsAnimated:  m.IsAnimated(),
 		Studios:     m.Studios(),
 		Networks:    m.Networks(),

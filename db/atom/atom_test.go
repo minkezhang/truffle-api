@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/minkezhang/bene-api/db/atom/internal/metadata/mock"
 
 	epb "github.com/minkezhang/bene-api/proto/go/enums"
@@ -56,6 +57,7 @@ func TestMerge(t *testing.T) {
 		want,
 		got,
 		cmp.AllowUnexported(A{}, mock.M{}),
+		cmpopts.SortSlices(func(a, b string) bool { return a < b }),
 	); diff != "" {
 		t.Errorf("Merge() mismatch (-want +got):\n%s", diff)
 	}
