@@ -42,6 +42,7 @@ func TestGet(t *testing.T) {
 		AtomType:   epb.Type_TYPE_TV,
 		Metadata: tv.New(tv.O{
 			IsAnimated: true,
+			IsAnime:    true,
 			Genres:     []string{"Adventure", "Comedy", "Detective", "Mystery", "Shounen"},
 			Studios:    []string{"TMS Entertainment"},
 		}),

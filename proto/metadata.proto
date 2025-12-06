@@ -13,8 +13,16 @@ message Mock {
 message TV {
   repeated string genres            = 1;
   repeated string showrunners       = 2;
-           bool   is_animated       = 3;
-  repeated string studios           = 4;
-  repeated string networks          = 5;
+           bool   is_anime          = 3;
+           bool   is_animated       = 4;
+  repeated string studios           = 5;
+  repeated string networks          = 6;
 }
 
+message Book {
+  repeated string genres         = 1;
+  repeated string authors        = 2;
+  repeated string illustrators   = 3;
+           bool   is_illustrated = 4;
+           bool   is_manga       = 5;
+}

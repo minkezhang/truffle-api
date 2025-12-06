@@ -31,6 +31,7 @@ func Load(msg proto.Message) *A {
 		APIID:      pb.GetId(),
 		PreviewURL: pb.GetPreviewUrl(),
 		Score:      pb.GetScore(),
+		Synopsis:   pb.GetSynopsis(),
 	})
 
 	titles := []T{}
@@ -59,6 +60,7 @@ func Save(a *A) proto.Message {
 		Id:         a.APIID(),
 		PreviewUrl: a.PreviewURL(),
 		Score:      int64(a.Score()),
+		Synopsis:   a.Synopsis(),
 	}
 
 	for _, t := range a.Titles() {
@@ -86,7 +88,7 @@ func Save(a *A) proto.Message {
 //  3. structs (i.e. a.M()) will be recursively merged with the same
 //     heuristic
 func Merge(a *A, o *A) *A {
-	if a.atomType != o.atomType {
+	if a.AtomType() != o.AtomType() {
 		panic(fmt.Errorf("cannot merge mismatching atom types: %v != %v", a.atomType, o.atomType))
 	}
 	return New(O{
@@ -98,10 +100,20 @@ func Merge(a *A, o *A) *A {
 			merge_utils.V[string]{API: a.APIType(), V: a.APIID()},
 			merge_utils.V[string]{API: o.APIType(), V: o.APIID()},
 		),
-		Titles:     merge_utils.Distinct(a.Titles(), o.Titles()),
-		PreviewURL: o.previewURL,
-		Score:      o.score,
-		AtomType:   o.atomType,
+		Titles: merge_utils.Distinct(a.Titles(), o.Titles()),
+		PreviewURL: merge_utils.Prioritize(
+			merge_utils.V[string]{API: a.APIType(), V: a.PreviewURL()},
+			merge_utils.V[string]{API: o.APIType(), V: o.PreviewURL()},
+		),
+		Score: merge_utils.Prioritize(
+			merge_utils.V[int64]{API: a.APIType(), V: a.Score()},
+			merge_utils.V[int64]{API: o.APIType(), V: o.Score()},
+		),
+		AtomType: a.AtomType(),
+		Synopsis: merge_utils.Prioritize(
+			merge_utils.V[string]{API: a.APIType(), V: a.Synopsis()},
+			merge_utils.V[string]{API: o.APIType(), V: o.Synopsis()},
+		),
 		Metadata: MergeMetadata(
 			metadata.T{
 				API: a.APIType(),
@@ -126,6 +138,7 @@ type O struct {
 	Titles     []T
 	PreviewURL string
 	Score      int64
+	Synopsis   string
 	AtomType   epb.Type
 	Metadata   metadata.M
 }
@@ -136,6 +149,7 @@ type A struct {
 	titles     map[string]map[string]interface{} // e.g. a.titles["us-en"]["Firefly"]
 	previewURL string
 	score      int64
+	synopsis   string
 
 	atomType epb.Type   // Read-only
 	metadata metadata.M // Media-specific data
@@ -149,6 +163,7 @@ func New(o O) *A {
 		score:      o.Score,
 		atomType:   o.AtomType,
 		metadata:   o.Metadata,
+		synopsis:   o.Synopsis,
 	}
 	a.SetTitles(o.Titles)
 	return a
@@ -158,6 +173,7 @@ func (a *A) APIType() epb.API     { return a.apiType }
 func (a *A) APIID() string        { return a.apiID }
 func (a *A) PreviewURL() string   { return a.previewURL }
 func (a *A) Score() int64         { return a.score }
+func (a *A) Synopsis() string     { return a.synopsis }
 func (a *A) AtomType() epb.Type   { return a.atomType }
 func (a *A) Metadata() metadata.M { return a.metadata.Copy() }
 func (a *A) Copy() *A {
@@ -169,6 +185,7 @@ func (a *A) Copy() *A {
 		AtomType:   a.atomType,
 		Metadata:   a.metadata.Copy(),
 		Titles:     a.Titles(),
+		Synopsis:   a.Synopsis(),
 	})
 }
 
@@ -194,6 +211,7 @@ func (a *A) SetTitles(v []T) {
 
 func (a *A) SetPreviewURL(v string) { a.previewURL = v }
 func (a *A) SetScore(v int64)       { a.score = v }
+func (a *A) SetSynopsis(v string)   { a.synopsis = v }
 func (a *A) SetMetadata(v metadata.M) {
 	if a.atomType != v.AtomType() {
 		panic(fmt.Errorf("cannot set mismatching atom types: %v != %v", a.atomType, v.AtomType()))

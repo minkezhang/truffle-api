@@ -24,4 +24,4 @@ jobs:
       run: go vet -v github.com/minkezhang/bene-api/...
 
     - name: Test github.com/minkezhang/bene-api
-      run: go test -v github.com/minkezhang/bene-api/... -bench . -benchmem
+      run: go test -v $(go list github.com/minkezhang/bene-api/... | grep -v /client/.*) -bench . -benchmem

@@ -105,9 +105,10 @@ type TV struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Genres        []string               `protobuf:"bytes,1,rep,name=genres,proto3" json:"genres,omitempty"`
 	Showrunners   []string               `protobuf:"bytes,2,rep,name=showrunners,proto3" json:"showrunners,omitempty"`
-	IsAnimated    bool                   `protobuf:"varint,3,opt,name=is_animated,json=isAnimated,proto3" json:"is_animated,omitempty"`
-	Studios       []string               `protobuf:"bytes,4,rep,name=studios,proto3" json:"studios,omitempty"`
-	Networks      []string               `protobuf:"bytes,5,rep,name=networks,proto3" json:"networks,omitempty"`
+	IsAnime       bool                   `protobuf:"varint,3,opt,name=is_anime,json=isAnime,proto3" json:"is_anime,omitempty"`
+	IsAnimated    bool                   `protobuf:"varint,4,opt,name=is_animated,json=isAnimated,proto3" json:"is_animated,omitempty"`
+	Studios       []string               `protobuf:"bytes,5,rep,name=studios,proto3" json:"studios,omitempty"`
+	Networks      []string               `protobuf:"bytes,6,rep,name=networks,proto3" json:"networks,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -156,6 +157,13 @@ func (x *TV) GetShowrunners() []string {
 	return nil
 }
 
+func (x *TV) GetIsAnime() bool {
+	if x != nil {
+		return x.IsAnime
+	}
+	return false
+}
+
 func (x *TV) GetIsAnimated() bool {
 	if x != nil {
 		return x.IsAnimated
@@ -177,6 +185,82 @@ func (x *TV) GetNetworks() []string {
 	return nil
 }
 
+type Book struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Genres        []string               `protobuf:"bytes,1,rep,name=genres,proto3" json:"genres,omitempty"`
+	Authors       []string               `protobuf:"bytes,2,rep,name=authors,proto3" json:"authors,omitempty"`
+	Illustrators  []string               `protobuf:"bytes,3,rep,name=illustrators,proto3" json:"illustrators,omitempty"`
+	IsIllustrated bool                   `protobuf:"varint,4,opt,name=is_illustrated,json=isIllustrated,proto3" json:"is_illustrated,omitempty"`
+	IsManga       bool                   `protobuf:"varint,5,opt,name=is_manga,json=isManga,proto3" json:"is_manga,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Book) Reset() {
+	*x = Book{}
+	mi := &file_proto_metadata_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Book) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Book) ProtoMessage() {}
+
+func (x *Book) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_metadata_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Book.ProtoReflect.Descriptor instead.
+func (*Book) Descriptor() ([]byte, []int) {
+	return file_proto_metadata_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Book) GetGenres() []string {
+	if x != nil {
+		return x.Genres
+	}
+	return nil
+}
+
+func (x *Book) GetAuthors() []string {
+	if x != nil {
+		return x.Authors
+	}
+	return nil
+}
+
+func (x *Book) GetIllustrators() []string {
+	if x != nil {
+		return x.Illustrators
+	}
+	return nil
+}
+
+func (x *Book) GetIsIllustrated() bool {
+	if x != nil {
+		return x.IsIllustrated
+	}
+	return false
+}
+
+func (x *Book) GetIsManga() bool {
+	if x != nil {
+		return x.IsManga
+	}
+	return false
+}
+
 var File_proto_metadata_proto protoreflect.FileDescriptor
 
 const file_proto_metadata_proto_rawDesc = "" +
@@ -184,14 +268,21 @@ const file_proto_metadata_proto_rawDesc = "" +
 	"\x14proto/metadata.proto\x12\x12bene.atom.metadata\"\a\n" +
 	"\x05Empty\"$\n" +
 	"\x04Mock\x12\x1c\n" +
-	"\tproducers\x18\x01 \x03(\tR\tproducers\"\x95\x01\n" +
+	"\tproducers\x18\x01 \x03(\tR\tproducers\"\xb0\x01\n" +
 	"\x02TV\x12\x16\n" +
 	"\x06genres\x18\x01 \x03(\tR\x06genres\x12 \n" +
-	"\vshowrunners\x18\x02 \x03(\tR\vshowrunners\x12\x1f\n" +
-	"\vis_animated\x18\x03 \x01(\bR\n" +
+	"\vshowrunners\x18\x02 \x03(\tR\vshowrunners\x12\x19\n" +
+	"\bis_anime\x18\x03 \x01(\bR\aisAnime\x12\x1f\n" +
+	"\vis_animated\x18\x04 \x01(\bR\n" +
 	"isAnimated\x12\x18\n" +
-	"\astudios\x18\x04 \x03(\tR\astudios\x12\x1a\n" +
-	"\bnetworks\x18\x05 \x03(\tR\bnetworksB7Z5github.com/minkezhang/bene-api/proto/go/atom/metadatab\x06proto3"
+	"\astudios\x18\x05 \x03(\tR\astudios\x12\x1a\n" +
+	"\bnetworks\x18\x06 \x03(\tR\bnetworks\"\x9e\x01\n" +
+	"\x04Book\x12\x16\n" +
+	"\x06genres\x18\x01 \x03(\tR\x06genres\x12\x18\n" +
+	"\aauthors\x18\x02 \x03(\tR\aauthors\x12\"\n" +
+	"\fillustrators\x18\x03 \x03(\tR\fillustrators\x12%\n" +
+	"\x0eis_illustrated\x18\x04 \x01(\bR\risIllustrated\x12\x19\n" +
+	"\bis_manga\x18\x05 \x01(\bR\aisMangaB7Z5github.com/minkezhang/bene-api/proto/go/atom/metadatab\x06proto3"
 
 var (
 	file_proto_metadata_proto_rawDescOnce sync.Once
@@ -205,11 +296,12 @@ func file_proto_metadata_proto_rawDescGZIP() []byte {
 	return file_proto_metadata_proto_rawDescData
 }
 
-var file_proto_metadata_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_proto_metadata_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_proto_metadata_proto_goTypes = []any{
 	(*Empty)(nil), // 0: bene.atom.metadata.Empty
 	(*Mock)(nil),  // 1: bene.atom.metadata.Mock
 	(*TV)(nil),    // 2: bene.atom.metadata.TV
+	(*Book)(nil),  // 3: bene.atom.metadata.Book
 }
 var file_proto_metadata_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -230,7 +322,7 @@ func file_proto_metadata_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_metadata_proto_rawDesc), len(file_proto_metadata_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

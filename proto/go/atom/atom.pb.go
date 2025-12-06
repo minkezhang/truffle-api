@@ -84,6 +84,7 @@ type Atom struct {
 	Id         string                 `protobuf:"bytes,4,opt,name=id,proto3" json:"id,omitempty"`
 	PreviewUrl string                 `protobuf:"bytes,5,opt,name=preview_url,json=previewUrl,proto3" json:"preview_url,omitempty"`
 	Score      int64                  `protobuf:"varint,6,opt,name=score,proto3" json:"score,omitempty"`
+	Synopsis   string                 `protobuf:"bytes,7,opt,name=synopsis,proto3" json:"synopsis,omitempty"`
 	// Types that are valid to be assigned to Metadata:
 	//
 	//	*Atom_MetadataEmpty
@@ -165,6 +166,13 @@ func (x *Atom) GetScore() int64 {
 	return 0
 }
 
+func (x *Atom) GetSynopsis() string {
+	if x != nil {
+		return x.Synopsis
+	}
+	return ""
+}
+
 func (x *Atom) GetMetadata() isAtom_Metadata {
 	if x != nil {
 		return x.Metadata
@@ -213,7 +221,7 @@ const file_proto_atom_proto_rawDesc = "" +
 	"\x10proto/atom.proto\x12\tbene.atom\x1a\x11proto/enums.proto\x1a\x14proto/metadata.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"A\n" +
 	"\x05Title\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\"\n" +
-	"\flocalization\x18\x02 \x01(\tR\flocalization\"\xcb\x02\n" +
+	"\flocalization\x18\x02 \x01(\tR\flocalization\"\xe7\x02\n" +
 	"\x04Atom\x12$\n" +
 	"\x04type\x18\x01 \x01(\x0e2\x10.bene.enums.TypeR\x04type\x12!\n" +
 	"\x03api\x18\x02 \x01(\x0e2\x0f.bene.enums.APIR\x03api\x12(\n" +
@@ -221,7 +229,8 @@ const file_proto_atom_proto_rawDesc = "" +
 	"\x02id\x18\x04 \x01(\tR\x02id\x12\x1f\n" +
 	"\vpreview_url\x18\x05 \x01(\tR\n" +
 	"previewUrl\x12\x14\n" +
-	"\x05score\x18\x06 \x01(\x03R\x05score\x12B\n" +
+	"\x05score\x18\x06 \x01(\x03R\x05score\x12\x1a\n" +
+	"\bsynopsis\x18\a \x01(\tR\bsynopsis\x12B\n" +
 	"\x0emetadata_empty\x18d \x01(\v2\x19.bene.atom.metadata.EmptyH\x00R\rmetadataEmpty\x129\n" +
 	"\vmetadata_tv\x18e \x01(\v2\x16.bene.atom.metadata.TVH\x00R\n" +
 	"metadataTvB\n" +

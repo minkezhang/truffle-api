@@ -103,6 +103,7 @@ func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) {
 
 		m := tv.New(tv.O{
 			IsAnimated: true,
+			IsAnime:    true,
 			Genres:     genres,
 			Studios:    studios,
 		})
