@@ -101,7 +101,7 @@ func (x *Mock) GetProducers() []string {
 	return nil
 }
 
-type TV struct {
+type Video struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Genres        []string               `protobuf:"bytes,1,rep,name=genres,proto3" json:"genres,omitempty"`
 	Showrunners   []string               `protobuf:"bytes,2,rep,name=showrunners,proto3" json:"showrunners,omitempty"`
@@ -113,9 +113,88 @@ type TV struct {
 	sizeCache     protoimpl.SizeCache
 }
 
+func (x *Video) Reset() {
+	*x = Video{}
+	mi := &file_proto_metadata_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Video) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Video) ProtoMessage() {}
+
+func (x *Video) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_metadata_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Video.ProtoReflect.Descriptor instead.
+func (*Video) Descriptor() ([]byte, []int) {
+	return file_proto_metadata_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Video) GetGenres() []string {
+	if x != nil {
+		return x.Genres
+	}
+	return nil
+}
+
+func (x *Video) GetShowrunners() []string {
+	if x != nil {
+		return x.Showrunners
+	}
+	return nil
+}
+
+func (x *Video) GetIsAnime() bool {
+	if x != nil {
+		return x.IsAnime
+	}
+	return false
+}
+
+func (x *Video) GetIsAnimated() bool {
+	if x != nil {
+		return x.IsAnimated
+	}
+	return false
+}
+
+func (x *Video) GetStudios() []string {
+	if x != nil {
+		return x.Studios
+	}
+	return nil
+}
+
+func (x *Video) GetNetworks() []string {
+	if x != nil {
+		return x.Networks
+	}
+	return nil
+}
+
+type TV struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Video         *Video                 `protobuf:"bytes,1,opt,name=video,proto3" json:"video,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
 func (x *TV) Reset() {
 	*x = TV{}
-	mi := &file_proto_metadata_proto_msgTypes[2]
+	mi := &file_proto_metadata_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -127,7 +206,7 @@ func (x *TV) String() string {
 func (*TV) ProtoMessage() {}
 
 func (x *TV) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_metadata_proto_msgTypes[2]
+	mi := &file_proto_metadata_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -140,47 +219,56 @@ func (x *TV) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TV.ProtoReflect.Descriptor instead.
 func (*TV) Descriptor() ([]byte, []int) {
-	return file_proto_metadata_proto_rawDescGZIP(), []int{2}
+	return file_proto_metadata_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *TV) GetGenres() []string {
+func (x *TV) GetVideo() *Video {
 	if x != nil {
-		return x.Genres
+		return x.Video
 	}
 	return nil
 }
 
-func (x *TV) GetShowrunners() []string {
-	if x != nil {
-		return x.Showrunners
-	}
-	return nil
+type Movie struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Video         *Video                 `protobuf:"bytes,1,opt,name=video,proto3" json:"video,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *TV) GetIsAnime() bool {
-	if x != nil {
-		return x.IsAnime
-	}
-	return false
+func (x *Movie) Reset() {
+	*x = Movie{}
+	mi := &file_proto_metadata_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
 }
 
-func (x *TV) GetIsAnimated() bool {
-	if x != nil {
-		return x.IsAnimated
-	}
-	return false
+func (x *Movie) String() string {
+	return protoimpl.X.MessageStringOf(x)
 }
 
-func (x *TV) GetStudios() []string {
+func (*Movie) ProtoMessage() {}
+
+func (x *Movie) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_metadata_proto_msgTypes[4]
 	if x != nil {
-		return x.Studios
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
 	}
-	return nil
+	return mi.MessageOf(x)
 }
 
-func (x *TV) GetNetworks() []string {
+// Deprecated: Use Movie.ProtoReflect.Descriptor instead.
+func (*Movie) Descriptor() ([]byte, []int) {
+	return file_proto_metadata_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Movie) GetVideo() *Video {
 	if x != nil {
-		return x.Networks
+		return x.Video
 	}
 	return nil
 }
@@ -198,7 +286,7 @@ type Book struct {
 
 func (x *Book) Reset() {
 	*x = Book{}
-	mi := &file_proto_metadata_proto_msgTypes[3]
+	mi := &file_proto_metadata_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -210,7 +298,7 @@ func (x *Book) String() string {
 func (*Book) ProtoMessage() {}
 
 func (x *Book) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_metadata_proto_msgTypes[3]
+	mi := &file_proto_metadata_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -223,7 +311,7 @@ func (x *Book) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Book.ProtoReflect.Descriptor instead.
 func (*Book) Descriptor() ([]byte, []int) {
-	return file_proto_metadata_proto_rawDescGZIP(), []int{3}
+	return file_proto_metadata_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Book) GetGenres() []string {
@@ -268,15 +356,19 @@ const file_proto_metadata_proto_rawDesc = "" +
 	"\x14proto/metadata.proto\x12\x12bene.atom.metadata\"\a\n" +
 	"\x05Empty\"$\n" +
 	"\x04Mock\x12\x1c\n" +
-	"\tproducers\x18\x01 \x03(\tR\tproducers\"\xb0\x01\n" +
-	"\x02TV\x12\x16\n" +
+	"\tproducers\x18\x01 \x03(\tR\tproducers\"\xb3\x01\n" +
+	"\x05Video\x12\x16\n" +
 	"\x06genres\x18\x01 \x03(\tR\x06genres\x12 \n" +
 	"\vshowrunners\x18\x02 \x03(\tR\vshowrunners\x12\x19\n" +
 	"\bis_anime\x18\x03 \x01(\bR\aisAnime\x12\x1f\n" +
 	"\vis_animated\x18\x04 \x01(\bR\n" +
 	"isAnimated\x12\x18\n" +
 	"\astudios\x18\x05 \x03(\tR\astudios\x12\x1a\n" +
-	"\bnetworks\x18\x06 \x03(\tR\bnetworks\"\x9e\x01\n" +
+	"\bnetworks\x18\x06 \x03(\tR\bnetworks\"5\n" +
+	"\x02TV\x12/\n" +
+	"\x05video\x18\x01 \x01(\v2\x19.bene.atom.metadata.VideoR\x05video\"8\n" +
+	"\x05Movie\x12/\n" +
+	"\x05video\x18\x01 \x01(\v2\x19.bene.atom.metadata.VideoR\x05video\"\x9e\x01\n" +
 	"\x04Book\x12\x16\n" +
 	"\x06genres\x18\x01 \x03(\tR\x06genres\x12\x18\n" +
 	"\aauthors\x18\x02 \x03(\tR\aauthors\x12\"\n" +
@@ -296,19 +388,23 @@ func file_proto_metadata_proto_rawDescGZIP() []byte {
 	return file_proto_metadata_proto_rawDescData
 }
 
-var file_proto_metadata_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_proto_metadata_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_proto_metadata_proto_goTypes = []any{
 	(*Empty)(nil), // 0: bene.atom.metadata.Empty
 	(*Mock)(nil),  // 1: bene.atom.metadata.Mock
-	(*TV)(nil),    // 2: bene.atom.metadata.TV
-	(*Book)(nil),  // 3: bene.atom.metadata.Book
+	(*Video)(nil), // 2: bene.atom.metadata.Video
+	(*TV)(nil),    // 3: bene.atom.metadata.TV
+	(*Movie)(nil), // 4: bene.atom.metadata.Movie
+	(*Book)(nil),  // 5: bene.atom.metadata.Book
 }
 var file_proto_metadata_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: bene.atom.metadata.TV.video:type_name -> bene.atom.metadata.Video
+	2, // 1: bene.atom.metadata.Movie.video:type_name -> bene.atom.metadata.Video
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_proto_metadata_proto_init() }
@@ -322,7 +418,7 @@ func file_proto_metadata_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_metadata_proto_rawDesc), len(file_proto_metadata_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

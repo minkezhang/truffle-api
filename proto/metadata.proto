@@ -10,13 +10,21 @@ message Mock {
   repeated string producers = 1;
 }
 
+message Video {
+  repeated string genres      = 1;
+  repeated string showrunners = 2;
+           bool   is_anime    = 3;
+           bool   is_animated = 4;
+  repeated string studios     = 5;
+  repeated string networks    = 6;
+}
+
 message TV {
-  repeated string genres            = 1;
-  repeated string showrunners       = 2;
-           bool   is_anime          = 3;
-           bool   is_animated       = 4;
-  repeated string studios           = 5;
-  repeated string networks          = 6;
+  Video video = 1;
+}
+
+message Movie {
+  Video video = 1;
 }
 
 message Book {

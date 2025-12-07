@@ -57,7 +57,7 @@ func TestMerge(t *testing.T) {
 		want,
 		got,
 		cmp.AllowUnexported(A{}, mock.M{}),
-		cmpopts.SortSlices(func(a, b string) bool { return a < b }),
+		cmpopts.SortSlices(func(a, b string) bool { return a > b }),
 	); diff != "" {
 		t.Errorf("Merge() mismatch (-want +got):\n%s", diff)
 	}

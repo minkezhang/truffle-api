@@ -7,6 +7,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/minkezhang/bene-api/client/query"
 	"github.com/minkezhang/bene-api/db/atom"
+	"github.com/minkezhang/bene-api/db/atom/metadata/shared/video"
 	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
 
 	epb "github.com/minkezhang/bene-api/proto/go/enums"
@@ -47,7 +48,15 @@ func TestGet(t *testing.T) {
 			Studios:    []string{"TMS Entertainment"},
 		}),
 	})
-	if diff := cmp.Diff(want, got, cmp.AllowUnexported(atom.A{}, tv.M{})); diff != "" {
+	if diff := cmp.Diff(
+		want,
+		got,
+		cmp.AllowUnexported(
+			atom.A{},
+			tv.M{},
+			video.M{},
+		),
+	); diff != "" {
 		t.Errorf("Get() mismatch (-want +got):\n%s", diff)
 	}
 }
