@@ -9,6 +9,8 @@ import (
 	"github.com/minkezhang/bene-api/client"
 	"github.com/minkezhang/bene-api/client/query"
 	"github.com/minkezhang/bene-api/db/atom"
+	"github.com/minkezhang/bene-api/db/atom/metadata"
+	"github.com/minkezhang/bene-api/db/atom/metadata/movie"
 	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
 	"github.com/nstratos/go-myanimelist/mal"
 
@@ -18,13 +20,36 @@ import (
 var (
 	_ client.C = &C{}
 
+	// MAL returns movies and TV shows through the same endpoint, so we will
+	// need to check.
+	mediaTypes = map[epb.Type]map[string]bool{
+		epb.Type_TYPE_MOVIE: map[string]bool{
+			"movie": true,
+		},
+		epb.Type_TYPE_TV: map[string]bool{
+			"tv":      true,
+			"ova":     true,
+			"special": true,
+			"ona":     true,
+		},
+	}
+
 	fields = map[epb.Type]mal.Fields{
+		epb.Type_TYPE_MOVIE: mal.Fields{
+			"title",
+			"mean",
+			"studios",
+			"alternative_titles",
+			"genres",
+			"media_type",
+		},
 		epb.Type_TYPE_TV: mal.Fields{
 			"title",
 			"mean",
 			"studios",
 			"alternative_titles",
 			"genres",
+			"media_type",
 		},
 		epb.Type_TYPE_BOOK: mal.Fields{
 			"media_type",
@@ -73,10 +98,16 @@ func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) {
 	}
 
 	switch t := g.AtomType; t {
+	case epb.Type_TYPE_MOVIE:
+		fallthrough
 	case epb.Type_TYPE_TV:
-		result, _, err := c.mal.Anime.Details(ctx, int(id), fields[epb.Type_TYPE_TV])
+		result, _, err := c.mal.Anime.Details(ctx, int(id), fields[t])
 		if err != nil {
 			return nil, err
+		}
+
+		if !mediaTypes[t][result.MediaType] {
+			return nil, nil
 		}
 
 		titles := []atom.T{
@@ -101,12 +132,25 @@ func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) {
 			studios = append(studios, s.Name)
 		}
 
-		m := tv.New(tv.O{
-			IsAnimated: true,
-			IsAnime:    true,
-			Genres:     genres,
-			Studios:    studios,
-		})
+		var m metadata.M
+		switch t {
+		case epb.Type_TYPE_TV:
+			m = tv.New(tv.O{
+				IsAnimated: true,
+				IsAnime:    true,
+				Genres:     genres,
+				Studios:    studios,
+			})
+		case epb.Type_TYPE_MOVIE:
+			m = movie.New(movie.O{
+				IsAnimated: true,
+				IsAnime:    true,
+				Genres:     genres,
+				Studios:    studios,
+			})
+		default:
+			panic(fmt.Errorf("invalid switch type: %v", t))
+		}
 
 		a := atom.New(atom.O{
 			APIType:    c.APIType(),
@@ -118,8 +162,6 @@ func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) {
 			Metadata:   m,
 		})
 		return a, nil
-	case epb.Type_TYPE_MOVIE:
-		return nil, fmt.Errorf("unimplemented")
 	case epb.Type_TYPE_BOOK:
 		return nil, fmt.Errorf("unimplemented")
 	}

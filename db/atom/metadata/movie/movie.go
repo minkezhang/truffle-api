@@ -2,6 +2,7 @@ package movie
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/minkezhang/bene-api/db/atom/metadata"
 	"github.com/minkezhang/bene-api/db/atom/metadata/shared/video"
@@ -51,5 +52,9 @@ func (g G) Merge(t metadata.T, u metadata.T) metadata.M {
 }
 
 type M tv.M
+type O tv.O
 
-func (m *M) AtomType() epb.Type { return epb.Type_TYPE_MOVIE }
+func New(o O) *M { return (*M)(tv.New(tv.O(o))) }
+
+func (m *M) AtomType() epb.Type      { return epb.Type_TYPE_MOVIE }
+func (m *M) Equal(o metadata.M) bool { return reflect.DeepEqual(m, o) }
