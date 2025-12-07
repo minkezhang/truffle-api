@@ -2,16 +2,12 @@ package mal
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/minkezhang/bene-api/client"
 	"github.com/minkezhang/bene-api/client/query"
 	"github.com/minkezhang/bene-api/db/atom"
-	"github.com/minkezhang/bene-api/db/atom/metadata"
-	"github.com/minkezhang/bene-api/db/atom/metadata/movie"
-	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
 	"github.com/nstratos/go-myanimelist/mal"
 
 	epb "github.com/minkezhang/bene-api/proto/go/enums"
@@ -19,47 +15,6 @@ import (
 
 var (
 	_ client.C = &C{}
-
-	// MAL returns movies and TV shows through the same endpoint, so we will
-	// need to check.
-	mediaTypes = map[epb.Type]map[string]bool{
-		epb.Type_TYPE_MOVIE: map[string]bool{
-			"movie": true,
-		},
-		epb.Type_TYPE_TV: map[string]bool{
-			"tv":      true,
-			"ova":     true,
-			"special": true,
-			"ona":     true,
-		},
-	}
-
-	fields = map[epb.Type]mal.Fields{
-		epb.Type_TYPE_MOVIE: mal.Fields{
-			"title",
-			"mean",
-			"studios",
-			"alternative_titles",
-			"genres",
-			"media_type",
-		},
-		epb.Type_TYPE_TV: mal.Fields{
-			"title",
-			"mean",
-			"studios",
-			"alternative_titles",
-			"genres",
-			"media_type",
-		},
-		epb.Type_TYPE_BOOK: mal.Fields{
-			"media_type",
-			"popularity",
-			"title",
-			"alternative_titles",
-			"mean",
-			"authors{first_name,last_name}",
-		},
-	}
 )
 
 type O struct {
@@ -97,80 +52,16 @@ func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) {
 		return nil, err
 	}
 
-	switch t := g.AtomType; t {
-	case epb.Type_TYPE_MOVIE:
-		fallthrough
-	case epb.Type_TYPE_TV:
-		result, _, err := c.mal.Anime.Details(ctx, int(id), fields[t])
-		if err != nil {
-			return nil, err
-		}
-
-		if !mediaTypes[t][result.MediaType] {
-			return nil, nil
-		}
-
-		titles := []atom.T{
-			atom.T{
-				Title: result.Title,
-			},
-		}
-		if t := result.AlternativeTitles.En; t != "" {
-			titles = append(titles, atom.T{
-				Title:        t,
-				Localization: "en",
-			})
-		}
-
-		genres := []string{}
-		for _, g := range result.Genres {
-			genres = append(genres, g.Name)
-		}
-
-		studios := []string{}
-		for _, s := range result.Studios {
-			studios = append(studios, s.Name)
-		}
-
-		var m metadata.M
-		switch t {
-		case epb.Type_TYPE_TV:
-			m = tv.New(tv.O{
-				IsAnimated: true,
-				IsAnime:    true,
-				Genres:     genres,
-				Studios:    studios,
-			})
-		case epb.Type_TYPE_MOVIE:
-			m = movie.New(movie.O{
-				IsAnimated: true,
-				IsAnime:    true,
-				Genres:     genres,
-				Studios:    studios,
-			})
-		default:
-			panic(fmt.Errorf("invalid switch type: %v", t))
-		}
-
-		a := atom.New(atom.O{
-			APIType:    c.APIType(),
-			APIID:      strconv.FormatInt(int64(result.ID), 10),
-			Titles:     titles,
-			PreviewURL: result.MainPicture.Large,
-			Score:      int64(result.Mean * 10),
-			AtomType:   t,
-			Metadata:   m,
-		})
-		return a, nil
-	case epb.Type_TYPE_BOOK:
-		return nil, fmt.Errorf("unimplemented")
+	result, _, err := c.mal.Anime.Details(ctx, int(id), fields[g.AtomType])
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, nil
+	return FromAnime(g.AtomType, result), nil
 }
 
 func (c *C) Query(ctx context.Context, q *query.Q) ([]*atom.A, error) {
-	return nil, nil /* unimplmented */
+	return nil, nil
 }
 
 type transport struct {

@@ -36,6 +36,7 @@ func TestGet(t *testing.T) {
 				Titles: []atom.T{
 					atom.T{Title: "Meitantei Conan"},
 					atom.T{Title: "Case Closed", Localization: "en"},
+					atom.T{Title: "名探偵コナン", Localization: "ja"},
 				},
 				PreviewURL: "https://cdn.myanimelist.net/images/anime/7/75199l.jpg",
 				Score:      81,
@@ -58,6 +59,7 @@ func TestGet(t *testing.T) {
 				Titles: []atom.T{
 					atom.T{Title: "Koe no Katachi"},
 					atom.T{Title: "A Silent Voice", Localization: "en"},
+					atom.T{Title: "聲の形", Localization: "ja"},
 				},
 				PreviewURL: "https://cdn.myanimelist.net/images/anime/1122/96435l.webp",
 				Score:      89,
