@@ -15,6 +15,7 @@ import (
 	"github.com/minkezhang/bene-api/db/atom/internal/utils/merge"
 	"github.com/minkezhang/bene-api/db/atom/metadata"
 	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
+	"github.com/minkezhang/bene-api/db/atom/metadata/movie"
 	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
 	"google.golang.org/protobuf/proto"
 
@@ -46,6 +47,8 @@ func Load(msg proto.Message) *A {
 	switch t := pb.GetType(); t {
 	case epb.Type_TYPE_TV:
 		a.SetMetadata(tv.G{}.Load(pb.GetMetadataTv()))
+	case epb.Type_TYPE_MOVIE:
+		a.SetMetadata(movie.G{}.Load(pb.GetMetadataMovie()))
 	default:
 		a.SetMetadata(empty.G{}.Load(pb.GetMetadataEmpty()))
 	}
@@ -73,6 +76,8 @@ func Save(a *A) proto.Message {
 	switch t := a.AtomType(); t {
 	case epb.Type_TYPE_TV:
 		pb.Metadata = &apb.Atom_MetadataTv{MetadataTv: tv.G{}.Save(a.Metadata().(*tv.M)).(*mpb.TV)}
+	case epb.Type_TYPE_MOVIE:
+		pb.Metadata = &apb.Atom_MetadataMovie{MetadataMovie: movie.G{}.Save(a.Metadata().(*movie.M)).(*mpb.Movie)}
 	default:
 		pb.Metadata = &apb.Atom_MetadataEmpty{MetadataEmpty: empty.G{}.Save(a.Metadata().(empty.M)).(*mpb.Empty)}
 	}
@@ -227,6 +232,8 @@ func MergeMetadata(t metadata.T, u metadata.T) metadata.M {
 		return empty.G{}.Merge(t, u)
 	case *tv.M:
 		return tv.G{}.Merge(t, u)
+	case *movie.M:
+		return movie.G{}.Merge(t, u)
 	default:
 		panic(fmt.Errorf("cannot merge unsupported metadata type: %v", mt))
 	}
