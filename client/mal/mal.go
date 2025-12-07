@@ -2,6 +2,7 @@ package mal
 
 import (
 	"context"
+	"math"
 	"net/http"
 	"strconv"
 
@@ -61,7 +62,65 @@ func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) {
 }
 
 func (c *C) Query(ctx context.Context, q *query.Q) ([]*atom.A, error) {
-	return nil, nil
+	var res []*atom.A
+
+	// MAL API sometimes returns duplicate entries
+	unique := map[string]bool{}
+
+	f := func(resp *mal.Response) ([]mal.Anime, *mal.Response, error) {
+		if resp != nil && resp.NextOffset == 0 {
+			return nil, nil, nil
+		}
+		var offset int
+		if resp != nil {
+			offset = resp.NextOffset
+		}
+		results, resp, err := c.mal.Anime.List(
+			ctx,
+			q.Title(),
+			// Union TV and Movie atom type results
+			fields[epb.Type_TYPE_TV],
+			mal.Limit(math.Min(100, float64(c.results))),
+			mal.Offset(offset),
+			mal.NSFW(c.nsfw),
+		)
+		return results, resp, err
+	}
+
+	for _, t := range []epb.Type{epb.Type_TYPE_TV, epb.Type_TYPE_MOVIE} {
+		if q.IsSupportedType(t) {
+			var results []mal.Anime
+
+			var page []mal.Anime
+			var resp *mal.Response
+			var err error
+
+			// Aggregate all results
+			for page, resp, err = f(nil); err == nil && page != nil && len(results) <= int(c.results); page, resp, err = f(resp) {
+				results = append(results, page...)
+			}
+			if err != nil {
+				return nil, err
+			}
+
+			for _, r := range results {
+				// Trim obscure series
+				if popularity := c.cutoff; popularity >= 0 && r.Popularity >= int(popularity) {
+					continue
+				}
+				if !types[t][r.MediaType] {
+					continue
+				}
+
+				if !unique[strconv.FormatInt(int64(r.ID), 10)] {
+					unique[strconv.FormatInt(int64(r.ID), 10)] = true
+					res = append(res, FromAnime(t, &r))
+				}
+			}
+		}
+	}
+
+	return res, nil
 }
 
 type transport struct {

@@ -2,6 +2,7 @@ package mal
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -72,6 +73,12 @@ func TestGet(t *testing.T) {
 				}),
 			}),
 		},
+		{
+			name:     "IncorrectType",
+			atomType: epb.Type_TYPE_MOVIE,
+			id:       "235",
+			want:     nil,
+		},
 	}
 
 	for _, c := range configs {
@@ -99,5 +106,39 @@ func TestGet(t *testing.T) {
 				t.Errorf("Get() mismatch (-want +got):\n%s", diff)
 			}
 		})
+	}
+}
+
+func TestList(t *testing.T) {
+	client := New(O{
+		ClientID:         MALClientID,
+		PopularityCutoff: 1000,
+		MaxResults:       100,
+		NSFW:             true,
+	})
+	res, err := client.Query(
+		context.Background(),
+		query.New(query.O{
+			AtomTypes: []epb.Type{
+				epb.Type_TYPE_TV,
+				epb.Type_TYPE_MOVIE,
+			},
+			Title: "Digimon Adventure tri. 2: Ketsui",
+		}),
+	)
+	if err != nil {
+		t.Errorf("Query() returned unexpected error: %v", err)
+	}
+
+	for _, r := range res {
+		fmt.Println(
+			struct {
+				titles []atom.T
+				id     string
+			}{
+				titles: r.Titles(),
+				id:     r.APIID(),
+			},
+		)
 	}
 }
