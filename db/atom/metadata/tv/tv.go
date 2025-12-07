@@ -2,7 +2,6 @@ package tv
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/minkezhang/bene-api/db/atom/metadata"
 	"github.com/minkezhang/bene-api/db/atom/metadata/shared/video"
@@ -69,6 +68,5 @@ func New(o O) *M {
 	}
 }
 
-func (m *M) AtomType() epb.Type      { return epb.Type_TYPE_TV }
-func (m *M) Equal(o metadata.M) bool { return reflect.DeepEqual(m, o) }
-func (m *M) Copy() metadata.M        { return &M{M: m.M.Copy().(*video.M)} }
+func (m *M) AtomType() epb.Type { return epb.Type_TYPE_TV }
+func (m *M) Copy() metadata.M   { return &M{M: m.M.Copy().(*video.M)} }

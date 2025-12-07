@@ -8,7 +8,7 @@ import (
 	"github.com/minkezhang/bene-api/client/query"
 	"github.com/minkezhang/bene-api/db/atom"
 	"github.com/minkezhang/bene-api/db/atom/metadata/movie"
-	// "github.com/minkezhang/bene-api/db/atom/metadata/shared/video"
+	"github.com/minkezhang/bene-api/db/atom/metadata/shared/video"
 	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
 
 	epb "github.com/minkezhang/bene-api/proto/go/enums"
@@ -91,9 +91,7 @@ func TestGet(t *testing.T) {
 				got,
 				cmp.AllowUnexported(
 					atom.A{},
-					// tv.M{},
-					// video.M{},
-					// movie.M{},
+					video.M{},
 				),
 			); diff != "" {
 				t.Errorf("Get() mismatch (-want +got):\n%s", diff)

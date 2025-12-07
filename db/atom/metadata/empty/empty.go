@@ -35,6 +35,5 @@ func (g G) Merge(t metadata.T, u metadata.T) metadata.M { return u.M.Copy() }
 
 type M struct{}
 
-func (m M) AtomType() epb.Type      { return epb.Type_TYPE_NONE }
-func (m M) Equal(o metadata.M) bool { return true }
-func (m M) Copy() metadata.M        { return M{} }
+func (m M) AtomType() epb.Type { return epb.Type_TYPE_NONE }
+func (m M) Copy() metadata.M   { return M{} }

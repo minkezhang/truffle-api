@@ -22,5 +22,4 @@ type G interface {
 type M interface {
 	AtomType() epb.Type
 	Copy() M
-	Equal(o M) bool
 }

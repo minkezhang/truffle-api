@@ -2,7 +2,6 @@ package video
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/minkezhang/bene-api/db/atom/internal/utils/merge"
 	"github.com/minkezhang/bene-api/db/atom/metadata"
@@ -108,8 +107,6 @@ func (m *M) SetIsAnimated(v bool)      { m.isAnimated = v }
 func (m *M) SetIsAnime(v bool)         { m.isAnime = v }
 func (m *M) SetStudios(v []string)     { m.studios = append([]string{}, v...) }
 func (m *M) SetNetworks(v []string)    { m.studios = append([]string{}, v...) }
-
-func (m *M) Equal(o metadata.M) bool { return reflect.DeepEqual(m, o) }
 
 func (m *M) Copy() metadata.M {
 	return New(O{
