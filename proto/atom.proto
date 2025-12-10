@@ -25,5 +25,6 @@ message Atom {
              bene.atom.metadata.Empty metadata_empty = 100;
              bene.atom.metadata.TV    metadata_tv    = 101;
              bene.atom.metadata.Movie metadata_movie = 102;
+             bene.atom.metadata.Book  metadata_book  = 103;
            }
 }

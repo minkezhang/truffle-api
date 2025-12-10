@@ -90,6 +90,7 @@ type Atom struct {
 	//	*Atom_MetadataEmpty
 	//	*Atom_MetadataTv
 	//	*Atom_MetadataMovie
+	//	*Atom_MetadataBook
 	Metadata      isAtom_Metadata `protobuf_oneof:"metadata"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -208,6 +209,15 @@ func (x *Atom) GetMetadataMovie() *metadata.Movie {
 	return nil
 }
 
+func (x *Atom) GetMetadataBook() *metadata.Book {
+	if x != nil {
+		if x, ok := x.Metadata.(*Atom_MetadataBook); ok {
+			return x.MetadataBook
+		}
+	}
+	return nil
+}
+
 type isAtom_Metadata interface {
 	isAtom_Metadata()
 }
@@ -224,11 +234,17 @@ type Atom_MetadataMovie struct {
 	MetadataMovie *metadata.Movie `protobuf:"bytes,102,opt,name=metadata_movie,json=metadataMovie,proto3,oneof"`
 }
 
+type Atom_MetadataBook struct {
+	MetadataBook *metadata.Book `protobuf:"bytes,103,opt,name=metadata_book,json=metadataBook,proto3,oneof"`
+}
+
 func (*Atom_MetadataEmpty) isAtom_Metadata() {}
 
 func (*Atom_MetadataTv) isAtom_Metadata() {}
 
 func (*Atom_MetadataMovie) isAtom_Metadata() {}
+
+func (*Atom_MetadataBook) isAtom_Metadata() {}
 
 var File_proto_atom_proto protoreflect.FileDescriptor
 
@@ -237,7 +253,7 @@ const file_proto_atom_proto_rawDesc = "" +
 	"\x10proto/atom.proto\x12\tbene.atom\x1a\x11proto/enums.proto\x1a\x14proto/metadata.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"A\n" +
 	"\x05Title\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\"\n" +
-	"\flocalization\x18\x02 \x01(\tR\flocalization\"\xab\x03\n" +
+	"\flocalization\x18\x02 \x01(\tR\flocalization\"\xec\x03\n" +
 	"\x04Atom\x12$\n" +
 	"\x04type\x18\x01 \x01(\x0e2\x10.bene.enums.TypeR\x04type\x12!\n" +
 	"\x03api\x18\x02 \x01(\x0e2\x0f.bene.enums.APIR\x03api\x12(\n" +
@@ -250,7 +266,8 @@ const file_proto_atom_proto_rawDesc = "" +
 	"\x0emetadata_empty\x18d \x01(\v2\x19.bene.atom.metadata.EmptyH\x00R\rmetadataEmpty\x129\n" +
 	"\vmetadata_tv\x18e \x01(\v2\x16.bene.atom.metadata.TVH\x00R\n" +
 	"metadataTv\x12B\n" +
-	"\x0emetadata_movie\x18f \x01(\v2\x19.bene.atom.metadata.MovieH\x00R\rmetadataMovieB\n" +
+	"\x0emetadata_movie\x18f \x01(\v2\x19.bene.atom.metadata.MovieH\x00R\rmetadataMovie\x12?\n" +
+	"\rmetadata_book\x18g \x01(\v2\x18.bene.atom.metadata.BookH\x00R\fmetadataBookB\n" +
 	"\n" +
 	"\bmetadataB.Z,github.com/minkezhang/bene-api/proto/go/atomb\x06proto3"
 
@@ -275,6 +292,7 @@ var file_proto_atom_proto_goTypes = []any{
 	(*metadata.Empty)(nil), // 4: bene.atom.metadata.Empty
 	(*metadata.TV)(nil),    // 5: bene.atom.metadata.TV
 	(*metadata.Movie)(nil), // 6: bene.atom.metadata.Movie
+	(*metadata.Book)(nil),  // 7: bene.atom.metadata.Book
 }
 var file_proto_atom_proto_depIdxs = []int32{
 	2, // 0: bene.atom.Atom.type:type_name -> bene.enums.Type
@@ -283,11 +301,12 @@ var file_proto_atom_proto_depIdxs = []int32{
 	4, // 3: bene.atom.Atom.metadata_empty:type_name -> bene.atom.metadata.Empty
 	5, // 4: bene.atom.Atom.metadata_tv:type_name -> bene.atom.metadata.TV
 	6, // 5: bene.atom.Atom.metadata_movie:type_name -> bene.atom.metadata.Movie
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	7, // 6: bene.atom.Atom.metadata_book:type_name -> bene.atom.metadata.Book
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_proto_atom_proto_init() }
@@ -299,6 +318,7 @@ func file_proto_atom_proto_init() {
 		(*Atom_MetadataEmpty)(nil),
 		(*Atom_MetadataTv)(nil),
 		(*Atom_MetadataMovie)(nil),
+		(*Atom_MetadataBook)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

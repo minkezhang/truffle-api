@@ -14,6 +14,7 @@ import (
 	"github.com/minkezhang/bene-api/db/atom/internal/metadata/mock"
 	"github.com/minkezhang/bene-api/db/atom/internal/utils/merge"
 	"github.com/minkezhang/bene-api/db/atom/metadata"
+	"github.com/minkezhang/bene-api/db/atom/metadata/book"
 	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
 	"github.com/minkezhang/bene-api/db/atom/metadata/movie"
 	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
@@ -49,6 +50,8 @@ func Load(msg proto.Message) *A {
 		a.SetMetadata(tv.G{}.Load(pb.GetMetadataTv()))
 	case epb.Type_TYPE_MOVIE:
 		a.SetMetadata(movie.G{}.Load(pb.GetMetadataMovie()))
+	case epb.Type_TYPE_BOOK:
+		a.SetMetadata(book.G{}.Load(pb.GetMetadataBook()))
 	default:
 		a.SetMetadata(empty.G{}.Load(pb.GetMetadataEmpty()))
 	}
@@ -78,6 +81,8 @@ func Save(a *A) proto.Message {
 		pb.Metadata = &apb.Atom_MetadataTv{MetadataTv: tv.G{}.Save(a.Metadata().(*tv.M)).(*mpb.TV)}
 	case epb.Type_TYPE_MOVIE:
 		pb.Metadata = &apb.Atom_MetadataMovie{MetadataMovie: movie.G{}.Save(a.Metadata().(*movie.M)).(*mpb.Movie)}
+	case epb.Type_TYPE_BOOK:
+		pb.Metadata = &apb.Atom_MetadataBook{MetadataBook: book.G{}.Save(a.Metadata().(*book.M)).(*mpb.Book)}
 	default:
 		pb.Metadata = &apb.Atom_MetadataEmpty{MetadataEmpty: empty.G{}.Save(a.Metadata().(empty.M)).(*mpb.Empty)}
 	}
@@ -234,6 +239,8 @@ func MergeMetadata(t metadata.T, u metadata.T) metadata.M {
 		return tv.G{}.Merge(t, u)
 	case *movie.M:
 		return movie.G{}.Merge(t, u)
+	case *book.M:
+		return book.G{}.Merge(t, u)
 	default:
 		panic(fmt.Errorf("cannot merge unsupported metadata type: %v", mt))
 	}
