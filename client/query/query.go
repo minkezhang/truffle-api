@@ -1,11 +1,20 @@
 package query
 
 import (
+	"math"
 	"regexp"
+	"strings"
 
+	"github.com/adrg/strutil"
+	"github.com/adrg/strutil/metrics"
+	"github.com/hbollon/go-edlib"
 	"github.com/minkezhang/bene-api/db/atom"
 
 	epb "github.com/minkezhang/bene-api/proto/go/enums"
+)
+
+const (
+	reward = 0.5
 )
 
 type G struct {
@@ -34,24 +43,89 @@ func New(o O) *Q {
 	return q
 }
 
+func (q *Q) AtomTypes() []epb.Type {
+	var ts []epb.Type
+	for t := range q.types {
+		ts = append(ts, t)
+	}
+	return ts
+}
+
 func (q *Q) IsSupportedType(v epb.Type) bool { return q.types[v] }
 func (q *Q) Title() string                   { return q.title }
 
-func (q *Q) Match(a *atom.A) (bool, error) {
-	pattern, err := regexp.Compile(q.Title())
+func RegExp(q *Q, a *atom.A) (float64, error) {
+	pattern, err := regexp.Compile(strings.ToLower(q.Title()))
 	if err != nil {
-		return false, err
+		return 0, err
 	}
 
 	if !q.IsSupportedType(a.AtomType()) {
-		return false, nil
+		return 0, nil
 	}
 
 	for _, t := range a.Titles() {
-		if pattern.MatchString(t.Title) {
-			return true, nil
+		if pattern.MatchString(strings.ToLower(t.Title)) {
+			return 1, nil
 		}
 	}
-	return false, nil
+	return 0, nil
 
+}
+
+func Jaccard(q *Q, a *atom.A) (float64, error) {
+	if !q.IsSupportedType(a.AtomType()) {
+		return 0, nil
+	}
+
+	score := float64(0)
+	j := metrics.NewJaccard()
+	j.CaseSensitive = false
+	for _, t := range a.Titles() {
+		score = math.Max(score, strutil.Similarity(q.Title(), t.Title, j))
+	}
+
+	if h, _ := RegExp(q, a); h > 0 {
+		score = math.Min(score+reward, 1)
+	}
+
+	return score, nil
+}
+
+func Hamming(q *Q, a *atom.A) (float64, error) {
+	if !q.IsSupportedType(a.AtomType()) {
+		return 0, nil
+	}
+
+	score := float64(0)
+	h := metrics.NewHamming()
+	h.CaseSensitive = false
+	for _, t := range a.Titles() {
+		score = math.Max(score, strutil.Similarity(q.Title(), t.Title, h))
+	}
+
+	if h, _ := RegExp(q, a); h > 0 {
+		score = math.Min(score+reward, 1)
+	}
+
+	return score, nil
+}
+
+func LCS(q *Q, a *atom.A) (float64, error) {
+	if !q.IsSupportedType(a.AtomType()) {
+		return 0, nil
+	}
+
+	score := float64(0)
+	for _, t := range a.Titles() {
+		score = math.Max(
+			score,
+			(2*float64(edlib.LCS(q.Title(), t.Title)))/float64(len(q.Title())+len(t.Title)))
+	}
+
+	if h, _ := RegExp(q, a); h > 0 {
+		score = math.Min(score+reward, 1)
+	}
+
+	return score, nil
 }

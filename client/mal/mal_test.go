@@ -2,10 +2,10 @@ package mal
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/minkezhang/bene-api/client/query"
 	"github.com/minkezhang/bene-api/db/atom"
 	"github.com/minkezhang/bene-api/db/atom/metadata/movie"
@@ -102,6 +102,11 @@ func TestGet(t *testing.T) {
 					atom.A{},
 					video.M{},
 				),
+				cmpopts.IgnoreFields(
+					atom.A{},
+					"synopsis",
+					"previewURL",
+				),
 			); diff != "" {
 				t.Errorf("Get() mismatch (-want +got):\n%s", diff)
 			}
@@ -110,35 +115,89 @@ func TestGet(t *testing.T) {
 }
 
 func TestList(t *testing.T) {
-	client := New(O{
-		ClientID:         MALClientID,
-		PopularityCutoff: 1000,
-		MaxResults:       100,
-		NSFW:             true,
-	})
-	res, err := client.Query(
-		context.Background(),
-		query.New(query.O{
-			AtomTypes: []epb.Type{
-				epb.Type_TYPE_TV,
-				epb.Type_TYPE_MOVIE,
+	configs := []struct {
+		name  string
+		query *query.Q
+		want  []*atom.A
+	}{
+		{
+			name: "Base",
+			query: query.New(query.O{
+				AtomTypes: []epb.Type{
+					epb.Type_TYPE_TV,
+					epb.Type_TYPE_MOVIE,
+				},
+				Title: "Digimon Tamers",
+			}),
+			want: []*atom.A{
+				atom.New(atom.O{
+					APIType:  epb.API_API_MAL,
+					APIID:    "874", // Digimon Tamers
+					AtomType: epb.Type_TYPE_TV,
+				}),
+				atom.New(atom.O{
+					APIType:  epb.API_API_MAL,
+					APIID:    "3033", // Digimon Tamers: Runaway Locomon
+					AtomType: epb.Type_TYPE_MOVIE,
+				}),
 			},
-			Title: "Digimon Adventure tri. 2: Ketsui",
-		}),
-	)
-	if err != nil {
-		t.Errorf("Query() returned unexpected error: %v", err)
+		},
+		{
+			name: "FilterType",
+			query: query.New(query.O{
+				AtomTypes: []epb.Type{
+					epb.Type_TYPE_MOVIE,
+				},
+				Title: "Digimon Tamers",
+			}),
+			want: []*atom.A{
+				atom.New(atom.O{
+					APIType:  epb.API_API_MAL,
+					APIID:    "3033", // Digimon Tamers: Runaway Locomon
+					AtomType: epb.Type_TYPE_MOVIE,
+				}),
+				atom.New(atom.O{
+					APIType:  epb.API_API_MAL,
+					APIID:    "3032", // Digimon Tamers: Battle of Adventurers
+					AtomType: epb.Type_TYPE_MOVIE,
+				}),
+			},
+		},
 	}
 
-	for _, r := range res {
-		fmt.Println(
-			struct {
-				titles []atom.T
-				id     string
-			}{
-				titles: r.Titles(),
-				id:     r.APIID(),
-			},
-		)
+	for _, c := range configs {
+		t.Run(c.name, func(t *testing.T) {
+
+			client := New(O{
+				ClientID:         MALClientID,
+				PopularityCutoff: 10000,
+				MaxResults:       2,
+				NSFW:             true,
+			})
+			got, err := client.Query(context.Background(), c.query)
+
+			if err != nil {
+				t.Errorf("Query() returned unexpected error: %v", err)
+			}
+
+			if diff := cmp.Diff(
+				c.want,
+				got,
+				cmp.AllowUnexported(
+					atom.A{},
+					video.M{},
+				),
+				cmpopts.IgnoreFields(
+					atom.A{},
+					"synopsis",
+					"previewURL",
+					"metadata",
+					"score",
+					"titles",
+				),
+			); diff != "" {
+				t.Errorf("Query() mismatch (-want +got):\n%s", diff)
+			}
+		})
 	}
 }

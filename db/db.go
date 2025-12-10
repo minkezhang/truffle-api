@@ -11,6 +11,7 @@ import (
 	"github.com/minkezhang/bene-api/db/node"
 	"github.com/minkezhang/bene-api/db/query"
 
+	cq "github.com/minkezhang/bene-api/client/query"
 	epb "github.com/minkezhang/bene-api/proto/go/enums"
 )
 
@@ -104,11 +105,11 @@ func (db *DB) Query(ctx context.Context, q *query.Q) ([]*node.N, error) {
 	if q.IsSupportedAPI(epb.API_API_BENE) {
 		for atomType := range db.data {
 			for _, n := range db.data[atomType] {
-				match, err := q.Match(n.Virtual())
+				match, err := cq.RegExp(q.Q, n.Virtual())
 				if err != nil {
 					return nil, err
 				}
-				if match {
+				if match > 0 {
 					res = append(res, n.Copy())
 				}
 			}

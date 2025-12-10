@@ -33,11 +33,11 @@ func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) { return c.data
 func (c *C) Query(ctx context.Context, q *query.Q) ([]*atom.A, error) {
 	res := []*atom.A{}
 	for _, a := range c.data {
-		match, err := q.Match(a)
+		match, err := query.RegExp(q, a)
 		if err != nil {
 			return nil, err
 		}
-		if match {
+		if match > 0 {
 			res = append(res, a)
 		}
 	}
