@@ -80,7 +80,11 @@ func (c *C) Query(ctx context.Context, q *query.Q) ([]*atom.A, error) {
 		results = append(results, atoms...)
 	}
 	if q.IsSupportedType(epb.Type_TYPE_BOOK) {
-		/* unimplemented */
+		atoms, err := c.manga.Query(ctx, q)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, atoms...)
 	}
 	return results, nil
 }

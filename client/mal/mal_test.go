@@ -176,17 +176,17 @@ func TestList(t *testing.T) {
 				AtomTypes: []epb.Type{
 					epb.Type_TYPE_BOOK,
 				},
-				Title: "Apothecary Diaries",
+				Title: "The Apothecary Diaries",
 			}),
 			want: []*atom.A{
 				atom.New(atom.O{
 					APIType:  epb.API_API_MAL,
-					APIID:    "874", // Digimon Tamers
+					APIID:    "86769", // The Apothecary Diaries (light novel)
 					AtomType: epb.Type_TYPE_BOOK,
 				}),
 				atom.New(atom.O{
 					APIType:  epb.API_API_MAL,
-					APIID:    "3033", // Digimon Tamers: Runaway Locomon
+					APIID:    "107562", // The Apothecary Diaries (manga)
 					AtomType: epb.Type_TYPE_BOOK,
 				}),
 			},
