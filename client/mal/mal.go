@@ -6,6 +6,7 @@ import (
 
 	"github.com/minkezhang/bene-api/client"
 	"github.com/minkezhang/bene-api/client/mal/anime"
+	"github.com/minkezhang/bene-api/client/mal/manga"
 	"github.com/minkezhang/bene-api/client/query"
 	"github.com/minkezhang/bene-api/db/atom"
 	"github.com/nstratos/go-myanimelist/mal"
@@ -36,11 +37,22 @@ func New(o O) *C {
 				},
 			),
 		},
+		manga: &manga.C{
+			Cutoff:  int(o.PopularityCutoff),
+			Results: int(o.MaxResults),
+			NSFW:    o.NSFW,
+			MAL: *mal.NewClient(
+				&http.Client{
+					Transport: transport{id: o.ClientID},
+				},
+			),
+		},
 	}
 }
 
 type C struct {
 	anime *anime.C
+	manga *manga.C
 }
 
 func (c *C) APIType() epb.API { return epb.API_API_MAL }
@@ -51,6 +63,8 @@ func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) {
 		fallthrough
 	case epb.Type_TYPE_MOVIE:
 		return c.anime.Get(ctx, g)
+	case epb.Type_TYPE_BOOK:
+		return c.manga.Get(ctx, g)
 	default:
 		return nil, nil /* unimplemented */
 	}

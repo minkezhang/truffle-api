@@ -8,6 +8,7 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/minkezhang/bene-api/client/query"
 	"github.com/minkezhang/bene-api/db/atom"
+	"github.com/minkezhang/bene-api/db/atom/metadata/book"
 	"github.com/minkezhang/bene-api/db/atom/metadata/movie"
 	"github.com/minkezhang/bene-api/db/atom/metadata/shared/video"
 	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
@@ -27,6 +28,54 @@ func TestGet(t *testing.T) {
 		id       string
 		want     *atom.A
 	}{
+		{
+			name:     "Book/Manga",
+			atomType: epb.Type_TYPE_BOOK,
+			id:       "1061", // Detective Conan
+			want: atom.New(atom.O{
+				APIType: epb.API_API_MAL,
+				APIID:   "1061",
+				Titles: []atom.T{
+					atom.T{Title: "Meitantei Conan"},
+					atom.T{Title: "Case Closed", Localization: "en"},
+					atom.T{Title: "名探偵コナン", Localization: "ja"},
+				},
+				PreviewURL: "https://cdn.myanimelist.net/images/anime/7/75199l.jpg",
+				Score:      82,
+				AtomType:   epb.Type_TYPE_BOOK,
+				Metadata: book.New(book.O{
+					Genres:        []string{"Adventure", "Award Winning", "Comedy", "Detective", "Mystery", "Shounen"},
+					Authors:       []string{"Gosho Aoyama"},
+					Illustrators:  []string{"Gosho Aoyama"},
+					IsIllustrated: true,
+					IsManga:       true,
+				}),
+			}),
+		},
+		{
+			name:     "Book/LightNovel",
+			atomType: epb.Type_TYPE_BOOK,
+			id:       "86769", // Apothecary Diaries
+			want: atom.New(atom.O{
+				APIType: epb.API_API_MAL,
+				APIID:   "86769",
+				Titles: []atom.T{
+					atom.T{Title: "Kusuriya no Hitorigoto"},
+					atom.T{Title: "The Apothecary Diaries", Localization: "en"},
+					atom.T{Title: "薬屋のひとりごと", Localization: "ja"},
+				},
+				PreviewURL: "https://cdn.myanimelist.net/images/manga/2/176943l.jpg",
+				Score:      88,
+				AtomType:   epb.Type_TYPE_BOOK,
+				Metadata: book.New(book.O{
+					Genres:        []string{"Drama", "Medical", "Mystery"},
+					Authors:       []string{"Natsu Hyuuga"},
+					Illustrators:  []string{"Touko Shino"},
+					IsIllustrated: false,
+					IsManga:       true,
+				}),
+			}),
+		},
 		{
 			name:     "TV",
 			atomType: epb.Type_TYPE_TV,
@@ -101,6 +150,7 @@ func TestGet(t *testing.T) {
 				cmp.AllowUnexported(
 					atom.A{},
 					video.M{},
+					book.M{},
 				),
 				cmpopts.IgnoreFields(
 					atom.A{},
@@ -121,7 +171,28 @@ func TestList(t *testing.T) {
 		want  []*atom.A
 	}{
 		{
-			name: "Base",
+			name: "Filter/Book",
+			query: query.New(query.O{
+				AtomTypes: []epb.Type{
+					epb.Type_TYPE_BOOK,
+				},
+				Title: "Apothecary Diaries",
+			}),
+			want: []*atom.A{
+				atom.New(atom.O{
+					APIType:  epb.API_API_MAL,
+					APIID:    "874", // Digimon Tamers
+					AtomType: epb.Type_TYPE_BOOK,
+				}),
+				atom.New(atom.O{
+					APIType:  epb.API_API_MAL,
+					APIID:    "3033", // Digimon Tamers: Runaway Locomon
+					AtomType: epb.Type_TYPE_BOOK,
+				}),
+			},
+		},
+		{
+			name: "Filter/TVAndMovie",
 			query: query.New(query.O{
 				AtomTypes: []epb.Type{
 					epb.Type_TYPE_TV,
@@ -143,7 +214,7 @@ func TestList(t *testing.T) {
 			},
 		},
 		{
-			name: "FilterType",
+			name: "Filter/Movie",
 			query: query.New(query.O{
 				AtomTypes: []epb.Type{
 					epb.Type_TYPE_MOVIE,

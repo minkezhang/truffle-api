@@ -21,6 +21,7 @@ var (
 		"media_type",
 		"title",
 		"alternative_titles",
+		"main_picture",
 		"mean",
 		"studios",
 		"synopsis",
