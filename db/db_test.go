@@ -5,14 +5,14 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/minkezhang/bene-api/client"
-	"github.com/minkezhang/bene-api/db/atom"
-	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
-	"github.com/minkezhang/bene-api/db/internal/client/mock"
-	"github.com/minkezhang/bene-api/db/node"
-	"github.com/minkezhang/bene-api/db/query"
+	"github.com/minkezhang/truffle-api/client"
+	"github.com/minkezhang/truffle-api/db/atom"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/empty"
+	"github.com/minkezhang/truffle-api/db/internal/client/mock"
+	"github.com/minkezhang/truffle-api/db/node"
+	"github.com/minkezhang/truffle-api/db/query"
 
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 func TestGet(t *testing.T) {
@@ -27,7 +27,7 @@ func TestGet(t *testing.T) {
 		AtomType:        epb.Type_TYPE_TV,
 		Atoms: []*atom.A{
 			atom.New(atom.O{
-				APIType: epb.API_API_BENE,
+				APIType: epb.API_API_TRUFFLE,
 				APIID:   "bar",
 				Titles: []atom.T{
 					{Title: "Firefly"},
@@ -38,7 +38,7 @@ func TestGet(t *testing.T) {
 				Metadata:   empty.M{},
 			}),
 			atom.New(atom.O{
-				APIType: epb.API_API_BENE,
+				APIType: epb.API_API_TRUFFLE,
 				APIID:   "baz",
 				Titles: []atom.T{
 					{Title: "Firefly: The Complete Series"},
@@ -81,7 +81,7 @@ func TestRemove(t *testing.T) {
 		AtomType:        epb.Type_TYPE_TV,
 		Atoms: []*atom.A{
 			atom.New(atom.O{
-				APIType: epb.API_API_BENE,
+				APIType: epb.API_API_TRUFFLE,
 				APIID:   "bar",
 				Titles: []atom.T{
 					{Title: "Firefly"},
@@ -92,7 +92,7 @@ func TestRemove(t *testing.T) {
 				Metadata:   empty.M{},
 			}),
 			atom.New(atom.O{
-				APIType: epb.API_API_BENE,
+				APIType: epb.API_API_TRUFFLE,
 				APIID:   "baz",
 				Titles: []atom.T{
 					{Title: "Firefly: The Complete Series"},
@@ -129,7 +129,7 @@ func TestQuery(t *testing.T) {
 			AtomType:        epb.Type_TYPE_TV,
 			Atoms: []*atom.A{
 				atom.New(atom.O{
-					APIType: epb.API_API_BENE,
+					APIType: epb.API_API_TRUFFLE,
 					APIID:   "bar",
 					Titles: []atom.T{
 						{Title: "Firefly"},
@@ -140,7 +140,7 @@ func TestQuery(t *testing.T) {
 					Metadata:   empty.M{},
 				}),
 				atom.New(atom.O{
-					APIType: epb.API_API_BENE,
+					APIType: epb.API_API_TRUFFLE,
 					APIID:   "baz",
 					Titles: []atom.T{
 						{Title: "Firefly: The Complete Series"},
@@ -159,7 +159,7 @@ func TestQuery(t *testing.T) {
 		db.Add(context.Background(), n)
 
 		got, err := db.Query(context.Background(), query.New(query.O{
-			APIs:      []epb.API{epb.API_API_BENE},
+			APIs:      []epb.API{epb.API_API_TRUFFLE},
 			AtomTypes: []epb.Type{m.AtomType()},
 			Title:     "fly",
 		}))
@@ -181,7 +181,7 @@ func TestQuery(t *testing.T) {
 			AtomType: epb.Type_TYPE_TV,
 			Atoms: []*atom.A{
 				atom.New(atom.O{
-					APIType: epb.API_API_BENE,
+					APIType: epb.API_API_TRUFFLE,
 					APIID:   "bar",
 					Titles: []atom.T{
 						{Title: "Firefly"},

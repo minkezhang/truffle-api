@@ -3,13 +3,13 @@ package movie
 import (
 	"fmt"
 
-	"github.com/minkezhang/bene-api/db/atom/metadata"
-	"github.com/minkezhang/bene-api/db/atom/metadata/shared/video"
-	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
+	"github.com/minkezhang/truffle-api/db/atom/metadata"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/shared/video"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/tv"
 	"google.golang.org/protobuf/proto"
 
-	mpb "github.com/minkezhang/bene-api/proto/go/atom/metadata"
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	mpb "github.com/minkezhang/truffle-api/proto/go/atom/metadata"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 var (

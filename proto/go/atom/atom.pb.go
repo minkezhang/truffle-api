@@ -7,8 +7,8 @@
 package atom
 
 import (
-	metadata "github.com/minkezhang/bene-api/proto/go/atom/metadata"
-	enums "github.com/minkezhang/bene-api/proto/go/enums"
+	metadata "github.com/minkezhang/truffle-api/proto/go/atom/metadata"
+	enums "github.com/minkezhang/truffle-api/proto/go/enums"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/known/timestamppb"
@@ -78,8 +78,8 @@ func (x *Title) GetLocalization() string {
 
 type Atom struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
-	Type       enums.Type             `protobuf:"varint,1,opt,name=type,proto3,enum=bene.enums.Type" json:"type,omitempty"`
-	Api        enums.API              `protobuf:"varint,2,opt,name=api,proto3,enum=bene.enums.API" json:"api,omitempty"`
+	Type       enums.Type             `protobuf:"varint,1,opt,name=type,proto3,enum=truffle.enums.Type" json:"type,omitempty"`
+	Api        enums.API              `protobuf:"varint,2,opt,name=api,proto3,enum=truffle.enums.API" json:"api,omitempty"`
 	Titles     []*Title               `protobuf:"bytes,3,rep,name=titles,proto3" json:"titles,omitempty"`
 	Id         string                 `protobuf:"bytes,4,opt,name=id,proto3" json:"id,omitempty"`
 	PreviewUrl string                 `protobuf:"bytes,5,opt,name=preview_url,json=previewUrl,proto3" json:"preview_url,omitempty"`
@@ -250,26 +250,26 @@ var File_proto_atom_proto protoreflect.FileDescriptor
 
 const file_proto_atom_proto_rawDesc = "" +
 	"\n" +
-	"\x10proto/atom.proto\x12\tbene.atom\x1a\x11proto/enums.proto\x1a\x14proto/metadata.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"A\n" +
+	"\x10proto/atom.proto\x12\ftruffle.atom\x1a\x11proto/enums.proto\x1a\x14proto/metadata.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"A\n" +
 	"\x05Title\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\"\n" +
-	"\flocalization\x18\x02 \x01(\tR\flocalization\"\xec\x03\n" +
-	"\x04Atom\x12$\n" +
-	"\x04type\x18\x01 \x01(\x0e2\x10.bene.enums.TypeR\x04type\x12!\n" +
-	"\x03api\x18\x02 \x01(\x0e2\x0f.bene.enums.APIR\x03api\x12(\n" +
-	"\x06titles\x18\x03 \x03(\v2\x10.bene.atom.TitleR\x06titles\x12\x0e\n" +
+	"\flocalization\x18\x02 \x01(\tR\flocalization\"\x81\x04\n" +
+	"\x04Atom\x12'\n" +
+	"\x04type\x18\x01 \x01(\x0e2\x13.truffle.enums.TypeR\x04type\x12$\n" +
+	"\x03api\x18\x02 \x01(\x0e2\x12.truffle.enums.APIR\x03api\x12+\n" +
+	"\x06titles\x18\x03 \x03(\v2\x13.truffle.atom.TitleR\x06titles\x12\x0e\n" +
 	"\x02id\x18\x04 \x01(\tR\x02id\x12\x1f\n" +
 	"\vpreview_url\x18\x05 \x01(\tR\n" +
 	"previewUrl\x12\x14\n" +
 	"\x05score\x18\x06 \x01(\x03R\x05score\x12\x1a\n" +
-	"\bsynopsis\x18\a \x01(\tR\bsynopsis\x12B\n" +
-	"\x0emetadata_empty\x18d \x01(\v2\x19.bene.atom.metadata.EmptyH\x00R\rmetadataEmpty\x129\n" +
-	"\vmetadata_tv\x18e \x01(\v2\x16.bene.atom.metadata.TVH\x00R\n" +
-	"metadataTv\x12B\n" +
-	"\x0emetadata_movie\x18f \x01(\v2\x19.bene.atom.metadata.MovieH\x00R\rmetadataMovie\x12?\n" +
-	"\rmetadata_book\x18g \x01(\v2\x18.bene.atom.metadata.BookH\x00R\fmetadataBookB\n" +
+	"\bsynopsis\x18\a \x01(\tR\bsynopsis\x12E\n" +
+	"\x0emetadata_empty\x18d \x01(\v2\x1c.truffle.atom.metadata.EmptyH\x00R\rmetadataEmpty\x12<\n" +
+	"\vmetadata_tv\x18e \x01(\v2\x19.truffle.atom.metadata.TVH\x00R\n" +
+	"metadataTv\x12E\n" +
+	"\x0emetadata_movie\x18f \x01(\v2\x1c.truffle.atom.metadata.MovieH\x00R\rmetadataMovie\x12B\n" +
+	"\rmetadata_book\x18g \x01(\v2\x1b.truffle.atom.metadata.BookH\x00R\fmetadataBookB\n" +
 	"\n" +
-	"\bmetadataB.Z,github.com/minkezhang/bene-api/proto/go/atomb\x06proto3"
+	"\bmetadataB1Z/github.com/minkezhang/truffle-api/proto/go/atomb\x06proto3"
 
 var (
 	file_proto_atom_proto_rawDescOnce sync.Once
@@ -285,23 +285,23 @@ func file_proto_atom_proto_rawDescGZIP() []byte {
 
 var file_proto_atom_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_proto_atom_proto_goTypes = []any{
-	(*Title)(nil),          // 0: bene.atom.Title
-	(*Atom)(nil),           // 1: bene.atom.Atom
-	(enums.Type)(0),        // 2: bene.enums.Type
-	(enums.API)(0),         // 3: bene.enums.API
-	(*metadata.Empty)(nil), // 4: bene.atom.metadata.Empty
-	(*metadata.TV)(nil),    // 5: bene.atom.metadata.TV
-	(*metadata.Movie)(nil), // 6: bene.atom.metadata.Movie
-	(*metadata.Book)(nil),  // 7: bene.atom.metadata.Book
+	(*Title)(nil),          // 0: truffle.atom.Title
+	(*Atom)(nil),           // 1: truffle.atom.Atom
+	(enums.Type)(0),        // 2: truffle.enums.Type
+	(enums.API)(0),         // 3: truffle.enums.API
+	(*metadata.Empty)(nil), // 4: truffle.atom.metadata.Empty
+	(*metadata.TV)(nil),    // 5: truffle.atom.metadata.TV
+	(*metadata.Movie)(nil), // 6: truffle.atom.metadata.Movie
+	(*metadata.Book)(nil),  // 7: truffle.atom.metadata.Book
 }
 var file_proto_atom_proto_depIdxs = []int32{
-	2, // 0: bene.atom.Atom.type:type_name -> bene.enums.Type
-	3, // 1: bene.atom.Atom.api:type_name -> bene.enums.API
-	0, // 2: bene.atom.Atom.titles:type_name -> bene.atom.Title
-	4, // 3: bene.atom.Atom.metadata_empty:type_name -> bene.atom.metadata.Empty
-	5, // 4: bene.atom.Atom.metadata_tv:type_name -> bene.atom.metadata.TV
-	6, // 5: bene.atom.Atom.metadata_movie:type_name -> bene.atom.metadata.Movie
-	7, // 6: bene.atom.Atom.metadata_book:type_name -> bene.atom.metadata.Book
+	2, // 0: truffle.atom.Atom.type:type_name -> truffle.enums.Type
+	3, // 1: truffle.atom.Atom.api:type_name -> truffle.enums.API
+	0, // 2: truffle.atom.Atom.titles:type_name -> truffle.atom.Title
+	4, // 3: truffle.atom.Atom.metadata_empty:type_name -> truffle.atom.metadata.Empty
+	5, // 4: truffle.atom.Atom.metadata_tv:type_name -> truffle.atom.metadata.TV
+	6, // 5: truffle.atom.Atom.metadata_movie:type_name -> truffle.atom.metadata.Movie
+	7, // 6: truffle.atom.Atom.metadata_book:type_name -> truffle.atom.metadata.Book
 	7, // [7:7] is the sub-list for method output_type
 	7, // [7:7] is the sub-list for method input_type
 	7, // [7:7] is the sub-list for extension type_name

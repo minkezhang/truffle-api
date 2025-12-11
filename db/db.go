@@ -5,14 +5,14 @@ package db
 import (
 	"context"
 
-	"github.com/minkezhang/bene-api/client"
-	"github.com/minkezhang/bene-api/db/atom"
-	"github.com/minkezhang/bene-api/db/generator"
-	"github.com/minkezhang/bene-api/db/node"
-	"github.com/minkezhang/bene-api/db/query"
+	"github.com/minkezhang/truffle-api/client"
+	"github.com/minkezhang/truffle-api/db/atom"
+	"github.com/minkezhang/truffle-api/db/generator"
+	"github.com/minkezhang/truffle-api/db/node"
+	"github.com/minkezhang/truffle-api/db/query"
 
-	cq "github.com/minkezhang/bene-api/client/query"
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	cq "github.com/minkezhang/truffle-api/client/query"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 // g is an ID generator
@@ -102,7 +102,7 @@ func (db *DB) Get(ctx context.Context, id string) (*node.N, error) {
 // If q.APIs is set, all matching clients will be queried.
 func (db *DB) Query(ctx context.Context, q *query.Q) ([]*node.N, error) {
 	res := []*node.N{}
-	if q.IsSupportedAPI(epb.API_API_BENE) {
+	if q.IsSupportedAPI(epb.API_API_TRUFFLE) {
 		for atomType := range db.data {
 			for _, n := range db.data[atomType] {
 				match, err := cq.RegExp(q.Q, n.Virtual())

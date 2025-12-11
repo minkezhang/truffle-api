@@ -7,13 +7,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/minkezhang/bene-api/client/query"
-	"github.com/minkezhang/bene-api/db/atom"
-	"github.com/minkezhang/bene-api/db/atom/metadata"
-	"github.com/minkezhang/bene-api/db/atom/metadata/book"
+	"github.com/minkezhang/truffle-api/client/query"
+	"github.com/minkezhang/truffle-api/db/atom"
+	"github.com/minkezhang/truffle-api/db/atom/metadata"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/book"
 	"github.com/nstratos/go-myanimelist/mal"
 
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 var (
@@ -61,7 +61,7 @@ func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) {
 		return nil, err
 	}
 
-	return ToBene(*result, []epb.Type{g.AtomType}), nil
+	return Save(*result, []epb.Type{g.AtomType}), nil
 }
 
 type candidate struct {
@@ -88,7 +88,7 @@ func (c *C) Query(ctx context.Context, q *query.Q) ([]*atom.A, error) {
 		)
 		page := []*atom.A{}
 		for _, r := range results {
-			a := ToBene(r, q.AtomTypes())
+			a := Save(r, q.AtomTypes())
 			if a != nil && r.Popularity <= c.Cutoff {
 				page = append(page, a)
 			}
@@ -145,7 +145,7 @@ func (c *C) Query(ctx context.Context, q *query.Q) ([]*atom.A, error) {
 	return res[:end], nil
 }
 
-func ToBene(r mal.Manga, ts []epb.Type) *atom.A {
+func Save(r mal.Manga, ts []epb.Type) *atom.A {
 	t := epb.Type_TYPE_BOOK
 	im, ok := types[r.MediaType]
 	if !ok {

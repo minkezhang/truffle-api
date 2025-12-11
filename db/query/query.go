@@ -1,9 +1,9 @@
 package query
 
 import (
-	"github.com/minkezhang/bene-api/client/query"
+	"github.com/minkezhang/truffle-api/client/query"
 
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 type O struct {

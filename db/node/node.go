@@ -10,10 +10,10 @@ package node
 import (
 	"fmt"
 
-	"github.com/minkezhang/bene-api/db/atom"
-	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
+	"github.com/minkezhang/truffle-api/db/atom"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/empty"
 
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 type O struct {

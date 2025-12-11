@@ -11,18 +11,18 @@ package atom
 import (
 	"fmt"
 
-	"github.com/minkezhang/bene-api/db/atom/internal/metadata/mock"
-	"github.com/minkezhang/bene-api/db/atom/internal/utils/merge"
-	"github.com/minkezhang/bene-api/db/atom/metadata"
-	"github.com/minkezhang/bene-api/db/atom/metadata/book"
-	"github.com/minkezhang/bene-api/db/atom/metadata/empty"
-	"github.com/minkezhang/bene-api/db/atom/metadata/movie"
-	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
+	"github.com/minkezhang/truffle-api/db/atom/internal/metadata/mock"
+	"github.com/minkezhang/truffle-api/db/atom/internal/utils/merge"
+	"github.com/minkezhang/truffle-api/db/atom/metadata"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/book"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/empty"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/movie"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/tv"
 	"google.golang.org/protobuf/proto"
 
-	apb "github.com/minkezhang/bene-api/proto/go/atom"
-	mpb "github.com/minkezhang/bene-api/proto/go/atom/metadata"
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	apb "github.com/minkezhang/truffle-api/proto/go/atom"
+	mpb "github.com/minkezhang/truffle-api/proto/go/atom/metadata"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 func Load(msg proto.Message) *A {

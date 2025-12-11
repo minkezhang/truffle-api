@@ -77,23 +77,21 @@ type API int32
 
 const (
 	API_API_VIRTUAL API = 0
-	API_API_BENE    API = 1
-	// API_TRUFFLE      = 2;
-	// API_ANILIST      = 3;
-	API_API_MAL API = 4
+	API_API_TRUFFLE API = 1
+	API_API_MAL     API = 2
 )
 
 // Enum value maps for API.
 var (
 	API_name = map[int32]string{
 		0: "API_VIRTUAL",
-		1: "API_BENE",
-		4: "API_MAL",
+		1: "API_TRUFFLE",
+		2: "API_MAL",
 	}
 	API_value = map[string]int32{
 		"API_VIRTUAL": 0,
-		"API_BENE":    1,
-		"API_MAL":     4,
+		"API_TRUFFLE": 1,
+		"API_MAL":     2,
 	}
 )
 
@@ -128,18 +126,17 @@ var File_proto_enums_proto protoreflect.FileDescriptor
 
 const file_proto_enums_proto_rawDesc = "" +
 	"\n" +
-	"\x11proto/enums.proto\x12\n" +
-	"bene.enums*A\n" +
+	"\x11proto/enums.proto\x12\rtruffle.enums*A\n" +
 	"\x04Type\x12\r\n" +
 	"\tTYPE_NONE\x10\x00\x12\v\n" +
 	"\aTYPE_TV\x10\x01\x12\x0e\n" +
 	"\n" +
 	"TYPE_MOVIE\x10\x02\x12\r\n" +
-	"\tTYPE_BOOK\x10\x03*1\n" +
+	"\tTYPE_BOOK\x10\x03*4\n" +
 	"\x03API\x12\x0f\n" +
-	"\vAPI_VIRTUAL\x10\x00\x12\f\n" +
-	"\bAPI_BENE\x10\x01\x12\v\n" +
-	"\aAPI_MAL\x10\x04B/Z-github.com/minkezhang/bene-api/proto/go/enumsb\x06proto3"
+	"\vAPI_VIRTUAL\x10\x00\x12\x0f\n" +
+	"\vAPI_TRUFFLE\x10\x01\x12\v\n" +
+	"\aAPI_MAL\x10\x02B2Z0github.com/minkezhang/truffle-api/proto/go/enumsb\x06proto3"
 
 var (
 	file_proto_enums_proto_rawDescOnce sync.Once
@@ -155,8 +152,8 @@ func file_proto_enums_proto_rawDescGZIP() []byte {
 
 var file_proto_enums_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_proto_enums_proto_goTypes = []any{
-	(Type)(0), // 0: bene.enums.Type
-	(API)(0),  // 1: bene.enums.API
+	(Type)(0), // 0: truffle.enums.Type
+	(API)(0),  // 1: truffle.enums.API
 }
 var file_proto_enums_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type

@@ -1,4 +1,4 @@
-module github.com/minkezhang/bene-api
+module github.com/minkezhang/truffle-api
 
 go 1.25.4
 

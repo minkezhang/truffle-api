@@ -1,7 +1,7 @@
 package merge_utils
 
 import (
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 func Distinct[T comparable](ts []T, us []T) []T {

@@ -4,14 +4,14 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/minkezhang/bene-api/client"
-	"github.com/minkezhang/bene-api/client/mal/anime"
-	"github.com/minkezhang/bene-api/client/mal/manga"
-	"github.com/minkezhang/bene-api/client/query"
-	"github.com/minkezhang/bene-api/db/atom"
+	"github.com/minkezhang/truffle-api/client"
+	"github.com/minkezhang/truffle-api/client/mal/anime"
+	"github.com/minkezhang/truffle-api/client/mal/manga"
+	"github.com/minkezhang/truffle-api/client/query"
+	"github.com/minkezhang/truffle-api/db/atom"
 	"github.com/nstratos/go-myanimelist/mal"
 
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 var (

@@ -353,7 +353,7 @@ var File_proto_metadata_proto protoreflect.FileDescriptor
 
 const file_proto_metadata_proto_rawDesc = "" +
 	"\n" +
-	"\x14proto/metadata.proto\x12\x12bene.atom.metadata\"\a\n" +
+	"\x14proto/metadata.proto\x12\x15truffle.atom.metadata\"\a\n" +
 	"\x05Empty\"$\n" +
 	"\x04Mock\x12\x1c\n" +
 	"\tproducers\x18\x01 \x03(\tR\tproducers\"\xb3\x01\n" +
@@ -364,17 +364,17 @@ const file_proto_metadata_proto_rawDesc = "" +
 	"\vis_animated\x18\x04 \x01(\bR\n" +
 	"isAnimated\x12\x18\n" +
 	"\astudios\x18\x05 \x03(\tR\astudios\x12\x1a\n" +
-	"\bnetworks\x18\x06 \x03(\tR\bnetworks\"5\n" +
-	"\x02TV\x12/\n" +
-	"\x05video\x18\x01 \x01(\v2\x19.bene.atom.metadata.VideoR\x05video\"8\n" +
-	"\x05Movie\x12/\n" +
-	"\x05video\x18\x01 \x01(\v2\x19.bene.atom.metadata.VideoR\x05video\"\x9e\x01\n" +
+	"\bnetworks\x18\x06 \x03(\tR\bnetworks\"8\n" +
+	"\x02TV\x122\n" +
+	"\x05video\x18\x01 \x01(\v2\x1c.truffle.atom.metadata.VideoR\x05video\";\n" +
+	"\x05Movie\x122\n" +
+	"\x05video\x18\x01 \x01(\v2\x1c.truffle.atom.metadata.VideoR\x05video\"\x9e\x01\n" +
 	"\x04Book\x12\x16\n" +
 	"\x06genres\x18\x01 \x03(\tR\x06genres\x12\x18\n" +
 	"\aauthors\x18\x02 \x03(\tR\aauthors\x12\"\n" +
 	"\fillustrators\x18\x03 \x03(\tR\fillustrators\x12%\n" +
 	"\x0eis_illustrated\x18\x04 \x01(\bR\risIllustrated\x12\x19\n" +
-	"\bis_manga\x18\x05 \x01(\bR\aisMangaB7Z5github.com/minkezhang/bene-api/proto/go/atom/metadatab\x06proto3"
+	"\bis_manga\x18\x05 \x01(\bR\aisMangaB:Z8github.com/minkezhang/truffle-api/proto/go/atom/metadatab\x06proto3"
 
 var (
 	file_proto_metadata_proto_rawDescOnce sync.Once
@@ -390,16 +390,16 @@ func file_proto_metadata_proto_rawDescGZIP() []byte {
 
 var file_proto_metadata_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_proto_metadata_proto_goTypes = []any{
-	(*Empty)(nil), // 0: bene.atom.metadata.Empty
-	(*Mock)(nil),  // 1: bene.atom.metadata.Mock
-	(*Video)(nil), // 2: bene.atom.metadata.Video
-	(*TV)(nil),    // 3: bene.atom.metadata.TV
-	(*Movie)(nil), // 4: bene.atom.metadata.Movie
-	(*Book)(nil),  // 5: bene.atom.metadata.Book
+	(*Empty)(nil), // 0: truffle.atom.metadata.Empty
+	(*Mock)(nil),  // 1: truffle.atom.metadata.Mock
+	(*Video)(nil), // 2: truffle.atom.metadata.Video
+	(*TV)(nil),    // 3: truffle.atom.metadata.TV
+	(*Movie)(nil), // 4: truffle.atom.metadata.Movie
+	(*Book)(nil),  // 5: truffle.atom.metadata.Book
 }
 var file_proto_metadata_proto_depIdxs = []int32{
-	2, // 0: bene.atom.metadata.TV.video:type_name -> bene.atom.metadata.Video
-	2, // 1: bene.atom.metadata.Movie.video:type_name -> bene.atom.metadata.Video
+	2, // 0: truffle.atom.metadata.TV.video:type_name -> truffle.atom.metadata.Video
+	2, // 1: truffle.atom.metadata.Movie.video:type_name -> truffle.atom.metadata.Video
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

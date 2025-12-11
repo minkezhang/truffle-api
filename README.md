@@ -1,4 +1,4 @@
-# bene-api
+# truffle-api
 Rewrite of github.com/minkezhang/truffle.
 
 ## Adding a New Atom Type
@@ -13,8 +13,8 @@ Rewrite of github.com/minkezhang/truffle.
 
 ```golang
 import (
-    "github.com/minkezhang/bene-api/db"
-    "github.com/minkezhang/bene-api/db/node"
+    "github.com/minkezhang/truffle-api/db"
+    "github.com/minkezhang/truffle-api/db/node"
     "github.com/minkezhang/client/mal"
 )
 

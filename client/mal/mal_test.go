@@ -6,14 +6,14 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/minkezhang/bene-api/client/query"
-	"github.com/minkezhang/bene-api/db/atom"
-	"github.com/minkezhang/bene-api/db/atom/metadata/book"
-	"github.com/minkezhang/bene-api/db/atom/metadata/movie"
-	"github.com/minkezhang/bene-api/db/atom/metadata/shared/video"
-	"github.com/minkezhang/bene-api/db/atom/metadata/tv"
+	"github.com/minkezhang/truffle-api/client/query"
+	"github.com/minkezhang/truffle-api/db/atom"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/book"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/movie"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/shared/video"
+	"github.com/minkezhang/truffle-api/db/atom/metadata/tv"
 
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 const (

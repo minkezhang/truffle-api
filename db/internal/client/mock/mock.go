@@ -3,10 +3,10 @@ package mock
 import (
 	"context"
 
-	"github.com/minkezhang/bene-api/client/query"
-	"github.com/minkezhang/bene-api/db/atom"
+	"github.com/minkezhang/truffle-api/client/query"
+	"github.com/minkezhang/truffle-api/db/atom"
 
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 type O struct {

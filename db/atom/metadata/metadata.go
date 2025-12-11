@@ -3,7 +3,7 @@ package metadata
 import (
 	"google.golang.org/protobuf/proto"
 
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 // T is a target Metadata instance along with the AtomType of the container.

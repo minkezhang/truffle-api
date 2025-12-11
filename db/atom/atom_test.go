@@ -5,15 +5,15 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/minkezhang/bene-api/db/atom/internal/metadata/mock"
+	"github.com/minkezhang/truffle-api/db/atom/internal/metadata/mock"
 
-	epb "github.com/minkezhang/bene-api/proto/go/enums"
+	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
 func TestMerge(t *testing.T) {
 	got := Merge(
 		New(O{
-			APIType: epb.API_API_BENE,
+			APIType: epb.API_API_TRUFFLE,
 			APIID:   "foo",
 			Titles: []T{
 				{Title: "Firefly"},
@@ -26,7 +26,7 @@ func TestMerge(t *testing.T) {
 			}),
 		}),
 		New(O{
-			APIType: epb.API_API_BENE,
+			APIType: epb.API_API_TRUFFLE,
 			APIID:   "foo",
 			Titles: []T{
 				{Title: "Firefly"},
@@ -40,7 +40,7 @@ func TestMerge(t *testing.T) {
 		}))
 
 	want := New(O{
-		APIType: epb.API_API_BENE,
+		APIType: epb.API_API_TRUFFLE,
 		APIID:   "foo",
 		Titles: []T{
 			{Title: "Firefly"}, // Remove duplicates
