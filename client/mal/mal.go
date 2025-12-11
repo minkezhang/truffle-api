@@ -1,3 +1,9 @@
+// Package mal defines the shim for MyAnimeList APIv2.
+//
+// See https://myanimelist.net/apiconfig/references/api/v2 for more information
+// on the API. See
+// https://help.myanimelist.net/hc/en-us/articles/900003108823-API for more
+// information on how to get an API key.
 package mal
 
 import (
@@ -19,7 +25,7 @@ var (
 )
 
 type O struct {
-	ClientID         string
+	ClientID         string // API key
 	PopularityCutoff int64
 	MaxResults       int64
 	NSFW             bool

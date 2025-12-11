@@ -164,14 +164,75 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestList(t *testing.T) {
+func TestQuery(t *testing.T) {
 	configs := []struct {
-		name  string
-		query *query.Q
-		want  []*atom.A
+		name   string
+		client *C
+		query  *query.Q
+		want   []*atom.A
 	}{
 		{
+			name: "Filter/NoNSFW",
+			client: New(O{
+				ClientID:         MALClientID,
+				PopularityCutoff: 10000,
+				MaxResults:       2,
+				NSFW:             false,
+			}),
+			query: query.New(query.O{
+				AtomTypes: []epb.Type{
+					epb.Type_TYPE_BOOK,
+				},
+				Title: "Nozoki Ana",
+			}),
+			want: []*atom.A{
+				atom.New(atom.O{
+					APIType:  epb.API_API_MAL,
+					APIID:    "24698", // Nozo x Kimi
+					AtomType: epb.Type_TYPE_BOOK,
+				}),
+				atom.New(atom.O{
+					APIType:  epb.API_API_MAL,
+					APIID:    "60561", // Nozomu Nozomi
+					AtomType: epb.Type_TYPE_BOOK,
+				}),
+			},
+		},
+		{
+			name: "Filter/NSFW",
+			client: New(O{
+				ClientID:         MALClientID,
+				PopularityCutoff: 10000,
+				MaxResults:       2,
+				NSFW:             true,
+			}),
+			query: query.New(query.O{
+				AtomTypes: []epb.Type{
+					epb.Type_TYPE_BOOK,
+				},
+				Title: "Nozoki Ana",
+			}),
+			want: []*atom.A{
+				atom.New(atom.O{
+					APIType:  epb.API_API_MAL,
+					APIID:    "21419", // Nozoki Ana
+					AtomType: epb.Type_TYPE_BOOK,
+				}),
+				atom.New(atom.O{
+					APIType:  epb.API_API_MAL,
+					APIID:    "166773", // 3.5 Kai no Nozoki Ana
+					AtomType: epb.Type_TYPE_BOOK,
+				}),
+			},
+		},
+		{
 			name: "Filter/Book",
+			client: New(O{
+				ClientID:         MALClientID,
+				PopularityCutoff: 10000,
+				MaxResults:       2,
+				NSFW:             true,
+			}),
 			query: query.New(query.O{
 				AtomTypes: []epb.Type{
 					epb.Type_TYPE_BOOK,
@@ -193,6 +254,12 @@ func TestList(t *testing.T) {
 		},
 		{
 			name: "Filter/TVAndMovie",
+			client: New(O{
+				ClientID:         MALClientID,
+				PopularityCutoff: 10000,
+				MaxResults:       2,
+				NSFW:             true,
+			}),
 			query: query.New(query.O{
 				AtomTypes: []epb.Type{
 					epb.Type_TYPE_TV,
@@ -215,6 +282,12 @@ func TestList(t *testing.T) {
 		},
 		{
 			name: "Filter/Movie",
+			client: New(O{
+				ClientID:         MALClientID,
+				PopularityCutoff: 10000,
+				MaxResults:       2,
+				NSFW:             true,
+			}),
 			query: query.New(query.O{
 				AtomTypes: []epb.Type{
 					epb.Type_TYPE_MOVIE,
@@ -238,14 +311,7 @@ func TestList(t *testing.T) {
 
 	for _, c := range configs {
 		t.Run(c.name, func(t *testing.T) {
-
-			client := New(O{
-				ClientID:         MALClientID,
-				PopularityCutoff: 10000,
-				MaxResults:       2,
-				NSFW:             true,
-			})
-			got, err := client.Query(context.Background(), c.query)
+			got, err := c.client.Query(context.Background(), c.query)
 
 			if err != nil {
 				t.Errorf("Query() returned unexpected error: %v", err)

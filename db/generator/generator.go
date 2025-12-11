@@ -1,3 +1,4 @@
+// Package generator creates UUIDs for DB nodes.
 package generator
 
 import (

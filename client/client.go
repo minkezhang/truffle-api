@@ -1,3 +1,5 @@
+// Package client defines the interface for different data sources to interact
+// with the Truffle API.
 package client
 
 import (
