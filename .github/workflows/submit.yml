@@ -17,11 +17,11 @@ jobs:
       with:
         go-version: 1.25.4
 
-    - name: Build github.com/minkezhang/bene-api
-      run: go build -v github.com/minkezhang/bene-api/...
+    - name: Build github.com/minkezhang/truffle-api
+      run: go build -v github.com/minkezhang/truffle-api/...
 
-    - name: Vet github.com/minkezhang/bene-api
-      run: go vet -v github.com/minkezhang/bene-api/...
+    - name: Vet github.com/minkezhang/truffle-api
+      run: go vet -v github.com/minkezhang/truffle-api/...
 
-    - name: Test github.com/minkezhang/bene-api
-      run: go test -v $(go list github.com/minkezhang/bene-api/... | grep -v /client/.*) -bench . -benchmem
+    - name: Test github.com/minkezhang/truffle-api
+      run: go test -v $(go list github.com/minkezhang/truffle-api/... | grep -v /client/.*) -bench . -benchmem
