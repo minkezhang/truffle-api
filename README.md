@@ -13,9 +13,9 @@ Rewrite of https://github.com/minkezhang/truffle.
 
 ```golang
 import (
+    "github.com/minkezhang/truffle-api/client/mal"
     "github.com/minkezhang/truffle-api/db"
     "github.com/minkezhang/truffle-api/db/node"
-    "github.com/minkezhang/client/mal"
 )
 
 func main() {
@@ -35,5 +35,4 @@ func main() {
     })
     
 }
-
 ```
