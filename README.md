@@ -1,5 +1,5 @@
 # truffle-api
-Rewrite of github.com/minkezhang/truffle.
+Rewrite of https://github.com/minkezhang/truffle.
 
 ## Adding a New Atom Type
 
