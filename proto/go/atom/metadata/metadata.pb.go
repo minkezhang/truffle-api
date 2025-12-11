@@ -9,6 +9,7 @@ package metadata
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -188,6 +189,7 @@ func (x *Video) GetNetworks() []string {
 type TV struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Video         *Video                 `protobuf:"bytes,1,opt,name=video,proto3" json:"video,omitempty"`
+	LastUpdated   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=last_updated,json=lastUpdated,proto3" json:"last_updated,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -225,6 +227,13 @@ func (*TV) Descriptor() ([]byte, []int) {
 func (x *TV) GetVideo() *Video {
 	if x != nil {
 		return x.Video
+	}
+	return nil
+}
+
+func (x *TV) GetLastUpdated() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastUpdated
 	}
 	return nil
 }
@@ -280,6 +289,7 @@ type Book struct {
 	Illustrators  []string               `protobuf:"bytes,3,rep,name=illustrators,proto3" json:"illustrators,omitempty"`
 	IsIllustrated bool                   `protobuf:"varint,4,opt,name=is_illustrated,json=isIllustrated,proto3" json:"is_illustrated,omitempty"`
 	IsManga       bool                   `protobuf:"varint,5,opt,name=is_manga,json=isManga,proto3" json:"is_manga,omitempty"`
+	LastUpdated   *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=last_updated,json=lastUpdated,proto3" json:"last_updated,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -349,11 +359,18 @@ func (x *Book) GetIsManga() bool {
 	return false
 }
 
+func (x *Book) GetLastUpdated() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LastUpdated
+	}
+	return nil
+}
+
 var File_proto_metadata_proto protoreflect.FileDescriptor
 
 const file_proto_metadata_proto_rawDesc = "" +
 	"\n" +
-	"\x14proto/metadata.proto\x12\x15truffle.atom.metadata\"\a\n" +
+	"\x14proto/metadata.proto\x12\x15truffle.atom.metadata\x1a\x1fgoogle/protobuf/timestamp.proto\"\a\n" +
 	"\x05Empty\"$\n" +
 	"\x04Mock\x12\x1c\n" +
 	"\tproducers\x18\x01 \x03(\tR\tproducers\"\xb3\x01\n" +
@@ -364,17 +381,19 @@ const file_proto_metadata_proto_rawDesc = "" +
 	"\vis_animated\x18\x04 \x01(\bR\n" +
 	"isAnimated\x12\x18\n" +
 	"\astudios\x18\x05 \x03(\tR\astudios\x12\x1a\n" +
-	"\bnetworks\x18\x06 \x03(\tR\bnetworks\"8\n" +
+	"\bnetworks\x18\x06 \x03(\tR\bnetworks\"w\n" +
 	"\x02TV\x122\n" +
-	"\x05video\x18\x01 \x01(\v2\x1c.truffle.atom.metadata.VideoR\x05video\";\n" +
+	"\x05video\x18\x01 \x01(\v2\x1c.truffle.atom.metadata.VideoR\x05video\x12=\n" +
+	"\flast_updated\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\vlastUpdated\";\n" +
 	"\x05Movie\x122\n" +
-	"\x05video\x18\x01 \x01(\v2\x1c.truffle.atom.metadata.VideoR\x05video\"\x9e\x01\n" +
+	"\x05video\x18\x01 \x01(\v2\x1c.truffle.atom.metadata.VideoR\x05video\"\xdd\x01\n" +
 	"\x04Book\x12\x16\n" +
 	"\x06genres\x18\x01 \x03(\tR\x06genres\x12\x18\n" +
 	"\aauthors\x18\x02 \x03(\tR\aauthors\x12\"\n" +
 	"\fillustrators\x18\x03 \x03(\tR\fillustrators\x12%\n" +
 	"\x0eis_illustrated\x18\x04 \x01(\bR\risIllustrated\x12\x19\n" +
-	"\bis_manga\x18\x05 \x01(\bR\aisMangaB:Z8github.com/minkezhang/truffle-api/proto/go/atom/metadatab\x06proto3"
+	"\bis_manga\x18\x05 \x01(\bR\aisManga\x12=\n" +
+	"\flast_updated\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\vlastUpdatedB:Z8github.com/minkezhang/truffle-api/proto/go/atom/metadatab\x06proto3"
 
 var (
 	file_proto_metadata_proto_rawDescOnce sync.Once
@@ -390,21 +409,24 @@ func file_proto_metadata_proto_rawDescGZIP() []byte {
 
 var file_proto_metadata_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_proto_metadata_proto_goTypes = []any{
-	(*Empty)(nil), // 0: truffle.atom.metadata.Empty
-	(*Mock)(nil),  // 1: truffle.atom.metadata.Mock
-	(*Video)(nil), // 2: truffle.atom.metadata.Video
-	(*TV)(nil),    // 3: truffle.atom.metadata.TV
-	(*Movie)(nil), // 4: truffle.atom.metadata.Movie
-	(*Book)(nil),  // 5: truffle.atom.metadata.Book
+	(*Empty)(nil),                 // 0: truffle.atom.metadata.Empty
+	(*Mock)(nil),                  // 1: truffle.atom.metadata.Mock
+	(*Video)(nil),                 // 2: truffle.atom.metadata.Video
+	(*TV)(nil),                    // 3: truffle.atom.metadata.TV
+	(*Movie)(nil),                 // 4: truffle.atom.metadata.Movie
+	(*Book)(nil),                  // 5: truffle.atom.metadata.Book
+	(*timestamppb.Timestamp)(nil), // 6: google.protobuf.Timestamp
 }
 var file_proto_metadata_proto_depIdxs = []int32{
 	2, // 0: truffle.atom.metadata.TV.video:type_name -> truffle.atom.metadata.Video
-	2, // 1: truffle.atom.metadata.Movie.video:type_name -> truffle.atom.metadata.Video
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	6, // 1: truffle.atom.metadata.TV.last_updated:type_name -> google.protobuf.Timestamp
+	2, // 2: truffle.atom.metadata.Movie.video:type_name -> truffle.atom.metadata.Video
+	6, // 3: truffle.atom.metadata.Book.last_updated:type_name -> google.protobuf.Timestamp
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_proto_metadata_proto_init() }

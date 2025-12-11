@@ -4,6 +4,8 @@ package truffle.atom.metadata;
 option go_package = "github.com/minkezhang/truffle-api/proto/go/atom/metadata";
 // option features.(pb.go).api_level = API_OPEN;
 
+import "google/protobuf/timestamp.proto";
+
 message Empty {}
 
 message Mock {
@@ -20,7 +22,8 @@ message Video {
 }
 
 message TV {
-  Video video = 1;
+  Video                     video        = 1;
+  google.protobuf.Timestamp last_updated = 2;
 }
 
 message Movie {
@@ -28,9 +31,10 @@ message Movie {
 }
 
 message Book {
-  repeated string genres         = 1;
-  repeated string authors        = 2;
-  repeated string illustrators   = 3;
-           bool   is_illustrated = 4;
-           bool   is_manga       = 5;
+  repeated string                    genres         = 1;
+  repeated string                    authors        = 2;
+  repeated string                    illustrators   = 3;
+           bool                      is_illustrated = 4;
+           bool                      is_manga       = 5;
+           google.protobuf.Timestamp last_updated   = 6;
 }

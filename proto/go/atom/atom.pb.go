@@ -11,7 +11,6 @@ import (
 	enums "github.com/minkezhang/truffle-api/proto/go/enums"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -250,7 +249,7 @@ var File_proto_atom_proto protoreflect.FileDescriptor
 
 const file_proto_atom_proto_rawDesc = "" +
 	"\n" +
-	"\x10proto/atom.proto\x12\ftruffle.atom\x1a\x11proto/enums.proto\x1a\x14proto/metadata.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"A\n" +
+	"\x10proto/atom.proto\x12\ftruffle.atom\x1a\x11proto/enums.proto\x1a\x14proto/metadata.proto\"A\n" +
 	"\x05Title\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\"\n" +
 	"\flocalization\x18\x02 \x01(\tR\flocalization\"\x81\x04\n" +

@@ -5,7 +5,6 @@ import (
 
 	"github.com/minkezhang/truffle-api/db/atom/metadata"
 	"github.com/minkezhang/truffle-api/db/atom/metadata/shared/video"
-	"github.com/minkezhang/truffle-api/db/atom/metadata/tv"
 	"google.golang.org/protobuf/proto"
 
 	mpb "github.com/minkezhang/truffle-api/proto/go/atom/metadata"
@@ -50,9 +49,24 @@ func (g G) Merge(t metadata.T, u metadata.T) metadata.M {
 	}
 }
 
-type M tv.M
-type O tv.O
+type O video.O
 
-func New(o O) *M { return (*M)(tv.New(tv.O(o))) }
+type M struct {
+	*video.M
+}
+
+func New(o O) *M {
+	return &M{
+		M: video.New(video.O{
+			Genres:      o.Genres,
+			Showrunners: o.Showrunners,
+			IsAnimated:  o.IsAnimated,
+			IsAnime:     o.IsAnime,
+			Studios:     o.Studios,
+			Networks:    o.Networks,
+		}),
+	}
+}
 
 func (m *M) AtomType() epb.Type { return epb.Type_TYPE_MOVIE }
+func (m *M) Copy() metadata.M   { return &M{M: m.M.Copy().(*video.M)} }

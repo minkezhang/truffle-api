@@ -27,6 +27,7 @@ var (
 		"synopsis",
 		"genres",
 		"popularity",
+		"updated_at",
 	}
 
 	types = map[string]epb.Type{
@@ -184,10 +185,13 @@ func Save(r mal.Anime, ts []epb.Type) *atom.A {
 	switch t {
 	case epb.Type_TYPE_TV:
 		m = tv.New(tv.O{
-			IsAnimated: true,
-			IsAnime:    true,
-			Genres:     genres,
-			Studios:    studios,
+			O: movie.O{
+				IsAnimated: true,
+				IsAnime:    true,
+				Genres:     genres,
+				Studios:    studios,
+			},
+			LastUpdated: r.UpdatedAt,
 		})
 	case epb.Type_TYPE_MOVIE:
 		m = movie.New(movie.O{

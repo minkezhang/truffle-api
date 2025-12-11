@@ -40,7 +40,7 @@ func TestGet(t *testing.T) {
 					atom.T{Title: "Case Closed", Localization: "en"},
 					atom.T{Title: "名探偵コナン", Localization: "ja"},
 				},
-				PreviewURL: "https://cdn.myanimelist.net/images/anime/7/75199l.jpg",
+				PreviewURL: "https://cdn.myanimelist.net/images/manga/1/97267l.jpg",
 				Score:      82,
 				AtomType:   epb.Type_TYPE_BOOK,
 				Metadata: book.New(book.O{
@@ -92,10 +92,12 @@ func TestGet(t *testing.T) {
 				Score:      81,
 				AtomType:   epb.Type_TYPE_TV,
 				Metadata: tv.New(tv.O{
-					IsAnimated: true,
-					IsAnime:    true,
-					Genres:     []string{"Adventure", "Comedy", "Detective", "Mystery", "Shounen"},
-					Studios:    []string{"TMS Entertainment"},
+					O: movie.O{
+						IsAnimated: true,
+						IsAnime:    true,
+						Genres:     []string{"Adventure", "Comedy", "Detective", "Mystery", "Shounen"},
+						Studios:    []string{"TMS Entertainment"},
+					},
 				}),
 			}),
 		},
@@ -149,8 +151,17 @@ func TestGet(t *testing.T) {
 				got,
 				cmp.AllowUnexported(
 					atom.A{},
-					video.M{},
 					book.M{},
+					tv.M{},
+					video.M{},
+				),
+				cmpopts.IgnoreFields(
+					tv.M{},
+					"lastUpdated",
+				),
+				cmpopts.IgnoreFields(
+					book.M{},
+					"lastUpdated",
 				),
 				cmpopts.IgnoreFields(
 					atom.A{},
@@ -322,7 +333,6 @@ func TestQuery(t *testing.T) {
 				got,
 				cmp.AllowUnexported(
 					atom.A{},
-					video.M{},
 				),
 				cmpopts.IgnoreFields(
 					atom.A{},

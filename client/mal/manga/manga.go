@@ -9,7 +9,6 @@ import (
 
 	"github.com/minkezhang/truffle-api/client/query"
 	"github.com/minkezhang/truffle-api/db/atom"
-	"github.com/minkezhang/truffle-api/db/atom/metadata"
 	"github.com/minkezhang/truffle-api/db/atom/metadata/book"
 	"github.com/nstratos/go-myanimelist/mal"
 
@@ -27,6 +26,7 @@ var (
 		"popularity",
 		"genres",
 		"authors{last_name, first_name}",
+		"updated_at",
 	}
 
 	types = map[string]bool{
@@ -192,14 +192,6 @@ func Save(r mal.Manga, ts []epb.Type) *atom.A {
 		}
 	}
 
-	var m metadata.M = book.New(book.O{
-		Genres:        genres,
-		Illustrators:  illustrators,
-		Authors:       authors,
-		IsIllustrated: im,
-		IsManga:       true,
-	})
-
 	return atom.New(atom.O{
 		APIType:    epb.API_API_MAL,
 		APIID:      strconv.FormatInt(int64(r.ID), 10),
@@ -208,6 +200,13 @@ func Save(r mal.Manga, ts []epb.Type) *atom.A {
 		Score:      int64(r.Mean * 10),
 		Synopsis:   r.Synopsis,
 		AtomType:   t,
-		Metadata:   m,
+		Metadata: book.New(book.O{
+			Genres:        genres,
+			Illustrators:  illustrators,
+			Authors:       authors,
+			IsIllustrated: im,
+			IsManga:       true,
+			LastUpdated:   r.UpdatedAt,
+		}),
 	})
 }

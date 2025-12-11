@@ -6,7 +6,6 @@ option go_package = "github.com/minkezhang/truffle-api/proto/go/atom";
 
 import "proto/enums.proto";
 import "proto/metadata.proto";
-import "google/protobuf/timestamp.proto";
 
 message Title {
   string title        = 1;
