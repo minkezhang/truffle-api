@@ -50,7 +50,7 @@ func New(o O) *N {
 func (n *N) ID() string            { return n.id }
 func (n *N) AtomType() epb.Type    { return n.atomType }
 func (n *N) IsQueued() bool        { return n.isQueued }
-func (n *N) Notes() bool           { return n.notes }
+func (n *N) Notes() string         { return n.notes }
 func (n *N) IsAuthoritative() bool { return n.isAuthoritative }
 
 func (n *N) Atoms() []*atom.A {
