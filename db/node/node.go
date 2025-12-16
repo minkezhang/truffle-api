@@ -21,6 +21,7 @@ type O struct {
 	IsAuthoritative bool
 	AtomType        epb.Type
 	IsQueued        bool
+	Notes           string
 	Atoms           []*atom.A
 }
 
@@ -30,6 +31,7 @@ type N struct {
 
 	isAuthoritative bool // Is saved locally
 	isQueued        bool // Is starred by the user
+	notes           string
 	atoms           map[epb.API]map[string]*atom.A
 }
 
@@ -38,6 +40,7 @@ func New(o O) *N {
 		id:              o.ID,
 		atomType:        o.AtomType,
 		isAuthoritative: o.IsAuthoritative,
+		notes:           o.Notes,
 		isQueued:        o.IsQueued,
 	}
 	n.SetAtoms(o.Atoms)
@@ -47,6 +50,7 @@ func New(o O) *N {
 func (n *N) ID() string            { return n.id }
 func (n *N) AtomType() epb.Type    { return n.atomType }
 func (n *N) IsQueued() bool        { return n.isQueued }
+func (n *N) Notes() bool           { return n.notes }
 func (n *N) IsAuthoritative() bool { return n.isAuthoritative }
 
 func (n *N) Atoms() []*atom.A {
@@ -68,6 +72,7 @@ func (n *N) SetAtoms(as []*atom.A) {
 
 func (n *N) SetIsQueued(v bool)        { n.isQueued = v }
 func (n *N) SetIsAuthoritative(v bool) { n.isAuthoritative = v }
+func (n *N) SetNotes(v string)         { n.notes = v }
 
 func (n *N) AddAtom(a *atom.A) {
 	if n.atomType != a.AtomType() {
@@ -91,6 +96,7 @@ func (n *N) Copy() *N {
 		AtomType:        n.AtomType(),
 		IsAuthoritative: n.IsAuthoritative(),
 		IsQueued:        n.IsQueued(),
+		Notes:           n.Notes(),
 		Atoms:           n.Atoms(),
 	})
 }
