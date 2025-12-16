@@ -110,6 +110,7 @@ func (n *N) Virtual() *atom.A {
 		APIID:      "",
 		Titles:     res.Titles(),
 		PreviewURL: res.PreviewURL(),
+		Synopsis:   res.Synopsis(),
 		Score:      res.Score(),
 		AtomType:   res.AtomType(),
 		Metadata:   res.Metadata(),
