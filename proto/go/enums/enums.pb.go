@@ -21,122 +21,213 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Type int32
+type SourceStatus int32
 
 const (
-	Type_TYPE_NONE  Type = 0
-	Type_TYPE_TV    Type = 1
-	Type_TYPE_MOVIE Type = 2
-	Type_TYPE_BOOK  Type = 3
+	SourceStatus_SOURCE_STATUS_UNKNOWN   SourceStatus = 0
+	SourceStatus_SOURCE_STATUS_QUEUED    SourceStatus = 1
+	SourceStatus_SOURCE_STATUS_ACTIVE    SourceStatus = 2
+	SourceStatus_SOURCE_STATUS_COMPLETED SourceStatus = 3
 )
 
-// Enum value maps for Type.
+// Enum value maps for SourceStatus.
 var (
-	Type_name = map[int32]string{
-		0: "TYPE_NONE",
-		1: "TYPE_TV",
-		2: "TYPE_MOVIE",
-		3: "TYPE_BOOK",
+	SourceStatus_name = map[int32]string{
+		0: "SOURCE_STATUS_UNKNOWN",
+		1: "SOURCE_STATUS_QUEUED",
+		2: "SOURCE_STATUS_ACTIVE",
+		3: "SOURCE_STATUS_COMPLETED",
 	}
-	Type_value = map[string]int32{
-		"TYPE_NONE":  0,
-		"TYPE_TV":    1,
-		"TYPE_MOVIE": 2,
-		"TYPE_BOOK":  3,
+	SourceStatus_value = map[string]int32{
+		"SOURCE_STATUS_UNKNOWN":   0,
+		"SOURCE_STATUS_QUEUED":    1,
+		"SOURCE_STATUS_ACTIVE":    2,
+		"SOURCE_STATUS_COMPLETED": 3,
 	}
 )
 
-func (x Type) Enum() *Type {
-	p := new(Type)
+func (x SourceStatus) Enum() *SourceStatus {
+	p := new(SourceStatus)
 	*p = x
 	return p
 }
 
-func (x Type) String() string {
+func (x SourceStatus) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (Type) Descriptor() protoreflect.EnumDescriptor {
+func (SourceStatus) Descriptor() protoreflect.EnumDescriptor {
 	return file_proto_enums_proto_enumTypes[0].Descriptor()
 }
 
-func (Type) Type() protoreflect.EnumType {
+func (SourceStatus) Type() protoreflect.EnumType {
 	return &file_proto_enums_proto_enumTypes[0]
 }
 
-func (x Type) Number() protoreflect.EnumNumber {
+func (x SourceStatus) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use Type.Descriptor instead.
-func (Type) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use SourceStatus.Descriptor instead.
+func (SourceStatus) EnumDescriptor() ([]byte, []int) {
 	return file_proto_enums_proto_rawDescGZIP(), []int{0}
 }
 
-type API int32
+type SourceType int32
 
 const (
-	API_API_VIRTUAL API = 0
-	API_API_TRUFFLE API = 1
-	API_API_MAL     API = 2
+	SourceType_SOURCE_TYPE_UNKNOWN          SourceType = 0
+	SourceType_SOURCE_TYPE_SERIES           SourceType = 1
+	SourceType_SOURCE_TYPE_SERIES_ANIME     SourceType = 2
+	SourceType_SOURCE_TYPE_MOVIE            SourceType = 3
+	SourceType_SOURCE_TYPE_MOVIE_ANIME      SourceType = 4
+	SourceType_SOURCE_TYPE_BOOK             SourceType = 5
+	SourceType_SOURCE_TYPE_BOOK_MANGA       SourceType = 6
+	SourceType_SOURCE_TYPE_BOOK_LIGHT_NOVEL SourceType = 7
 )
 
-// Enum value maps for API.
+// Enum value maps for SourceType.
 var (
-	API_name = map[int32]string{
-		0: "API_VIRTUAL",
-		1: "API_TRUFFLE",
-		2: "API_MAL",
+	SourceType_name = map[int32]string{
+		0: "SOURCE_TYPE_UNKNOWN",
+		1: "SOURCE_TYPE_SERIES",
+		2: "SOURCE_TYPE_SERIES_ANIME",
+		3: "SOURCE_TYPE_MOVIE",
+		4: "SOURCE_TYPE_MOVIE_ANIME",
+		5: "SOURCE_TYPE_BOOK",
+		6: "SOURCE_TYPE_BOOK_MANGA",
+		7: "SOURCE_TYPE_BOOK_LIGHT_NOVEL",
 	}
-	API_value = map[string]int32{
-		"API_VIRTUAL": 0,
-		"API_TRUFFLE": 1,
-		"API_MAL":     2,
+	SourceType_value = map[string]int32{
+		"SOURCE_TYPE_UNKNOWN":          0,
+		"SOURCE_TYPE_SERIES":           1,
+		"SOURCE_TYPE_SERIES_ANIME":     2,
+		"SOURCE_TYPE_MOVIE":            3,
+		"SOURCE_TYPE_MOVIE_ANIME":      4,
+		"SOURCE_TYPE_BOOK":             5,
+		"SOURCE_TYPE_BOOK_MANGA":       6,
+		"SOURCE_TYPE_BOOK_LIGHT_NOVEL": 7,
 	}
 )
 
-func (x API) Enum() *API {
-	p := new(API)
+func (x SourceType) Enum() *SourceType {
+	p := new(SourceType)
 	*p = x
 	return p
 }
 
-func (x API) String() string {
+func (x SourceType) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (API) Descriptor() protoreflect.EnumDescriptor {
+func (SourceType) Descriptor() protoreflect.EnumDescriptor {
 	return file_proto_enums_proto_enumTypes[1].Descriptor()
 }
 
-func (API) Type() protoreflect.EnumType {
+func (SourceType) Type() protoreflect.EnumType {
 	return &file_proto_enums_proto_enumTypes[1]
 }
 
-func (x API) Number() protoreflect.EnumNumber {
+func (x SourceType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use API.Descriptor instead.
-func (API) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use SourceType.Descriptor instead.
+func (SourceType) EnumDescriptor() ([]byte, []int) {
 	return file_proto_enums_proto_rawDescGZIP(), []int{1}
+}
+
+type SourceAPI int32
+
+const (
+	SourceAPI_SOURCE_API_NONE    SourceAPI = 0
+	SourceAPI_SOURCE_API_MOCK    SourceAPI = 1
+	SourceAPI_SOURCE_API_TRUFFLE SourceAPI = 2
+	SourceAPI_SOURCE_API_MAL     SourceAPI = 3
+	// MAL returns recommended anime and manga links without specifying the
+	// media type (used to resolve to SourceType). Because SourceType is used to
+	// determine if the MAL anime or manga endpoint is used, we need to otherwise
+	// specify the endpoint.
+	//
+	// Users may not specify these API types.
+	SourceAPI_SOURCE_API_MAL_MANGA_PARTIAL SourceAPI = 4
+	SourceAPI_SOURCE_API_MAL_ANIME_PARTIAL SourceAPI = 5
+)
+
+// Enum value maps for SourceAPI.
+var (
+	SourceAPI_name = map[int32]string{
+		0: "SOURCE_API_NONE",
+		1: "SOURCE_API_MOCK",
+		2: "SOURCE_API_TRUFFLE",
+		3: "SOURCE_API_MAL",
+		4: "SOURCE_API_MAL_MANGA_PARTIAL",
+		5: "SOURCE_API_MAL_ANIME_PARTIAL",
+	}
+	SourceAPI_value = map[string]int32{
+		"SOURCE_API_NONE":              0,
+		"SOURCE_API_MOCK":              1,
+		"SOURCE_API_TRUFFLE":           2,
+		"SOURCE_API_MAL":               3,
+		"SOURCE_API_MAL_MANGA_PARTIAL": 4,
+		"SOURCE_API_MAL_ANIME_PARTIAL": 5,
+	}
+)
+
+func (x SourceAPI) Enum() *SourceAPI {
+	p := new(SourceAPI)
+	*p = x
+	return p
+}
+
+func (x SourceAPI) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (SourceAPI) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_enums_proto_enumTypes[2].Descriptor()
+}
+
+func (SourceAPI) Type() protoreflect.EnumType {
+	return &file_proto_enums_proto_enumTypes[2]
+}
+
+func (x SourceAPI) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use SourceAPI.Descriptor instead.
+func (SourceAPI) EnumDescriptor() ([]byte, []int) {
+	return file_proto_enums_proto_rawDescGZIP(), []int{2}
 }
 
 var File_proto_enums_proto protoreflect.FileDescriptor
 
 const file_proto_enums_proto_rawDesc = "" +
 	"\n" +
-	"\x11proto/enums.proto\x12\rtruffle.enums*A\n" +
-	"\x04Type\x12\r\n" +
-	"\tTYPE_NONE\x10\x00\x12\v\n" +
-	"\aTYPE_TV\x10\x01\x12\x0e\n" +
+	"\x11proto/enums.proto\x12\rtruffle.enums*z\n" +
+	"\fSourceStatus\x12\x19\n" +
+	"\x15SOURCE_STATUS_UNKNOWN\x10\x00\x12\x18\n" +
+	"\x14SOURCE_STATUS_QUEUED\x10\x01\x12\x18\n" +
+	"\x14SOURCE_STATUS_ACTIVE\x10\x02\x12\x1b\n" +
+	"\x17SOURCE_STATUS_COMPLETED\x10\x03*\xe3\x01\n" +
 	"\n" +
-	"TYPE_MOVIE\x10\x02\x12\r\n" +
-	"\tTYPE_BOOK\x10\x03*4\n" +
-	"\x03API\x12\x0f\n" +
-	"\vAPI_VIRTUAL\x10\x00\x12\x0f\n" +
-	"\vAPI_TRUFFLE\x10\x01\x12\v\n" +
-	"\aAPI_MAL\x10\x02B2Z0github.com/minkezhang/truffle-api/proto/go/enumsb\x06proto3"
+	"SourceType\x12\x17\n" +
+	"\x13SOURCE_TYPE_UNKNOWN\x10\x00\x12\x16\n" +
+	"\x12SOURCE_TYPE_SERIES\x10\x01\x12\x1c\n" +
+	"\x18SOURCE_TYPE_SERIES_ANIME\x10\x02\x12\x15\n" +
+	"\x11SOURCE_TYPE_MOVIE\x10\x03\x12\x1b\n" +
+	"\x17SOURCE_TYPE_MOVIE_ANIME\x10\x04\x12\x14\n" +
+	"\x10SOURCE_TYPE_BOOK\x10\x05\x12\x1a\n" +
+	"\x16SOURCE_TYPE_BOOK_MANGA\x10\x06\x12 \n" +
+	"\x1cSOURCE_TYPE_BOOK_LIGHT_NOVEL\x10\a*\xa5\x01\n" +
+	"\tSourceAPI\x12\x13\n" +
+	"\x0fSOURCE_API_NONE\x10\x00\x12\x13\n" +
+	"\x0fSOURCE_API_MOCK\x10\x01\x12\x16\n" +
+	"\x12SOURCE_API_TRUFFLE\x10\x02\x12\x12\n" +
+	"\x0eSOURCE_API_MAL\x10\x03\x12 \n" +
+	"\x1cSOURCE_API_MAL_MANGA_PARTIAL\x10\x04\x12 \n" +
+	"\x1cSOURCE_API_MAL_ANIME_PARTIAL\x10\x05B2Z0github.com/minkezhang/truffle-api/proto/go/enumsb\x06proto3"
 
 var (
 	file_proto_enums_proto_rawDescOnce sync.Once
@@ -150,10 +241,11 @@ func file_proto_enums_proto_rawDescGZIP() []byte {
 	return file_proto_enums_proto_rawDescData
 }
 
-var file_proto_enums_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_proto_enums_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_proto_enums_proto_goTypes = []any{
-	(Type)(0), // 0: truffle.enums.Type
-	(API)(0),  // 1: truffle.enums.API
+	(SourceStatus)(0), // 0: truffle.enums.SourceStatus
+	(SourceType)(0),   // 1: truffle.enums.SourceType
+	(SourceAPI)(0),    // 2: truffle.enums.SourceAPI
 }
 var file_proto_enums_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -173,7 +265,7 @@ func file_proto_enums_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_enums_proto_rawDesc), len(file_proto_enums_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

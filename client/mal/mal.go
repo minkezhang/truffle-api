@@ -8,90 +8,91 @@ package mal
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
-	"github.com/minkezhang/truffle-api/client"
-	"github.com/minkezhang/truffle-api/client/mal/anime"
-	"github.com/minkezhang/truffle-api/client/mal/manga"
-	"github.com/minkezhang/truffle-api/client/query"
-	"github.com/minkezhang/truffle-api/db/atom"
+	"github.com/minkezhang/truffle-api/client/mal/shim"
+	"github.com/minkezhang/truffle-api/client/option"
+	"github.com/minkezhang/truffle-api/data/source"
 	"github.com/nstratos/go-myanimelist/mal"
 
+	cpb "github.com/minkezhang/truffle-api/proto/go/config"
 	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
-var (
-	_ client.C = &C{}
-)
-
-type O struct {
-	ClientID         string // API key
-	PopularityCutoff int64
-	MaxResults       int64
-	NSFW             bool
-}
-
-func New(o O) *C {
-	return &C{
-		anime: &anime.C{
-			Cutoff:  int(o.PopularityCutoff),
-			Results: int(o.MaxResults),
-			NSFW:    o.NSFW,
-			MAL: *mal.NewClient(
-				&http.Client{
-					Transport: transport{id: o.ClientID},
-				},
-			),
+func Make(pb *cpb.MAL) C {
+	client := *mal.NewClient(
+		&http.Client{
+			Transport: transport{id: pb.GetClientId()},
 		},
-		manga: &manga.C{
-			Cutoff:  int(o.PopularityCutoff),
-			Results: int(o.MaxResults),
-			NSFW:    o.NSFW,
-			MAL: *mal.NewClient(
-				&http.Client{
-					Transport: transport{id: o.ClientID},
-				},
-			),
+	)
+
+	return C{
+		anime: shim.AnimeClient{
+			Config: pb,
+			MAL:    client,
+		},
+		manga: shim.MangaClient{
+			Config: pb,
+			MAL:    client,
 		},
 	}
 }
 
 type C struct {
-	anime *anime.C
-	manga *manga.C
+	anime shim.AnimeClient
+	manga shim.MangaClient
 }
 
-func (c *C) APIType() epb.API { return epb.API_API_MAL }
-
-func (c *C) Get(ctx context.Context, g query.G) (*atom.A, error) {
-	switch t := g.AtomType; t {
-	case epb.Type_TYPE_TV:
-		fallthrough
-	case epb.Type_TYPE_MOVIE:
-		return c.anime.Get(ctx, g)
-	case epb.Type_TYPE_BOOK:
-		return c.manga.Get(ctx, g)
+func (c C) Get(ctx context.Context, header source.H) (source.S, error) {
+	switch api := header.API(); api {
+	case epb.SourceAPI_SOURCE_API_MAL_MANGA_PARTIAL:
+		return c.manga.Get(ctx, header)
+	case epb.SourceAPI_SOURCE_API_MAL_ANIME_PARTIAL:
+		return c.anime.Get(ctx, header)
+	case epb.SourceAPI_SOURCE_API_MAL:
+		switch t := header.Type(); t {
+		case epb.SourceType_SOURCE_TYPE_SERIES_ANIME:
+			fallthrough
+		case epb.SourceType_SOURCE_TYPE_MOVIE_ANIME:
+			return c.anime.Get(ctx, header)
+		case epb.SourceType_SOURCE_TYPE_BOOK_MANGA:
+			fallthrough
+		case epb.SourceType_SOURCE_TYPE_BOOK_LIGHT_NOVEL:
+			return c.manga.Get(ctx, header)
+		default:
+			return source.S{}, fmt.Errorf("unsupported source type: %v", t.String())
+		}
 	default:
-		return nil, nil /* unimplemented */
+		return source.S{}, fmt.Errorf("unsupported API: %v", api.String())
 	}
 }
 
-func (c *C) Query(ctx context.Context, q *query.Q) ([]*atom.A, error) {
-	var results []*atom.A
-	if q.IsSupportedType(epb.Type_TYPE_TV) || q.IsSupportedType(epb.Type_TYPE_MOVIE) {
-		atoms, err := c.anime.Query(ctx, q)
-		if err != nil {
-			return nil, err
+func (c C) Search(ctx context.Context, query string, opts ...option.O) ([]source.S, error) {
+	var results []source.S
+	var sources []source.S
+	var err error
+
+	nsfw := false
+	for _, o := range opts {
+		switch o := o.(type) {
+		case option.NSFW:
+			nsfw = bool(o)
 		}
-		results = append(results, atoms...)
 	}
-	if q.IsSupportedType(epb.Type_TYPE_BOOK) {
-		atoms, err := c.manga.Query(ctx, q)
-		if err != nil {
-			return nil, err
-		}
-		results = append(results, atoms...)
+
+	sources, err = c.anime.Search(ctx, query, nsfw)
+	if err != nil {
+		return nil, err
 	}
+	results = append(results, sources...)
+
+	sources, err = c.manga.Search(ctx, query, nsfw)
+	if err != nil {
+		return nil, err
+	}
+	results = append(results, sources...)
+
 	return results, nil
 }
 

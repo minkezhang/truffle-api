@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package truffle.data;
+option go_package = "github.com/minkezhang/truffle-api/proto/go/data";
+// option features.(pb.go).api_level = API_OPEN;
+
+import "google/protobuf/timestamp.proto";
+import "proto/enums.proto";
+
+message Database {
+    repeated Node   nodes   = 1;
+    repeated Source sources = 2;
+}
+
+message Title {
+  string title        = 1;
+  string localization = 2;
+}
+
+// Node is comprised of multiple source instances.
+//
+// All sources within the same node must have the same source type and
+// source tag.
+message Node {
+  NodeHeader header = 1;
+}
+
+message NodeHeader {
+  truffle.enums.SourceType type = 1;
+  string                   id   = 2;
+}
+
+message SourceHeader {
+  truffle.enums.SourceAPI  api  = 1;
+  truffle.enums.SourceType type = 2;
+  string                   id   = 3;
+}
+
+message Source {
+  string       node_id = 1;  // Parent reference
+  SourceHeader header  = 2;
+
+  // Data sources may link to other 
+  repeated SourceHeader related_headers = 3;
+
+  // Common fields
+  repeated Title                      titles      = 100;
+           string                     preview_url = 101;
+           int64                      score       = 102;  // 0 - 100
+           string                     synopsis    = 103;
+           string                     notes       = 104;
+  repeated string                     genres      = 105;
+           truffle.enums.SourceStatus status      = 106;
+
+  // Series and movie-specific fields
+  repeated string studios = 200;  // e.g. WIT, Gainax (anime-specific)
+  repeated string seasons = 201;  // e.g. 2010 Fall (anime-specific)
+
+  // Book-specific fields
+  repeated string                    authors      = 300;
+  repeated string                    illustrators = 301;
+           google.protobuf.Timestamp last_updated = 302;  // Last time a chapter was released (manga-specific)
+}

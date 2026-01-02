@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package truffle.config;
+option go_package = "github.com/minkezhang/truffle-api/proto/go/config";
+// option features.(pb.go).api_level = API_OPEN;
+
+message Config {
+  Truffle truffle = 1;
+  MAL     mal     = 2;
+}
+
+message MAL {
+    string client_id   = 1;  // TODO(minkezhang): Add OAuth2 flow
+    int64  max_results = 2;
+}
+
+message Truffle {
+}

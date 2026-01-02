@@ -2,17 +2,17 @@ package mal
 
 import (
 	"context"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/minkezhang/truffle-api/client/query"
-	"github.com/minkezhang/truffle-api/db/atom"
-	"github.com/minkezhang/truffle-api/db/atom/metadata/book"
-	"github.com/minkezhang/truffle-api/db/atom/metadata/movie"
-	"github.com/minkezhang/truffle-api/db/atom/metadata/shared/video"
-	"github.com/minkezhang/truffle-api/db/atom/metadata/tv"
+	"github.com/minkezhang/truffle-api/client/option"
+	"github.com/minkezhang/truffle-api/data/source"
+	"google.golang.org/protobuf/testing/protocmp"
 
+	cpb "github.com/minkezhang/truffle-api/proto/go/config"
+	dpb "github.com/minkezhang/truffle-api/proto/go/data"
 	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
@@ -21,152 +21,163 @@ const (
 	MALClientID = "6114d00ca681b7701d1e15fe11a4987e"
 )
 
+var (
+	config = &cpb.MAL{
+		ClientId:   MALClientID,
+		MaxResults: 2,
+	}
+)
+
 func TestGet(t *testing.T) {
 	configs := []struct {
-		name     string
-		atomType epb.Type
-		id       string
-		want     *atom.A
+		name        string
+		api_type    epb.SourceAPI
+		source_type epb.SourceType
+		id          string
+		want        source.S
 	}{
 		{
-			name:     "Book/Manga",
-			atomType: epb.Type_TYPE_BOOK,
-			id:       "1061", // Detective Conan
-			want: atom.New(atom.O{
-				APIType: epb.API_API_MAL,
-				APIID:   "1061",
-				Titles: []atom.T{
-					atom.T{Title: "Meitantei Conan"},
-					atom.T{Title: "Case Closed", Localization: "en"},
-					atom.T{Title: "名探偵コナン", Localization: "ja"},
+			name:        "Book/Manga",
+			api_type:    epb.SourceAPI_SOURCE_API_MAL,
+			source_type: epb.SourceType_SOURCE_TYPE_BOOK_MANGA,
+			id:          "1061", // Detective Conan
+			want: source.Make(&dpb.Source{
+				Header: &dpb.SourceHeader{
+					Api:  epb.SourceAPI_SOURCE_API_MAL,
+					Type: epb.SourceType_SOURCE_TYPE_BOOK_MANGA,
+					Id:   "1061",
 				},
-				PreviewURL: "https://cdn.myanimelist.net/images/manga/1/97267l.jpg",
-				Score:      82,
-				AtomType:   epb.Type_TYPE_BOOK,
-				Metadata: book.New(book.O{
-					Genres:        []string{"Adventure", "Award Winning", "Comedy", "Detective", "Mystery", "Shounen"},
-					Authors:       []string{"Gosho Aoyama"},
-					Illustrators:  []string{"Gosho Aoyama"},
-					IsIllustrated: true,
-					IsManga:       true,
-				}),
+				Titles: []*dpb.Title{
+					&dpb.Title{Title: "Meitantei Conan"},
+					&dpb.Title{Title: "Case Closed", Localization: "en"},
+					&dpb.Title{Title: "名探偵コナン", Localization: "ja"},
+				},
+				Score:        82,
+				Genres:       []string{"Adventure", "Award Winning", "Comedy", "Detective", "Mystery", "Shounen"},
+				Authors:      []string{"Gosho Aoyama"},
+				Illustrators: []string{"Gosho Aoyama"},
 			}),
 		},
 		{
-			name:     "Book/LightNovel",
-			atomType: epb.Type_TYPE_BOOK,
-			id:       "86769", // Apothecary Diaries
-			want: atom.New(atom.O{
-				APIType: epb.API_API_MAL,
-				APIID:   "86769",
-				Titles: []atom.T{
-					atom.T{Title: "Kusuriya no Hitorigoto"},
-					atom.T{Title: "The Apothecary Diaries", Localization: "en"},
-					atom.T{Title: "薬屋のひとりごと", Localization: "ja"},
+			name:        "Book/LightNovel",
+			api_type:    epb.SourceAPI_SOURCE_API_MAL,
+			source_type: epb.SourceType_SOURCE_TYPE_BOOK_MANGA,
+			id:          "86769", // Apothecary Diaries
+			want: source.Make(&dpb.Source{
+				Header: &dpb.SourceHeader{
+					Api:  epb.SourceAPI_SOURCE_API_MAL,
+					Id:   "86769",
+					Type: epb.SourceType_SOURCE_TYPE_BOOK_LIGHT_NOVEL,
 				},
-				PreviewURL: "https://cdn.myanimelist.net/images/manga/2/176943l.jpg",
-				Score:      88,
-				AtomType:   epb.Type_TYPE_BOOK,
-				Metadata: book.New(book.O{
-					Genres:        []string{"Drama", "Medical", "Mystery"},
-					Authors:       []string{"Natsu Hyuuga"},
-					Illustrators:  []string{"Touko Shino"},
-					IsIllustrated: false,
-					IsManga:       true,
-				}),
+				Titles: []*dpb.Title{
+					&dpb.Title{Title: "Kusuriya no Hitorigoto"},
+					&dpb.Title{Title: "The Apothecary Diaries", Localization: "en"},
+					&dpb.Title{Title: "薬屋のひとりごと", Localization: "ja"},
+				},
+				Score:        88,
+				Genres:       []string{"Drama", "Medical", "Mystery"},
+				Authors:      []string{"Natsu Hyuuga"},
+				Illustrators: []string{"Touko Shino"},
 			}),
 		},
 		{
-			name:     "TV",
-			atomType: epb.Type_TYPE_TV,
-			id:       "235", // Detective Conan
-			want: atom.New(atom.O{
-				APIType: epb.API_API_MAL,
-				APIID:   "235",
-				Titles: []atom.T{
-					atom.T{Title: "Meitantei Conan"},
-					atom.T{Title: "Case Closed", Localization: "en"},
-					atom.T{Title: "名探偵コナン", Localization: "ja"},
+			name:        "Series",
+			api_type:    epb.SourceAPI_SOURCE_API_MAL,
+			source_type: epb.SourceType_SOURCE_TYPE_SERIES_ANIME,
+			id:          "235", // Detective Conan
+			want: source.Make(&dpb.Source{
+				Header: &dpb.SourceHeader{
+					Api:  epb.SourceAPI_SOURCE_API_MAL,
+					Id:   "235",
+					Type: epb.SourceType_SOURCE_TYPE_SERIES_ANIME,
 				},
-				PreviewURL: "https://cdn.myanimelist.net/images/anime/7/75199l.jpg",
-				Score:      81,
-				AtomType:   epb.Type_TYPE_TV,
-				Metadata: tv.New(tv.O{
-					O: movie.O{
-						IsAnimated: true,
-						IsAnime:    true,
-						Genres:     []string{"Adventure", "Comedy", "Detective", "Mystery", "Shounen"},
-						Studios:    []string{"TMS Entertainment"},
-					},
-				}),
+				Titles: []*dpb.Title{
+					&dpb.Title{Title: "Meitantei Conan"},
+					&dpb.Title{Title: "Case Closed", Localization: "en"},
+					&dpb.Title{Title: "名探偵コナン", Localization: "ja"},
+				},
+				Score:   81,
+				Genres:  []string{"Adventure", "Comedy", "Detective", "Mystery", "Shounen"},
+				Studios: []string{"TMS Entertainment"},
 			}),
 		},
 		{
-			name:     "Movie",
-			atomType: epb.Type_TYPE_MOVIE,
-			id:       "28851", // Koe no Katachi
-			want: atom.New(atom.O{
-				APIType: epb.API_API_MAL,
-				APIID:   "28851",
-				Titles: []atom.T{
-					atom.T{Title: "Koe no Katachi"},
-					atom.T{Title: "A Silent Voice", Localization: "en"},
-					atom.T{Title: "聲の形", Localization: "ja"},
+			name:        "Movie",
+			api_type:    epb.SourceAPI_SOURCE_API_MAL,
+			source_type: epb.SourceType_SOURCE_TYPE_MOVIE_ANIME,
+			id:          "28851", // Koe no Katachi
+			want: source.Make(&dpb.Source{
+				Header: &dpb.SourceHeader{
+					Api:  epb.SourceAPI_SOURCE_API_MAL,
+					Id:   "28851",
+					Type: epb.SourceType_SOURCE_TYPE_MOVIE_ANIME,
 				},
-				PreviewURL: "https://cdn.myanimelist.net/images/anime/1122/96435l.webp",
-				Score:      89,
-				AtomType:   epb.Type_TYPE_MOVIE,
-				Metadata: movie.New(movie.O{
-					IsAnimated: true,
-					IsAnime:    true,
-					Genres:     []string{"Award Winning", "Drama", "Shounen"},
-					Studios:    []string{"Kyoto Animation"},
-				}),
+				Titles: []*dpb.Title{
+					&dpb.Title{Title: "Koe no Katachi"},
+					&dpb.Title{Title: "A Silent Voice", Localization: "en"},
+					&dpb.Title{Title: "聲の形", Localization: "ja"},
+				},
+				Score:   89,
+				Genres:  []string{"Award Winning", "Drama", "Shounen"},
+				Studios: []string{"Kyoto Animation"},
 			}),
 		},
 		{
-			name:     "IncorrectType",
-			atomType: epb.Type_TYPE_MOVIE,
-			id:       "235",
-			want:     nil,
+			name:        "Movie/Partial",
+			api_type:    epb.SourceAPI_SOURCE_API_MAL_ANIME_PARTIAL,
+			source_type: epb.SourceType_SOURCE_TYPE_UNKNOWN,
+			id:          "28851",
+			want: source.Make(&dpb.Source{
+				Header: &dpb.SourceHeader{
+					Api:  epb.SourceAPI_SOURCE_API_MAL,
+					Id:   "28851",
+					Type: epb.SourceType_SOURCE_TYPE_MOVIE_ANIME,
+				},
+				Titles: []*dpb.Title{
+					&dpb.Title{Title: "Koe no Katachi"},
+					&dpb.Title{Title: "A Silent Voice", Localization: "en"},
+					&dpb.Title{Title: "聲の形", Localization: "ja"},
+				},
+				Score:   89,
+				Genres:  []string{"Award Winning", "Drama", "Shounen"},
+				Studios: []string{"Kyoto Animation"},
+			}),
 		},
 	}
 
 	for _, c := range configs {
 		t.Run(c.name, func(t *testing.T) {
-			client := New(O{
-				ClientID: MALClientID,
-			})
+			client := Make(config)
 
-			got, err := client.Get(context.Background(), query.G{
-				AtomType: c.atomType,
-				ID:       c.id,
-			})
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+
+			got, err := client.Get(ctx, source.Make(
+				&dpb.Source{
+					Header: &dpb.SourceHeader{
+						Api:  c.api_type,
+						Type: c.source_type,
+						Id:   c.id,
+					},
+				},
+			).Header())
 			if err != nil {
-				t.Errorf("Get() returned unexpected error: %v", err)
+				t.Fatalf("Get() returned unexpected error: %v", err)
 			}
 
 			if diff := cmp.Diff(
 				c.want,
 				got,
-				cmp.AllowUnexported(
-					atom.A{},
-					book.M{},
-					tv.M{},
-					video.M{},
-				),
-				cmpopts.IgnoreFields(
-					tv.M{},
-					"lastUpdated",
-				),
-				cmpopts.IgnoreFields(
-					book.M{},
-					"lastUpdated",
-				),
-				cmpopts.IgnoreFields(
-					atom.A{},
+				cmp.AllowUnexported(source.S{}),
+				protocmp.Transform(),
+				protocmp.IgnoreFields(
+					&dpb.Source{},
 					"synopsis",
-					"previewURL",
+					"last_updated",
+					"preview_url",
+					"seasons",
+					"score",
+					"related_headers",
 				),
 			); diff != "" {
 				t.Errorf("Get() mismatch (-want +got):\n%s", diff)
@@ -175,176 +186,60 @@ func TestGet(t *testing.T) {
 	}
 }
 
-func TestQuery(t *testing.T) {
-	configs := []struct {
-		name   string
-		client *C
-		query  *query.Q
-		want   []*atom.A
-	}{
-		{
-			name: "Filter/NoNSFW",
-			client: New(O{
-				ClientID:         MALClientID,
-				PopularityCutoff: 10000,
-				MaxResults:       2,
-				NSFW:             false,
-			}),
-			query: query.New(query.O{
-				AtomTypes: []epb.Type{
-					epb.Type_TYPE_BOOK,
-				},
-				Title: "Nozoki Ana",
-			}),
-			want: []*atom.A{
-				atom.New(atom.O{
-					APIType:  epb.API_API_MAL,
-					APIID:    "24698", // Nozo x Kimi
-					AtomType: epb.Type_TYPE_BOOK,
-				}),
-				atom.New(atom.O{
-					APIType:  epb.API_API_MAL,
-					APIID:    "60561", // Nozomu Nozomi
-					AtomType: epb.Type_TYPE_BOOK,
-				}),
-			},
-		},
-		{
-			name: "Filter/NSFW",
-			client: New(O{
-				ClientID:         MALClientID,
-				PopularityCutoff: 10000,
-				MaxResults:       2,
-				NSFW:             true,
-			}),
-			query: query.New(query.O{
-				AtomTypes: []epb.Type{
-					epb.Type_TYPE_BOOK,
-				},
-				Title: "Nozoki Ana",
-			}),
-			want: []*atom.A{
-				atom.New(atom.O{
-					APIType:  epb.API_API_MAL,
-					APIID:    "21419", // Nozoki Ana
-					AtomType: epb.Type_TYPE_BOOK,
-				}),
-				atom.New(atom.O{
-					APIType:  epb.API_API_MAL,
-					APIID:    "166773", // 3.5 Kai no Nozoki Ana
-					AtomType: epb.Type_TYPE_BOOK,
-				}),
-			},
-		},
-		{
-			name: "Filter/Book",
-			client: New(O{
-				ClientID:         MALClientID,
-				PopularityCutoff: 10000,
-				MaxResults:       2,
-				NSFW:             true,
-			}),
-			query: query.New(query.O{
-				AtomTypes: []epb.Type{
-					epb.Type_TYPE_BOOK,
-				},
-				Title: "The Apothecary Diaries",
-			}),
-			want: []*atom.A{
-				atom.New(atom.O{
-					APIType:  epb.API_API_MAL,
-					APIID:    "86769", // The Apothecary Diaries (light novel)
-					AtomType: epb.Type_TYPE_BOOK,
-				}),
-				atom.New(atom.O{
-					APIType:  epb.API_API_MAL,
-					APIID:    "107562", // The Apothecary Diaries (manga)
-					AtomType: epb.Type_TYPE_BOOK,
-				}),
-			},
-		},
-		{
-			name: "Filter/TVAndMovie",
-			client: New(O{
-				ClientID:         MALClientID,
-				PopularityCutoff: 10000,
-				MaxResults:       2,
-				NSFW:             true,
-			}),
-			query: query.New(query.O{
-				AtomTypes: []epb.Type{
-					epb.Type_TYPE_TV,
-					epb.Type_TYPE_MOVIE,
-				},
-				Title: "Digimon Tamers",
-			}),
-			want: []*atom.A{
-				atom.New(atom.O{
-					APIType:  epb.API_API_MAL,
-					APIID:    "874", // Digimon Tamers
-					AtomType: epb.Type_TYPE_TV,
-				}),
-				atom.New(atom.O{
-					APIType:  epb.API_API_MAL,
-					APIID:    "3033", // Digimon Tamers: Runaway Locomon
-					AtomType: epb.Type_TYPE_MOVIE,
-				}),
-			},
-		},
-		{
-			name: "Filter/Movie",
-			client: New(O{
-				ClientID:         MALClientID,
-				PopularityCutoff: 10000,
-				MaxResults:       2,
-				NSFW:             true,
-			}),
-			query: query.New(query.O{
-				AtomTypes: []epb.Type{
-					epb.Type_TYPE_MOVIE,
-				},
-				Title: "Digimon Tamers",
-			}),
-			want: []*atom.A{
-				atom.New(atom.O{
-					APIType:  epb.API_API_MAL,
-					APIID:    "3033", // Digimon Tamers: Runaway Locomon
-					AtomType: epb.Type_TYPE_MOVIE,
-				}),
-				atom.New(atom.O{
-					APIType:  epb.API_API_MAL,
-					APIID:    "3032", // Digimon Tamers: Battle of Adventurers
-					AtomType: epb.Type_TYPE_MOVIE,
-				}),
-			},
-		},
-	}
-
-	for _, c := range configs {
-		t.Run(c.name, func(t *testing.T) {
-			got, err := c.client.Query(context.Background(), c.query)
-
-			if err != nil {
-				t.Errorf("Query() returned unexpected error: %v", err)
-			}
-
-			if diff := cmp.Diff(
-				c.want,
-				got,
-				cmp.AllowUnexported(
-					atom.A{},
-				),
-				cmpopts.IgnoreFields(
-					atom.A{},
-					"synopsis",
-					"previewURL",
-					"metadata",
-					"score",
-					"titles",
-				),
-			); diff != "" {
-				t.Errorf("Query() mismatch (-want +got):\n%s", diff)
-			}
+func TestSearch(t *testing.T) {
+	t.Run("NSFW", func(t *testing.T) {
+		client := Make(&cpb.MAL{
+			ClientId:   config.GetClientId(),
+			MaxResults: 20,
 		})
-	}
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		got, err := client.Search(ctx, "Citrus", option.NSFW(true)) // NSFW
+		if err != nil {
+			t.Errorf("Search() returned non-nil error: %v", err)
+		}
+
+		// Check that at least one NSFW result was returned.
+		nsfw := false
+		for _, s := range got {
+			categories := map[string]bool{}
+			for _, g := range s.Genres() {
+				categories[strings.ToLower(g)] = true
+			}
+			if categories["hentai"] || categories["erotica"] {
+				nsfw = true
+			}
+		}
+		if !nsfw {
+			t.Errorf("Search() returned no NSFW results")
+		}
+	})
+	t.Run("NoNSFW", func(t *testing.T) {
+		client := Make(&cpb.MAL{
+			ClientId:   config.GetClientId(),
+			MaxResults: 20,
+		})
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		got, err := client.Search(ctx, "Citrus", option.NSFW(false)) // NSFW
+		if err != nil {
+			t.Errorf("Search() returned non-nil error: %v", err)
+		}
+		for _, s := range got {
+			categories := map[string]bool{}
+			for _, g := range s.Genres() {
+				categories[strings.ToLower(g)] = true
+			}
+			if categories["hentai"] || categories["erotica"] {
+				t.Errorf(
+					"Search() returned a NSFW result: %v (%v:%v)",
+					s.Title().Title(),
+					s.Header().Type().String(),
+					s.Header().ID(),
+				)
+			}
+		}
+	})
 }

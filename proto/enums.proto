@@ -4,22 +4,46 @@ package truffle.enums;
 option go_package = "github.com/minkezhang/truffle-api/proto/go/enums";
 // option features.(pb.go).api_level = API_OPEN;
 
-enum Type {
-  TYPE_NONE  = 0;
-  TYPE_TV    = 1;
-  TYPE_MOVIE = 2;
-  TYPE_BOOK  = 3;
+enum SourceStatus {
+  SOURCE_STATUS_UNKNOWN   = 0;
+  SOURCE_STATUS_QUEUED    = 1;
+  SOURCE_STATUS_ACTIVE    = 2;
+  SOURCE_STATUS_COMPLETED = 3;
 }
 
-enum API {
-  API_VIRTUAL = 0;
-  API_TRUFFLE = 1;
-  API_MAL     = 2;
-  // API_ANILIST      = 3;
-  // API_MANGADEX     = 5;
-  // API_TMDB         = 6;  // https://www.themoviedb.org/
-  // API_OMDB         = 7;  // https://www.omdbapi.com/
-  // API_STEAM        = 8;
-  // API_OPEN_LIBRARY = 9;
-  // API_SPOTIFY      = 10;
+enum SourceType {
+  SOURCE_TYPE_UNKNOWN          = 0;
+  SOURCE_TYPE_SERIES           = 1;
+  SOURCE_TYPE_SERIES_ANIME     = 2;
+  SOURCE_TYPE_MOVIE            = 3;
+  SOURCE_TYPE_MOVIE_ANIME      = 4;
+  SOURCE_TYPE_BOOK             = 5;
+  SOURCE_TYPE_BOOK_MANGA       = 6;
+  SOURCE_TYPE_BOOK_LIGHT_NOVEL = 7;
 }
+
+enum SourceAPI {
+  SOURCE_API_NONE    = 0;
+  SOURCE_API_MOCK    = 1;
+  SOURCE_API_TRUFFLE = 2;
+  SOURCE_API_MAL     = 3;
+
+  // MAL returns recommended anime and manga links without specifying the
+  // media type (used to resolve to SourceType). Because SourceType is used to
+  // determine if the MAL anime or manga endpoint is used, we need to otherwise
+  // specify the endpoint.
+  //
+  // Users may not specify these API types.
+  SOURCE_API_MAL_MANGA_PARTIAL = 4;
+  SOURCE_API_MAL_ANIME_PARTIAL = 5;
+
+  // SOURCE_API_ANILIST      = 4;
+  // SOURCE_API_MANGAUPDATES = 5;
+  // SOURCE_API_MANGADEX     = 6;
+  // SOURCE_API_TMDB         = 7;  // https://www.themoviedb.org/
+  // SOURCE_API_OMDB         = 8;  // https://www.omdbapi.com/
+  // SOURCE_API_STEAM        = 9;
+  // SOURCE_API_OPEN_LIBRARY = 10;
+  // SOURCE_API_SPOTIFY      = 11;
+}
+

@@ -1,136 +1,270 @@
-// Package db encapsulates logic necessary to query for media data across
-// multiple clients.
+// Package db implements a Truffle database.
 package db
 
 import (
+	"cmp"
 	"context"
+	"fmt"
+	"slices"
 
 	"github.com/minkezhang/truffle-api/client"
-	"github.com/minkezhang/truffle-api/db/atom"
-	"github.com/minkezhang/truffle-api/db/generator"
-	"github.com/minkezhang/truffle-api/db/node"
-	"github.com/minkezhang/truffle-api/db/query"
+	"github.com/minkezhang/truffle-api/client/mal"
+	"github.com/minkezhang/truffle-api/client/option"
+	"github.com/minkezhang/truffle-api/client/truffle"
+	"github.com/minkezhang/truffle-api/data/node"
+	"github.com/minkezhang/truffle-api/data/source"
+	"github.com/minkezhang/truffle-api/data/source/util"
+	"github.com/minkezhang/truffle-api/util/generator"
+	"github.com/minkezhang/truffle-api/util/match"
 
-	cq "github.com/minkezhang/truffle-api/client/query"
+	cpb "github.com/minkezhang/truffle-api/proto/go/config"
+	dpb "github.com/minkezhang/truffle-api/proto/go/data"
 	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
 
-// g is an ID generator
-type g interface {
-	Generate() string
-}
+func New(ctx context.Context, config *cpb.Config, db *dpb.Database) *DB {
+	mal_client := client.New(
+		ctx,
+		mal.Make(config.GetMal()),
+		util.Filter(db.GetSources(), func(v *dpb.Source) bool {
+			return v.GetHeader().GetApi() != epb.SourceAPI_SOURCE_API_MAL
+		}),
+	)
 
-type O struct {
-	Data    []*node.N
-	Clients []client.C
+	nodes := map[string]node.N{}
+	for _, n := range db.GetNodes() {
+		nodes[n.GetHeader().GetId()] = node.Make(n)
+	}
+
+	return &DB{
+		clients: map[epb.SourceAPI]*client.Cache{
+			epb.SourceAPI_SOURCE_API_TRUFFLE: client.New(
+				ctx,
+				truffle.New(
+					config.GetTruffle(),
+					util.Filter(db.GetSources(), func(v *dpb.Source) bool {
+						return v.GetHeader().GetApi() != epb.SourceAPI_SOURCE_API_TRUFFLE
+					}),
+				),
+				util.Filter(db.GetSources(), func(v *dpb.Source) bool {
+					return v.GetHeader().GetApi() != epb.SourceAPI_SOURCE_API_TRUFFLE
+				}),
+			),
+			epb.SourceAPI_SOURCE_API_MAL:               mal_client,
+			epb.SourceAPI_SOURCE_API_MAL_ANIME_PARTIAL: mal_client,
+			epb.SourceAPI_SOURCE_API_MAL_MANGA_PARTIAL: mal_client,
+		},
+		nodes: nodes,
+		generator: generator.New(generator.O{
+			IDs: util.Apply(db.GetNodes(), func(v *dpb.Node) string { return v.GetHeader().GetId() }),
+		}),
+	}
 }
 
 type DB struct {
-	data    map[epb.Type]map[string]*node.N
-	clients map[epb.API]client.C
-
-	g g // ID generator
+	clients   map[epb.SourceAPI]*client.Cache
+	nodes     map[string]node.N
+	generator *generator.G
 }
 
-func New(ctx context.Context, o O) (*DB, error) {
-	ids := []string{}
-	db := &DB{
-		data:    map[epb.Type]map[string]*node.N{},
-		clients: map[epb.API]client.C{},
-	}
-	for _, n := range o.Data {
-		db.Add(ctx, n)
-		ids = append(ids, n.ID())
-	}
-	db.g = generator.New(generator.O{
-		IDs: ids,
-	})
-
-	for _, c := range o.Clients {
-		db.clients[c.APIType()] = c
-	}
-
-	return db, nil
-}
-
-// Add will add a given node to the DB.
-//
-// A Node ID will be generated if no Node ID is provided and returned.
-func (db *DB) Add(ctx context.Context, n *node.N) (string, error) {
-	n.SetIsAuthoritative(true)
-	if n.ID() == "" {
-		n = node.New(node.O{
-			ID:              db.g.Generate(),
-			AtomType:        n.AtomType(),
-			IsAuthoritative: n.IsAuthoritative(),
-			IsQueued:        n.IsQueued(),
-			Atoms:           n.Atoms(),
-		})
-	}
-	if _, ok := db.data[n.AtomType()]; !ok {
-		db.data[n.AtomType()] = map[string]*node.N{}
-	}
-	db.data[n.AtomType()][n.ID()] = n
-	return n.ID(), nil
-}
-
-func (db *DB) Remove(ctx context.Context, id string) error {
-	n, err := db.Get(ctx, id)
+func (db *DB) DeleteNode(ctx context.Context, header node.H) error {
+	n, err := db.GetNode(ctx, header, option.Remote(false))
 	if err != nil {
 		return err
 	}
-	if n == nil {
-		return nil
-	}
 
-	delete(db.data[n.AtomType()], n.ID())
+	for _, s := range n.Sources() {
+		if err := db.clients[s.Header().API()].Delete(ctx, s.Header()); err != nil {
+			return err
+		}
+	}
+	delete(db.nodes, n.Header().ID())
 	return nil
 }
 
-// Get returns a specific node by the Node ID.
-func (db *DB) Get(ctx context.Context, id string) (*node.N, error) {
-	for _, ns := range db.data {
-		if n, ok := ns[id]; ok {
-			return n, nil
-		}
+func (db *DB) GetNode(ctx context.Context, header node.H, refresh option.Remote) (node.N, error) {
+	n, ok := db.nodes[header.ID()]
+	if !ok {
+		return node.N{}, nil
 	}
-	return nil, nil
+
+	sources := []source.S{}
+	for _, api := range []epb.SourceAPI{
+		epb.SourceAPI_SOURCE_API_TRUFFLE,
+		epb.SourceAPI_SOURCE_API_MAL,
+	} {
+		_sources, err := db.clients[api].SearchByNodeID(ctx, header, refresh)
+		if err != nil {
+			return node.N{}, err
+		}
+		sources = append(sources, _sources...)
+	}
+
+	return n.WithSources(sources), nil
 }
 
-// Query returns a set of nodes which match the input query.
+// Put saves a source into the Truffle DB.
 //
-// If q.APIs is set, all matching clients will be queried.
-func (db *DB) Query(ctx context.Context, q *query.Q) ([]*node.N, error) {
-	res := []*node.N{}
-	if q.IsSupportedAPI(epb.API_API_TRUFFLE) {
-		for atomType := range db.data {
-			for _, n := range db.data[atomType] {
-				match, err := cq.RegExp(q.Q, n.Virtual())
-				if err != nil {
-					return nil, err
-				}
-				if match > 0 {
-					res = append(res, n.Copy())
-				}
-			}
-		}
+//  1. If the source does not exist, save it.
+//  1. If the source does not specify a node ID, generate one.
+//  1. If the source specifies a node ID different from its current designation,
+//     attempt to link the new ID.
+func (db *DB) Put(ctx context.Context, s source.S) (source.H, error) {
+	var t source.S // Pre-existing source if source exists
+	var n node.N   // Associated with s
+
+	fmt.Println(s.NodeID())
+	// Create node if the source is not yet linked.
+	if _, ok := db.nodes[s.NodeID()]; !ok || s.NodeID() == "" {
+		s = s.WithNodeID(db.generator.Generate())
+		n = node.Make(&dpb.Node{
+			Header: &dpb.NodeHeader{
+				Id:   s.NodeID(),
+				Type: s.Header().Type(),
+			},
+		})
+		db.nodes[n.Header().ID()] = n
+		fmt.Println(n.Header().Type().String())
 	}
 
-	for _, c := range db.clients {
-		if q.IsSupportedAPI(c.APIType()) {
-			atoms, err := c.Query(ctx, q.Q)
+	// Get old source if it exists
+	t, err := db.Get(ctx, s.Header(), option.Remote(false))
+	if err != nil {
+		return source.H{}, err
+	}
+
+	header, err := db.clients[s.Header().API()].Put(ctx, s)
+	if err != nil {
+		return header, err
+	}
+	s = s.WithHeader(header)
+
+	// The source is being relinked to a new node.
+	if t != (source.S{}) && s.NodeID() != t.NodeID() {
+		// Check if we can actually link to this node.
+		n, err := db.GetNode(ctx, node.Make(&dpb.Node{
+			Header: &dpb.NodeHeader{
+				Id:   s.NodeID(),
+				Type: s.Header().Type(),
+			},
+		}).Header(), option.Remote(false))
+		if err != nil {
+			return source.H{}, err
+		}
+		if n.Header().Type() != s.Header().Type() {
+			return source.H{}, fmt.Errorf("mismatching node and source media types: %v != %v", n.Header().Type(), s.Header().Type())
+		}
+
+		// Check if we need to delete old node if no remaining links
+		// exist.
+		m, err := db.GetNode(ctx, node.Make(&dpb.Node{
+			Header: &dpb.NodeHeader{
+				Id:   t.NodeID(),
+				Type: t.Header().Type(),
+			},
+		}).Header(), option.Remote(false))
+		if err != nil {
+			return source.H{}, err
+		}
+		if len(m.Sources()) == 0 {
+			if err := db.DeleteNode(ctx, m.Header()); err != nil {
+				return source.H{}, err
+			}
+		}
+
+	}
+
+	return s.Header(), nil
+}
+
+func (db *DB) Delete(ctx context.Context, header source.H) error {
+	s, err := db.clients[header.API()].Get(ctx, header, option.Remote(false))
+	if err != nil {
+		return err
+	}
+
+	if err := db.clients[header.API()].Delete(ctx, header); err != nil {
+		return err
+	}
+
+	// Delete old node if it exists and no other connections remain.
+	if s.NodeID() != "" {
+		n, err := db.GetNode(ctx, node.Make(&dpb.Node{
+			Header: &dpb.NodeHeader{
+				Id:   s.NodeID(),
+				Type: s.Header().Type(),
+			},
+		}).Header(), option.Remote(false))
+		if err != nil {
+			return err
+		}
+
+		if len(n.Sources()) == 0 {
+			return db.DeleteNode(ctx, n.Header())
+		}
+	}
+	return nil
+}
+
+func (db *DB) Get(ctx context.Context, header source.H, refresh option.Remote) (source.S, error) {
+	if _, ok := db.clients[header.API()]; !ok {
+		return source.S{}, nil
+	}
+
+	s, err := db.clients[header.API()].Get(ctx, header, refresh)
+	if err != nil {
+		return source.S{}, err
+	}
+
+	// If source is not found, attempt to force getting the remote version.
+	if s == (source.S{}) && !refresh {
+		return db.clients[header.API()].Get(ctx, header, option.Remote(true))
+	}
+	return s, nil
+}
+
+func (db *DB) Search(ctx context.Context, query string, opts map[epb.SourceAPI][]option.O) ([]source.S, error) {
+	results := []source.S{}
+	for api, _opts := range opts {
+		if _, ok := db.clients[api]; ok {
+			if api == epb.SourceAPI_SOURCE_API_TRUFFLE {
+				_opts = append(_opts, option.Remote(true))
+			}
+			sources, err := db.clients[api].Search(
+				ctx,
+				query,
+				_opts...,
+			)
 			if err != nil {
 				return nil, err
 			}
-			for _, a := range atoms {
-				res = append(res, node.New(node.O{
-					IsAuthoritative: false,
-					AtomType:        a.AtomType(),
-					Atoms:           []*atom.A{a},
-				}))
-			}
+			results = append(results, sources...)
 		}
 	}
 
-	return res, nil
+	slices.SortStableFunc(results, func(a, b source.S) int {
+		u, _ := match.Hamming(query, a)
+		v, _ := match.Hamming(query, b)
+		return -1 * cmp.Compare(u, v)
+	})
+
+	return results, nil
+}
+
+func (db *DB) PB() *dpb.Database {
+	sources := append(
+		[]*dpb.Source{},
+		append(
+			db.clients[epb.SourceAPI_SOURCE_API_TRUFFLE].PB(),
+			db.clients[epb.SourceAPI_SOURCE_API_MAL].PB()...,
+		)...,
+	)
+	nodes := []*dpb.Node{}
+	for _, n := range db.nodes {
+		nodes = append(nodes, n.PB())
+	}
+	return &dpb.Database{
+		Nodes:   nodes,
+		Sources: sources,
+	}
 }
