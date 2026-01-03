@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/minkezhang/truffle-api/data/source/util"
+	"github.com/minkezhang/truffle-api/util/slice"
 	"github.com/nstratos/go-myanimelist/mal"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -108,14 +108,14 @@ func (a Anime) PB() *dpb.Source {
 		PreviewUrl: a.MainPicture.Large,
 		Score:      int64(a.Mean * 10),
 		Synopsis:   a.Synopsis,
-		Genres:     util.Apply(a.Genres, func(v mal.Genre) string { return v.Name }),
-		RelatedHeaders: util.Apply(a.RelatedAnime, func(v mal.RelatedAnime) *dpb.SourceHeader {
+		Genres:     slice.Apply(a.Genres, func(v mal.Genre) string { return v.Name }),
+		RelatedHeaders: slice.Apply(a.RelatedAnime, func(v mal.RelatedAnime) *dpb.SourceHeader {
 			return &dpb.SourceHeader{
 				Api: epb.SourceAPI_SOURCE_API_MAL_ANIME_PARTIAL,
 				Id:  strconv.FormatInt(int64(v.Node.ID), 10),
 			}
 		}),
-		Studios: util.Apply(a.Studios, func(v mal.Studio) string { return v.Name }),
+		Studios: slice.Apply(a.Studios, func(v mal.Studio) string { return v.Name }),
 		Seasons: []string{fmt.Sprintf("%v %d", strings.ToTitle(a.StartSeason.Season), a.StartSeason.Year)},
 	}
 }
@@ -166,8 +166,8 @@ func (m Manga) PB() *dpb.Source {
 		PreviewUrl: m.MainPicture.Large,
 		Score:      int64(m.Mean * 10),
 		Synopsis:   m.Synopsis,
-		Genres:     util.Apply(m.Genres, func(v mal.Genre) string { return v.Name }),
-		RelatedHeaders: util.Apply(m.RelatedManga, func(v mal.RelatedManga) *dpb.SourceHeader {
+		Genres:     slice.Apply(m.Genres, func(v mal.Genre) string { return v.Name }),
+		RelatedHeaders: slice.Apply(m.RelatedManga, func(v mal.RelatedManga) *dpb.SourceHeader {
 			return &dpb.SourceHeader{
 				Api: epb.SourceAPI_SOURCE_API_MAL_MANGA_PARTIAL,
 				Id:  strconv.FormatInt(int64(v.Node.ID), 10),

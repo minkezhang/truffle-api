@@ -1,22 +1,9 @@
-package util
+package slice
 
 import (
 	"slices"
 	"strings"
-
-	epb "github.com/minkezhang/truffle-api/proto/go/enums"
 )
-
-// is_higher_priority returns if the source API u is of higher priority than v.
-func is_higher_priority(u, v epb.SourceAPI) bool { return u < v }
-
-func Prioritize[T comparable](a epb.SourceAPI, u T, b epb.SourceAPI, v T) T {
-	var zero T
-	if u == zero || is_higher_priority(b, a) {
-		return v
-	}
-	return u
-}
 
 func Apply[T any, U any](vs []T, f func(v T) U) []U {
 	results := []U{}

@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/minkezhang/truffle-api/data/source"
-	"github.com/minkezhang/truffle-api/data/source/util"
+	"github.com/minkezhang/truffle-api/util/slice"
 	"github.com/nstratos/go-myanimelist/mal"
 
 	cpb "github.com/minkezhang/truffle-api/proto/go/config"
@@ -46,7 +46,7 @@ func (c MangaClient) Search(ctx context.Context, query string, nsfw bool) ([]sou
 			mal.Offset(offset),
 			mal.NSFW(nsfw),
 		)
-		return util.Apply(results, func(v mal.Manga) source.S {
+		return slice.Apply(results, func(v mal.Manga) source.S {
 			return source.Make(Manga{v}.PB())
 		}), resp, err
 	}

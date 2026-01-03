@@ -6,7 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minkezhang/truffle-api/data/source/util"
+	"github.com/minkezhang/truffle-api/data/source/util/merge"
+	"github.com/minkezhang/truffle-api/util/slice"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -93,7 +94,7 @@ func (s S) Header() H {
 }
 
 func (s S) RelatedHeaders() []H {
-	return util.Apply(s.PB().GetRelatedHeaders(), func(header *dpb.SourceHeader) H {
+	return slice.Apply(s.PB().GetRelatedHeaders(), func(header *dpb.SourceHeader) H {
 		return H{
 			_api:  header.GetApi(),
 			_type: header.GetType(),
@@ -103,7 +104,7 @@ func (s S) RelatedHeaders() []H {
 }
 
 func (s S) Titles() []T {
-	return util.Apply(s.PB().GetTitles(), func(title *dpb.Title) T {
+	return slice.Apply(s.PB().GetTitles(), func(title *dpb.Title) T {
 		return T{
 			_title:        title.GetTitle(),
 			_localization: title.GetLocalization(),
@@ -135,39 +136,39 @@ func Merge(u, v S) (S, error) {
 	}
 
 	return Make(&dpb.Source{
-		NodeId: util.Prioritize(u.Header().API(), u.NodeID(), v.Header().API(), v.NodeID()),
-		Header: util.Prioritize(u.Header().API(), u.Header(), v.Header().API(), v.Header()).PB(),
+		NodeId: merge.Prioritize(u.Header().API(), u.NodeID(), v.Header().API(), v.NodeID()),
+		Header: merge.Prioritize(u.Header().API(), u.Header(), v.Header().API(), v.Header()).PB(),
 		RelatedHeaders: append(
-			util.Apply(
+			slice.Apply(
 				u.RelatedHeaders(),
 				func(v H) *dpb.SourceHeader { return v.PB() },
 			),
-			util.Apply(
+			slice.Apply(
 				v.RelatedHeaders(),
 				func(v H) *dpb.SourceHeader { return v.PB() },
 			)...,
 		),
 		Titles: append(
-			util.Apply(
+			slice.Apply(
 				u.Titles(),
 				func(v T) *dpb.Title { return v.PB() },
 			),
-			util.Apply(
+			slice.Apply(
 				v.Titles(),
 				func(v T) *dpb.Title { return v.PB() },
 			)...,
 		),
-		PreviewUrl:   util.Prioritize(u.Header().API(), u.PreviewURL(), v.Header().API(), v.PreviewURL()),
-		Score:        int64(util.Prioritize(u.Header().API(), u.Score(), v.Header().API(), v.Score())),
+		PreviewUrl:   merge.Prioritize(u.Header().API(), u.PreviewURL(), v.Header().API(), v.PreviewURL()),
+		Score:        int64(merge.Prioritize(u.Header().API(), u.Score(), v.Header().API(), v.Score())),
 		Synopsis:     strings.Join([]string{u.Synopsis(), v.Synopsis()}, "\n\n"),
 		Notes:        strings.Join([]string{u.Notes(), v.Notes()}, "\n\n"),
 		Genres:       append(u.Genres(), v.Genres()...),
-		Status:       util.Prioritize(u.Header().API(), u.Status(), v.Header().API(), v.Status()),
+		Status:       merge.Prioritize(u.Header().API(), u.Status(), v.Header().API(), v.Status()),
 		Studios:      append(u.Studios(), v.Studios()...),
 		Seasons:      append(u.Seasons(), v.Seasons()...),
 		Authors:      append(u.Authors(), v.Authors()...),
 		Illustrators: append(u.Illustrators(), v.Illustrators()...),
-		LastUpdated:  util.Prioritize(u.Header().API(), timestamppb.New(u.LastUpdated()), v.Header().API(), timestamppb.New(v.LastUpdated())),
+		LastUpdated:  merge.Prioritize(u.Header().API(), timestamppb.New(u.LastUpdated()), v.Header().API(), timestamppb.New(v.LastUpdated())),
 	}), nil
 }
 
@@ -177,7 +178,7 @@ func clean(src *dpb.Source) *dpb.Source {
 	}
 	dst := proto.Clone(src).(*dpb.Source)
 
-	dst.RelatedHeaders = util.DeduplicateFunc(
+	dst.RelatedHeaders = slice.DeduplicateFunc(
 		dst.GetRelatedHeaders(),
 		func(u, v *dpb.SourceHeader) int { // cmp
 			return cmp.Compare(u.GetApi(), v.GetApi())
@@ -187,11 +188,11 @@ func clean(src *dpb.Source) *dpb.Source {
 		},
 	)
 
-	dst.Titles = util.DeduplicateTitles(dst.GetTitles())
-	dst.Genres = util.DeduplicateStrings(dst.GetGenres())
-	dst.Studios = util.DeduplicateStrings(dst.GetStudios())
-	dst.Seasons = util.DeduplicateStrings(dst.GetSeasons())
-	dst.Authors = util.DeduplicateStrings(dst.GetAuthors())
-	dst.Illustrators = util.DeduplicateStrings(dst.GetIllustrators())
+	dst.Titles = merge.DeduplicateTitles(dst.GetTitles())
+	dst.Genres = merge.DeduplicateStrings(dst.GetGenres())
+	dst.Studios = merge.DeduplicateStrings(dst.GetStudios())
+	dst.Seasons = merge.DeduplicateStrings(dst.GetSeasons())
+	dst.Authors = merge.DeduplicateStrings(dst.GetAuthors())
+	dst.Illustrators = merge.DeduplicateStrings(dst.GetIllustrators())
 	return dst
 }

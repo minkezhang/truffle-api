@@ -13,9 +13,9 @@ import (
 	"github.com/minkezhang/truffle-api/client/truffle"
 	"github.com/minkezhang/truffle-api/data/node"
 	"github.com/minkezhang/truffle-api/data/source"
-	"github.com/minkezhang/truffle-api/data/source/util"
 	"github.com/minkezhang/truffle-api/util/generator"
 	"github.com/minkezhang/truffle-api/util/match"
+	"github.com/minkezhang/truffle-api/util/slice"
 
 	cpb "github.com/minkezhang/truffle-api/proto/go/config"
 	dpb "github.com/minkezhang/truffle-api/proto/go/data"
@@ -26,7 +26,7 @@ func New(ctx context.Context, config *cpb.Config, db *dpb.Database) *DB {
 	mal_client := client.New(
 		ctx,
 		mal.Make(config.GetMal()),
-		util.Filter(db.GetSources(), func(v *dpb.Source) bool {
+		slice.Filter(db.GetSources(), func(v *dpb.Source) bool {
 			return v.GetHeader().GetApi() != epb.SourceAPI_SOURCE_API_MAL
 		}),
 	)
@@ -42,11 +42,11 @@ func New(ctx context.Context, config *cpb.Config, db *dpb.Database) *DB {
 				ctx,
 				truffle.New(
 					config.GetTruffle(),
-					util.Filter(db.GetSources(), func(v *dpb.Source) bool {
+					slice.Filter(db.GetSources(), func(v *dpb.Source) bool {
 						return v.GetHeader().GetApi() != epb.SourceAPI_SOURCE_API_TRUFFLE
 					}),
 				),
-				util.Filter(db.GetSources(), func(v *dpb.Source) bool {
+				slice.Filter(db.GetSources(), func(v *dpb.Source) bool {
 					return v.GetHeader().GetApi() != epb.SourceAPI_SOURCE_API_TRUFFLE
 				}),
 			),
@@ -56,7 +56,7 @@ func New(ctx context.Context, config *cpb.Config, db *dpb.Database) *DB {
 		},
 		nodes: nodes,
 		generator: generator.New(generator.O{
-			IDs: util.Apply(db.GetNodes(), func(v *dpb.Node) string { return v.GetHeader().GetId() }),
+			IDs: slice.Apply(db.GetNodes(), func(v *dpb.Node) string { return v.GetHeader().GetId() }),
 		}),
 	}
 }

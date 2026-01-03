@@ -6,8 +6,8 @@ import (
 	"github.com/minkezhang/truffle-api/client/option"
 	"github.com/minkezhang/truffle-api/data/node"
 	"github.com/minkezhang/truffle-api/data/source"
-	"github.com/minkezhang/truffle-api/data/source/util"
 	"github.com/minkezhang/truffle-api/util/match"
+	"github.com/minkezhang/truffle-api/util/slice"
 
 	dpb "github.com/minkezhang/truffle-api/proto/go/data"
 	epb "github.com/minkezhang/truffle-api/proto/go/enums"
@@ -82,7 +82,7 @@ func (c *C) PB() []*dpb.Source {
 			}
 		}
 	}
-	return util.Apply(sources, func(v source.S) *dpb.Source { return v.PB() })
+	return slice.Apply(sources, func(v source.S) *dpb.Source { return v.PB() })
 }
 
 func (c *C) SearchByNodeID(ctx context.Context, header node.H) ([]source.S, error) {

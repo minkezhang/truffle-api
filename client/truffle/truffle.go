@@ -7,8 +7,8 @@ import (
 
 	"github.com/minkezhang/truffle-api/client/option"
 	"github.com/minkezhang/truffle-api/data/source"
-	"github.com/minkezhang/truffle-api/data/source/util"
 	"github.com/minkezhang/truffle-api/util/generator"
+	"github.com/minkezhang/truffle-api/util/slice"
 
 	cpb "github.com/minkezhang/truffle-api/proto/go/config"
 	dpb "github.com/minkezhang/truffle-api/proto/go/data"
@@ -16,7 +16,7 @@ import (
 )
 
 func New(pb *cpb.Truffle, data []*dpb.Source) *C {
-	ids := util.Apply(data, func(v *dpb.Source) string {
+	ids := slice.Apply(data, func(v *dpb.Source) string {
 		return v.GetHeader().GetId()
 	})
 
