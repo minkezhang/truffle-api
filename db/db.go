@@ -113,7 +113,6 @@ func (db *DB) Put(ctx context.Context, s source.S) (source.H, error) {
 	var t source.S // Pre-existing source if source exists
 	var n node.N   // Associated with s
 
-	fmt.Println(s.NodeID())
 	// Create node if the source is not yet linked.
 	if _, ok := db.nodes[s.NodeID()]; !ok || s.NodeID() == "" {
 		s = s.WithNodeID(db.generator.Generate())
@@ -124,7 +123,6 @@ func (db *DB) Put(ctx context.Context, s source.S) (source.H, error) {
 			},
 		})
 		db.nodes[n.Header().ID()] = n
-		fmt.Println(n.Header().Type().String())
 	}
 
 	// Get old source if it exists
