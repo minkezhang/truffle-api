@@ -63,12 +63,18 @@ func Make(pb *dpb.Source) S {
 
 func (s S) WithNodeID(node_id string) S {
 	pb := s.PB()
+	if pb == nil {
+		pb = &dpb.Source{}
+	}
 	pb.NodeId = node_id
 	return Make(pb)
 }
 
 func (s S) WithHeader(header H) S {
 	pb := s.PB()
+	if pb == nil {
+		pb = &dpb.Source{}
+	}
 	pb.Header = header.PB()
 	return Make(pb)
 }

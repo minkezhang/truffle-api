@@ -45,7 +45,11 @@ func (n N) Sources() []source.S { return n.sources }
 func (n N) PB() *dpb.Node       { return proto.Clone(n.pb).(*dpb.Node) }
 
 func (n N) WithSources(vs []source.S) N {
-	m := Make(n.PB())
+	pb := n.PB()
+	if pb == nil {
+		pb = &dpb.Node{}
+	}
+	m := Make(pb)
 	m.sources = vs
 	return m
 }
