@@ -59,6 +59,7 @@ func (n N) Virtual() (source.S, error) {
 		NodeId: n.Header().ID(),
 		Header: &dpb.SourceHeader{
 			Type: n.Header().Type(),
+			Api: epb.SourceAPI_SOURCE_API_TRUFFLE,
 		},
 	})
 	for _, s := range n.sources {
