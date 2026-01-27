@@ -45,7 +45,7 @@ func (c *C) Put(ctx context.Context, s source.S) (source.H, error) {
 		pb.Header = &dpb.SourceHeader{
 			Id:   c.generator.Generate(),
 			Type: pb.GetHeader().GetType(),
-			Api:  epb.SourceAPI_SOURCE_API_MAL,
+			Api:  epb.SourceAPI_SOURCE_API_TRUFFLE,
 		}
 	}
 	s = source.Make(pb)

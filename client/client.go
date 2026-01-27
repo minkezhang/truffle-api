@@ -69,7 +69,7 @@ func (c *Cache) Get(ctx context.Context, header source.H, remote option.Remote) 
 		var err error
 		s, err = c.c.Get(ctx, header)
 		if err != nil {
-			return source.S{}, nil
+			return source.S{}, err
 		}
 		if s != (source.S{}) {
 			t, _ := c.cache.Get(ctx, header)
