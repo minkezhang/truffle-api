@@ -63,3 +63,13 @@ func DeduplicateTitles(titles []*dpb.Title) []*dpb.Title {
 		},
 	)
 }
+
+func Join(u, v string) string {
+	if v == "" {
+		return u
+	}
+	if u == "" {
+		return v
+	}
+	return strings.Join([]string{u, v}, "\n\n")
+}

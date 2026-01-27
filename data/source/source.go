@@ -3,7 +3,6 @@ package source
 import (
 	"cmp"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/minkezhang/truffle-api/data/source/util/merge"
@@ -166,8 +165,8 @@ func Merge(u, v S) (S, error) {
 		),
 		PreviewUrl:   merge.Prioritize(u.Header().API(), u.PreviewURL(), v.Header().API(), v.PreviewURL()),
 		Score:        int64(merge.Prioritize(u.Header().API(), u.Score(), v.Header().API(), v.Score())),
-		Synopsis:     strings.Join([]string{u.Synopsis(), v.Synopsis()}, "\n\n"),
-		Notes:        strings.Join([]string{u.Notes(), v.Notes()}, "\n\n"),
+		Synopsis:     merge.Join(u.Synopsis(), v.Synopsis()),
+		Notes:        merge.Join(u.Notes(), v.Notes()),
 		Genres:       append(u.Genres(), v.Genres()...),
 		Status:       merge.Prioritize(u.Header().API(), u.Status(), v.Header().API(), v.Status()),
 		Studios:      append(u.Studios(), v.Studios()...),
